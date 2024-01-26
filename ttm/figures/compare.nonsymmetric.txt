@@ -1,0 +1,36 @@
+octave:5> GenerateTexSurfTTV
+Library: TLib-SB-P3, Metric: Laufzeit [ms], Mean: 22.0547, Median: 20.4904, Err: 66.0995, Min: 0.932076, Max: 96.5143
+Library: TLib-LB-P3, Metric: Laufzeit [ms], Mean: 27.2162, Median: 24.0904, Err: 72.5792, Min: 0.985317, Max: 124.429
+Library: TCL, Metric: Laufzeit [ms], Mean: 140.331, Median: 107.864, Err: 87.4817, Min: 0.321906, Max: 490.31
+Library: TBLIS, Metric: Laufzeit [ms], Mean: 82.3085, Median: 77.754, Err: 61.3918, Min: 4.36686, Max: 278.924
+Library: EIGEN, Metric: Laufzeit [ms], Mean: 974.647, Median: 157.896, Err: 312.733, Min: 4.5235, Max: 30439.9
+
+Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 27.0423, Median: 29.2409, Err: 23.4531, Min: 6.13397, Max: 35.8119
+Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 23.0486, Median: 24.5508, Err: 30.8481, Min: 7.26238, Max: 34.0461
+Library: TCL, Metric: Durchsatz [GFlops], Mean: 2.35291, Median: 1.19859, Err: 158.571, Min: 0.546151, Max: 32.1105
+Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 7.00314, Median: 6.62164, Err: 21.7749, Min: 2.11709, Max: 11.6253
+Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 3.53203, Median: 2.89545, Err: 58.5541, Min: 0.0352698, Max: 7.41757
+
+Library: TLib-LB-P3, Metric: Verhältnis, Mean: 1.27989, Median: 1.06763, Err: 44.5219, Min: 0.579426, Max: 4.67212
+Library: TCL, Metric: Verhältnis, Mean: 6.1586, Median: 5.93457, Err: 61.3256, Min: 0.236183, Max: 12.6793
+Library: TBLIS, Metric: Verhältnis, Mean: 4.0227, Median: 4.0113, Err: 31.2662, Min: 0.910858, Max: 10.4775
+Library: EIGEN, Metric: Verhältnis, Mean: 54.2246, Median: 10.1984, Err: 273.677, Min: 1.13043, Max: 932.292
+
+
+
+Library: TLib-SB-P3, Metric: Laufzeit [ms], Mean: 51.129, Median: 44.8274, Err: 75.1187, Min: 2.06402, Max: 233.435
+Library: TLib-LB-P3, Metric: Laufzeit [ms], Mean: 50.5422, Median: 45.2961, Err: 71.4955, Min: 2.11872, Max: 206.55
+Library: TCL, Metric: Laufzeit [ms], Mean: 150.486, Median: 118.814, Err: 84.1738, Min: 0.47129, Max: 478.4
+Library: TBLIS, Metric: Laufzeit [ms], Mean: 161.941, Median: 151.455, Err: 62.2802, Min: 4.89783, Max: 507.335
+Library: EIGEN, Metric: Laufzeit [ms], Mean: 1113.89, Median: 327.543, Err: 267.131, Min: 9.43582, Max: 33315.6
+
+Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 12.3436, Median: 13.9135, Err: 30.5003, Min: 3.73841, Max: 17.4949
+Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 12.2615, Median: 13.9074, Err: 29.2714, Min: 3.67566, Max: 16.4004
+Library: TCL, Metric: Durchsatz [GFlops], Mean: 1.8821, Median: 0.875671, Err: 140.447, Min: 0.560876, Max: 18.2588
+Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 3.61401, Median: 3.31215, Err: 24.6001, Min: 2.0029, Max: 7.91721
+Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 1.70814, Median: 1.44493, Err: 56.4276, Min: 0.0322254, Max: 3.6154
+
+Library: TLib-LB-P3, Metric: Verhältnis, Mean: 1.00174, Median: 1.00157, Err: 4.75513, Min: 0.712074, Max: 1.3795
+Library: TCL, Metric: Verhältnis, Mean: 3.09321, Median: 2.36365, Err: 64.6174, Min: 0.213133, Max: 6.83632
+Library: TBLIS, Metric: Verhältnis, Mean: 3.58121, Median: 3.34596, Err: 38.2751, Min: 0.845611, Max: 7.51843
+Library: EIGEN, Metric: Verhältnis, Mean: 29.292, Median: 7.90342, Err: 236.317, Min: 1.43805, Max: 488.886

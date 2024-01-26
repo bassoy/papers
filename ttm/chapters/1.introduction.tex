@@ -1,0 +1,64 @@
+\section{Introduction}
+\label{sec:introduction}
+Numerical multilinear algebra has become ubiquitous in many scientific domains such as computational neuroscience, pattern recognition, signal processing and data mining \cite{karahan:2015:tensor, papalexakis:2017:tensors}. % suter:2013:volumevisualization, 
+Tensors representing large amount of multidimensional data are decomposed and analyzed with the help of basic tensor operations where the contraction of tensors plays a central role \cite{lee:2018:fundamental, kolda:2009:decompositions}. 
+%While tensor contraction with arithmetic intensity has been discussed, class 2 tensor operations 
+To support numeric computations, the development and analysis of high-performance kernels for the tensor contraction have gained greater attention.
+Based on the Transpose-Transpose-\tf{GEMM}-Transpose (\tf{TGGT}) approach, \cite{bader:2006:algorithm862,solomonik:2013:cyclops} reorganize tensors in order to perform a tensor contraction with an optimized matrix-matrix multiplication (\tf{GEMM}) implementation. % ,van:2015:blis, 
+% which is denoted by (TTGT).
+A more recent method, \tf{GEMM}-like Tensor-Tensor Multiplication (\tf{GETT}), is to design algorithms according to high-performance \tf{GEMM} \cite{springer:2018:design,matthews:2018:high,abadi:2016:tensorflow}.
+Other methods are based on the \tf{LOG} approach in which algorithms utilize \tf{GEMM} with multiple tensor slices \cite{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction}.
+Focusing on class 3 compute-bound tensor contractions with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
+
+In this work, we design and analyze high-performance algorithms for the tensor-vector multiplication that is used in many numerical algorithms, e.g. the higher-order power method \cite{lee:2018:fundamental, kolda:2009:decompositions, bader:2006:algorithm862}.
+Our analysis is motivated by the observation that implementations for class 3 tensor contractions do not perform equally well for tensor-vector multiplications.
+Our approach is akin to the one proposed in \cite{li:2015:input, shi:2016:tensor.contraction} but targets the utilization of general matrix-vector multiplication routines (\tf{GEMV}) using \tf{OpenBLAS} \cite{wang:2013:augem} without code generation.
+We present new recursive in-place algorithms that compute the tensor-vector multiplication by executing \tf{GEMV} with slices and fibers of tensors.
+Moreover, except for few corner cases, we demonstrate that in-place tensor-vector multiplications with any contraction mode can be implemented with one recursive algorithm using multiple slice-vector multiplications and only one \tf{GEMV} parameter configuration.
+For parallel execution, we propose a variable loop fusion method with respect to the slice order of slice-vector multiplications. 
+Our algorithms support dense tensors with any order, dimensions and any non-hierarchical layouts including the first- and the last-order storage formats for any contraction mode.
+We have quantified the impact of the tensor layout, tensor slice order and parallel execution of slice-vector multiplications with varying contraction modes.
+The runtime measurements of our implementations are compared with those presented in \cite{springer:2018:design, abadi:2016:tensorflow,matthews:2018:high}.
+In summary, the main findings of our work are:
+\begin{itemize}
+	\item 
+	%
+	A tensor-vector multiplication is implementable by an in-place algorithm with $1$ \tf{DOT} and $7$ \tf{GEMV} parameter configurations supporting all combinations of contraction mode, tensor order, dimensions and non-hierarchical storage format validating the second recipe in \cite{dinapoli:2014:towards.efficient.use} with a precise description.
+	\item 
+	Algorithms with variable loop fusion and parallel slice-vector multiplications can achieve the peak performance of a \tf{GEMV} with large slice dimensions. %  for about $45$\% of about tests cases with asymmetrically shaped tensors of $30$ (16) Gflops/s \tf{OpenBLAS}'s 
+	The use of order-$2$ tensor slices helps to retain the performance at a peak level.
+	\item
+	A \tf{LOG}-based implementation is able to compute a tensor-vector product faster than \tf{TTGT}- and \tf{GETT}-based implementations that have been described in \cite{springer:2018:design,matthews:2018:high,abadi:2016:tensorflow}.
+	Using symmetrically shaped tensors, an average speedup of $3$ to $6$x for single and double precision floating point computations can be achieved.
+\end{itemize}
+
+The remainder of the paper is organized as follows. 
+Section~\ref{sec:related} presents related work.
+Section~\ref{sec:preliminaries} introduces the terminology used in this paper and defines the tensor-vector multiplication.
+Algorithm design and methods for parallel execution is discussed in Section~\ref{sec:design}.
+Section~\ref{sec:experimental.setup} describes the test setup and discusses the benchmark results in Section \ref{sec:results}.
+Conclusions are drawn in Section~\ref{sec:conclusion}.
+
+
+\begin{comment}
+In Introduction these are the claims and benefits:
+\begin{itemize}
+\item we propose recursive tensor vector multiplication algorithms that can process tensors with any rank, dimension extent and any linear layouts (including the first- and the last-order storage format) for any possible contraction mode (show algorithms).
+\item while this might not possible for the general tensor-tensor multiplication, we show that the tensor-vector multiplication algorithms can be defined in terms of tensors and subtensors in terms of four and three general matrix vector multiplication configurations that is applicable for any kind of contraction mode and linear layout combination. This greatly simplifies the implementation of the tensor-vector multiplication. (show tables for tensor and subtensor)
+\item We present a parallelization strategy with which the number of parallel executed matrix-vector multiplications is adjusted at runtime. In contrast to a simple parallelization over the most outer loop we show that our proposed strategy leads generally to a sustained bandwith.
+\item Using about 2x10x360x120 tensor shape configurations the proposed algorithms provide a sustained throughput of 20 GB/s for any kind of contraction mode and linear layout combination. We show that our methodology simplifies the design and implementation of such a complicated operation without any matrification.
+\item We are able to transform a Multi-Loop GEMV into a Single-Loop GEMV which can be fully parallelized with the parallel OpenMP.
+\item We show parallelization strategies for both subtensor sizes without employing 
+\item The analysis of tensor contraction is hard due to great design space. A tensor is parametrized in terms of order x dimensions x layout. Additionally, the contraction operation itself is highly variable: only for the class 2 operation with no free indices on the right-hand side you have contraction mode x ???. Understanding what blocking strategy is best is hard to find out   give an example from GETT-Paper that 'only' 50 examples of tensor contractions are considered. (by the way how does we have?, can we divide the analysis space into tensor parametrization and algorithm parametrization?)	
+\item it would be important to mention that the compiler of Paul Springer also considers the utilization of different approach to generate highly efficient code. just to mention that the search space for the selection of the right approach is great. our work is based on the loop-over-gemm approach.
+\item According to \cite{li:2015:input} the transposition for out-of-place tensor contractions can take up to $70$\% of their execution time.
+\item Our approach is similar to \cite{li:2015:input} which uses coarse-grained parallelism via OpenMP together with fine-graind parallelism using high-performance \ttt{gemm}. 
+Similar to this work it states that the tensor-matrix multiplication can be computed by a sequence of matrix multiplies formed either from the left-most or the right-most contiguous modes. 
+We can state the same for the tensor-vector multiplication that any tensor-vector multiplication can be expressed in terms of slice-vector multiplications that are executable in-place by the linear algebra \ttt{gemv} routine without transposition.
+It uses a nonlinear recursive approach that has been already applied for elementwise tensor operations in \cite{bassoy:2018:fast}.
+Our proposed algorithms implement the mode-q tensor-vector multiplication supporting tensors with runtime or compile-time variable order and dimensions. Tensor Elements can be stored according to any non-hierarchical layout including the first- and last-order storage format. We precisely define the mapping between a tensor-vector multiplication and a \ttt{gemv} for any order, storage layout and contraction mode.
+Complying with Lemma 4.1. in \cite{li:2015:input} we show that in case of a tensor-vector multiplication, can be performed without physical reorganization on exactly $p-q$ modes that do not have to be contiguous.
+\item we show that our mapping strategy yields is up to 20x faster than \ttt{TTGT}-like and up to 10x faster than \ttt{GETT}-like implementations.
+\item Most publications use a generator to construct multi-loops with high-performance kernels.
+\end{itemize}
+\end{comment}

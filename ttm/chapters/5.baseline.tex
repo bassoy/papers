@@ -1,0 +1,337 @@
+\section{Algorithm Design}
+\label{sec:design}
+\subsection{Standard Algorithms with Contiguous Memory Access}
+The control and data flow of the basic tensor-vector multiplication algorithm implements Eq. \eqref{equ:tensor.vector.multplikation} with a single function.
+It uses tree recursion with a control flow akin to one of Algorithm 1 in \cite{bassoy:2018:fast}.
+%Starting with the recursion level $p$, the basic algorithm computes a tensor-vector product $\mubC$ for $q>1$ in a nonlinear recursive fashion.
+Instead of combining two scalars elementwise in the inner-most loop, the tensor-vector multiplication algorithm computes an inner product and skips the iteration over the $q$-th index set, i.e. the $q$-th loop.
+%We consider the recursive version with a tree-recursion for convenience.
+%Starting with the most outer mode with $r=p$, \texttt{transform} iterates in each recursion level over the $r$th index set and calls itself with the value of that induction variable and a decremented $r$.
+%The elementwise scalar operation is applied when the function reaches $r=1$ favoring the first-order storage format for contiguous memory access.
+The algorithm supports tensors with arbitrary order, dimensions and any non-hierarchical storage format.
+%It also performs the inner products for any mode of the input tensor except for $q=1$.
+%Instead of inserting branches into inner-most recursion level, we prefer an additional function for a minimized control- and data-flow.
+%A specialized function for $q=1$ omits the statements in line 2, 3, 8 and sets the expression in line 9 into the inner-most loop body.
+%\subsection{Contiguous Memory Access}
+%\subsection{Data Locality}
+However, it accesses memory non-contiguously if the storage format does not prioritize the $q$-th mode with $\pi_1 \neq q$ and $w_q>1$, see Eq. \eqref{equ:stride.tuple}. % according to Eq. \eqref{equ:stride.tuple}  with the layout function $\lambda_{\mbw}$ 
+%according to the equations \eqref{equ:lambda} and \eqref{equ:stride.tuple} 
+The access pattern can be enhanced by modifying the tensor layout, i.e reordering tensor elements according to the storage format.
+A reordering however, limits its overall performance of the contraction operation \cite{shi:2016:tensor.contraction}.
+%Comprising a computational cost that is comparable with a tensor transposition that is amongst other works discussed  in~\cite{shi:2016:tensor.contraction}.
+%Elements should therefore according to the storage format by applying the optimization strategy as proposed in \cite{bassoy:2018:fast}.
+%In order to support of variable (static or dynamic) storage formats, we propose to access the multi-index with a the permutation tuple. %  instead of a loop-reordering
+
+As proposed in \cite{bassoy:2018:fast}, elements can be accessed according to the storage format using a permutation tuple.
+In this way, the desired index set for a given recursion level can be selected.
+%The idea is to access index-elements with the help of the permutation tuple and therefore selecting the desired index set of a recursion level.
+%In this way contiguous memory access for any non-hierarchical storage format.
+%This approach generalizes the loop-reordering strategy for matrix operations that are well explained in \cite{golub:2013:matrix.computations}.
+By inserting the $q$-th (contraction) loop into an already existing branch for $r>1$ additionally simplifies the algorithm's control-flow.
+%where $q$ is the contraction mode.
+%simultaneously simplifying the control- and data-flow.
+%Inserting the $q$-th loop into the branch with $r>1$ also results in an simplified control-flow.
+\begin{algorithm}[t]
+%\SetAlgoNoLine
+\DontPrintSemicolon
+\SetKwProg{Fn}{}{}{end}
+\SetKwFunction{TTV}{tensor\_times\_vector\_recursive}%
+%\SetAlgoNoEnd
+\footnotesize 
+\SetAlgoVlined
+\hrule
+\BlankLine
+\Fn{\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, q, \hat{q}, r$}}
+{
+	\uIf{$r = \hat{q}$ }
+	{
+		\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, q, \hat{q}, r-1$ }
+	}
+	\uElseIf{$r > 1$ }
+	{
+		\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
+		{
+			\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, q, \hat{q}, r-1$}\;
+		}		
+	}	
+	\Else%{$r\geq1 \wedge m \neq 1$}
+	{
+		\For{$i_q \leftarrow 1$ \KwTo $n_q$}
+		{
+			\For{$i_{\pi_1} \leftarrow 1$ \KwTo $n_{\pi_1}$}
+			{
+				$\mubC(i_1,\dots,i_{q-1},i_{q+1},\dots,i_{p})$ \ttt{+=} $\mubA(i_1,\dots,i_q,\dots,i_p) \cdot \mbb(i_q)$\;
+			}
+		}
+	}
+}
+\BlankLine
+\hrule
+\caption{
+	\footnotesize Recursive implementation of the tensor-vector multiplication starting with $r=p$ for $p \geq 2$ and $1 \leq \pi_1 \neq q \leq p$ with better data locality for large dimensions.
+	Iteration along mode $\mhq$ with $\mhq = (\pi^{-1})_q$ is moved into the inner-most recursion level.
+	\label{alg:ttv.sequential.blocked}
+}
+\end{algorithm}
+%The function \ttt{tensor\_times\_vector<coalesced>} in Algorithm \ref{alg:ttv.sequential.coalesced} additionally includes the permutation tuple $\mbpi$ of $\mubA$ and iterates over the $\pi_r$-th mode adjusting the memory access according to $\mbpi$.
+%In this way the function is able to provide a contiguous memory access for any non-hierarchical storage format which is similar to what is suggested in \cite{bassoy:2018:fast} for elementwise tensor operations.
+Yet the loop-reordering forces the first $\bar{n}_{k-1} = \prod_{r=1}^{k-1} n_{\pi_r}$ elements of $\mubC$ to be accessed $n_q$-times with $\pi_k = q$.
+%\begin{equation}
+%\mubC(\mbk) \leftarrow \mubC(\mbk) + \mubA(\mbi) \cdot \mbb.
+%\end{equation}
+%The downside of this approach can be observed 
+If the number of reaccessed elements exceeds the last-level cache size, cache missus occur resulting in a poor performance of the algorithm with longer execution times.
+%The runtime behavior of such an algorithm therefore depends on the contraction mode.
+%Such artifacts might become more noticeable in case of a parallelized version when each thread favorably accesses its own smaller level-two or level-one data cache.
+\begin{comment}
+\begin{algorithm}[t]
+	%\SetAlgoNoLine
+	\DontPrintSemicolon
+	\SetKwProg{Fn}{}{}{end}
+	\SetKwFunction{TTV}{tensor\_times\_vector<coalesced>}%
+	\SetAlgoVlined
+	\hrule
+	\BlankLine
+	\Fn{\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r$}}
+	{
+		\uIf{$r > 1$ }
+		{
+			\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
+			{
+				\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r-1$}\;
+			}		
+		}	
+		\Else%{$r\geq1 \wedge m \neq 1$}
+		{			
+			\For{$i_{\mbpi_1} \leftarrow 1$ \KwTo $n_{\mbpi_1}$}
+			{
+				$\mubC(i_1,\dots,i_{q-1},i_{q+1},\dots,i_{p})$ \ttt{+=} $\mubA(i_1,\dots,i_q,\dots,i_p) \cdot \mbb(i_q)$\;			
+			}
+		}
+	}
+	\BlankLine
+	\hrule
+	\caption{
+		\footnotesize Sequential version of the mode-$q$ tensor-vector multiplication  with contiguous memory access for tensors with any order $p\geq 2$ and any non-hierarchical storage format. The function initially called with $r=p$ recursively loops over the complete multi-index space of $\mubA$ and $\mubC$.
+		\label{alg:ttv.sequential.coalesced}
+	}
+\end{algorithm}
+\end{comment}
+
+Algorithm \ref{alg:ttv.sequential.blocked} improves the data locality if the number of elements $\bar{n}_{k-1}$ exceeds the cache size.
+By nesting the $\pi_1$-th loop inside the $i_q$-th loop, the function only reuses $n_{\pi_1}$ elements.
+%\todo[noline]{Complete the description of Algorithm 2.}
+This is done by inserting an \ttt{if}-statement at the very beginning of the function which skips the $q$-th loop when $r = \mhq$ with $\mhq = (\pi^{-1})_q$ where
+$\mhq$ is the index position of $q$ within $\mbpi$.
+%Eq. \eqref{equ:subtensor.small} assumes $\pi_1 < q$. 
+%For $\pi_1 > q$ the selection of the $\pi_1$-th mode must be on the right-hand side of $q$-th mode.
+The proposed algorithm constitutes the starting point for \tf{BLAS} utilization.
+%is able to select accordingly and to provide high spatial data locality for any given non-hierarchical storage format and dimensions. 
+%Please note that Eq. \eqref{equ:subtensor.small} assumes $\pi_1 < q$.
+%For $\pi_1 > q$ e.g. in case of the last-order storage format, the selection of the $\pi_1$-th mode in Eq. \eqref{equ:subtensor.small} must be on the right-hand side of $q$-th mode.
+%The tuple $\mbpi^{-1}$ is the inverse of the layout tuple $\mbpi$ where $\pi_q^{-1}$ denotes the $q$-th element\todo{Put this into the notation}. 
+%It constitutes the starting point for the utilization of linear algebra routines.
+
+\subsection{Extended Algorithms utilizing BLAS}
+\label{subsec:linear.algebra.routines}
+\vspace{-0.3em}
+The number of reused elements in Algorithm \ref{alg:ttv.sequential.blocked} can be further minimized by tiling the inner-most loops.
+Instead of applying loop transformations as proposed in \cite{springer:2018:design,matthews:2018:high}, we apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input,shi:2016:tensor.contraction} for class 3 tensor operations.
+The function and parameter configurations for the tensor multiplication can be divided into eight cases.
+
+\tit{Case 1 $(p=1)$:}
+The tensor-vector product $\mubA \times_1 \mbb$ can be computed with a \tf{DOT} operation $\mba^T \mbb$ where $\mubA$ is an order-$1$ tensor, i.e. a vector $\mba$ of length $n_1$.
+
+\tit{Case 2-5 $(p=2)$:}
+Let $\mbA$ be an order-$2$ tensor, i.e. matrix with dimensions $n_1$ and $n_2$.
+If $m=2$ and if $\mbA$ is stored according to the column-major $\mbpi=(1,2)$ or row-major format $\mbpi=(2,1)$, the tensor-vector multiplication can be trivially executed by a \tf{GEMV} routine using the tensor's storage format.
+The two remaining cases for $m=1$ require an interpretation of the order-$2$ tensor. 
+In case of the column-major format $\mbpi=(1,2)$, the tensor-vector product can be computed with a \tf{GEMV} routine, interpreting the columns of the matrix as rows with permuted dimensions.
+Analogously, a \tf{GEMV} routine executes a tensor-vector multiplication with $\mbpi=(2,1)$.
+
+%\paragraph{Case 6-7 ($p>2$):}
+%\label{subsubsec:order.p.ge.1}
+\tit{Case 6-7 $(p>2)$:}
+General tensor-vector multiplications with higher-order tensors execute the \tf{GEMV} routine multiple times over different slices of the tensor.
+There are two exceptions to the general case.%, namely when $\pi_1$ or $\pi_p$ is equal to the contraction mode $q$.
+If $\pi_1 = q$, a single \tf{GEMV} routine is sufficient for any storage layout.
+The tensor can be interpreted as a matrix with $\bar{n}_q = \prod_{r=1}^p n_r / n_q$ rows and $n_q$ columns.
+The leading dimension \tf{LDA} for $\pi_1=q$ is $n_q$.
+Tensor fibers with contiguously stored elements are therefore interpreted as matrix rows.
+In case of $\pi_p=q$, the leading dimension \tf{LDA} is given by $\bar{n}_q$ where all fibers with the exception of the dimension $\pi_p$ are interpreted as matrix columns.
+The interpretation of tensor objects does not copy data elements.
+
+\begin{table}[t]
+%\captionsetup{width=0.7\textheight}
+\centering
+%\footnotesize
+\footnotesize
+\begin{tabular}{ c c c c c c c c c c c } % 
+\toprule
+Case \ & Order $p$ \ \ & Layout $\mbpi$  & Mode $q$ & Routine \ & \tf{FORMAT} \ & \tf{M} & \tf{N} & \tf{LDA} \\
+\midrule
+1 & $1$       & -           & $1$       & \tf{DOT}    & -        & $n_1$   & -     & -  \\ %[0.1cm]
+\midrule
+2 & $2$ & $(1,2)$     & $1$       & \tf{GEMV} & \tf{ROW} & $n_2$ & $n_1$ & $n_1$ \\ %[0.1cm]
+3 & $2$ & $(1,2)$     & $2$       & \tf{GEMV} & \tf{COL} & $n_1$ & $n_2$ & $n_1$ \\ %[0.1cm]
+4 & $2$ & $(2,1)$     & $1$       & \tf{GEMV} & \tf{COL} & $n_2$ & $n_1$ & $n_2$ \\ %[0.1cm]
+5 & $2$ & $(2,1)$     & $2$       & \tf{GEMV} & \tf{ROW} & $n_1$ & $n_2$ & $n_2$ \\ %[0.1cm]
+\midrule
+6 & $>2$ & any & $\pi_1$  & \tf{GEMV} & \tf{ROW} & $\bar{n}_q$ & $n_q$ & $n_q$ \\ %[0.1cm]
+7 & $>2$ & any & $\pi_p$  & \tf{GEMV} & \tf{COL} & $\bar{n}_q$ & $n_q$ & $\bar{n}_q$ \\ %[0.1cm]
+\midrule
+8 & $>2$ & any & \ $\pi_2,\pi_3,\dots,\pi_{p-1}$ \ & \tf{GEMV*} & \tf{COL} & $\hat{n}_q$ & $n_q$ & $\hat{n}_q$\\%[0.1cm]
+%\midrule
+%$>2$      & any    & \ $\pi_2,\pi_3,\dots,\pi_{p-1}$ \ & \tf{GEMV}* & \tf{COL} & $w_q$ & $n_q$ & $w_q$\\ [0.1cm]
+\bottomrule\\
+\end{tabular}
+%\vspace{0.2cm}
+\caption%
+{%
+\footnotesize
+Parameter configuration of the \tf{DOT}- and \tf{GEMV} with eight cases executing a tensor-vector multiplication with respect to the order $p$, layout $\mbpi$ and contraction mode $q$.
+All three parameters determine the values of \tf{FORMAT}, \tf{M}, \tf{N} and \tf{LDA}.
+\tf{GEMV*} denotes a multiple execution of \tf{GEMV} with different tensor slices.
+In case of order-$2$ and order-$\mhq$ slices, the number of rows must be equal to $\hat{n}_q = n_{\pi_1}$ and $\hat{n}_q =w_q$, respectively.
+The number of rows for case 6 and 7 is given by $\bar{n}_q = \prod_{r=1}^p n_r / n_q$.
+%\vspace{-0.5cm}
+}
+\label{tab:mapping}
+\end{table}%\textbf{}
+
+\tit{Case 8 $(p>2)$:}
+For the last case with $\pi_1\neq q$ and $\pi_p \neq q$, we provide two methods that loop over tensor slices.
+%\vspace{-0.35cm}
+%\paragraph{Multi-Loop (v1) with Order-$2$ Slices:}
+%\cem{Besserer Übergang} 
+Lines 8 to 10 of Algorithm \ref{alg:ttv.sequential.blocked} perform a slice-vector multiplication of the form $\mbc' = \mbA' \cdot \mbb$.
+It is executed with a \tf{GEMV} with no further adjustment of the algorithm.
+The vector $\mbc'$ denotes a fiber of $\mubC$ with $n_u$ elements and $\mbA'$ denotes an order-$2$ slice of $\mubA$ with dimensions $n_u$ and $n_v$ such that
+\begin{equation}
+\label{equ:order.2.slice}
+\mbA' = \mubA(i_1,\dots,\colon_{\mkern-5.5muu},\dots,\colon_{\mkern-5.5muv},\dots,i_p) 
+\quad \text{and} \quad
+\mbc' = \mubC(i_1,\dots,\colon_{\mkern-5.5muu},\dots,i_p)
+\end{equation}
+where $u=\pi_1$ and $v = q$ or vice versa.
+%\vspace{-0.3cm}
+%\paragraph{Multi-Loop (v2) with Order-$\mhq$ Slices:}
+Algorithm \ref{alg:ttv.sequential.blocked} needs a minor modification in order to loop over order-$\mhq$ slices. 
+With $\mhq = (\pi^{-1})_q$, the conditions in line 2 and 4 are changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
+The modified algorithms therefore omits the first $\mhq$ modes $\pi_1, \dots, \pi_{\mhq}$ including $\pi_{\mhq} = q$ where all elements of an order-$\mhq$ slice are contiguously stored.
+Choosing the first-order storage format for convenience, the order-$\mhq$ and order-$(\mhq-1)$ slices of both tensors are given by 
+\begin{equation}
+\label{equ:order.mhq.slice}
+\mubA' = \mubA(\colon_{\mkern-5.5mu1},\dots,\colon_{\mkern-5.5muq},i_{q+1},\dots,i_{p}) 
+\ \text{and} \
+\mubC' = \mubC(\colon_{\mkern-5.5mu1},\dots,\colon_{\mkern-5.5mu{q-1}},i_{q+1},\dots,i_p).
+\end{equation}
+The fiber $\mbc'$ of length $w_q = n_{1} \cdot n_2 \cdots n_{q-1}$ is the one-dimensional interpretation of $\mubC'$ and the order-$2$ slice $\mbA'$ with dimensions $w_q$ and $n_q$ the two-dimensional interpretation of $\mubA'$.
+The slice-vector multiplication in this case can be performed with a \tf{GEMV} that interprets the order-$\mhq$ slices as order-$2$ according to the description.
+Table~\ref{tab:mapping} summarizes the call parameters of the \tf{DOT} or \tf{GEMV} for all order, storage format and contraction mode combinations.
+%The final function \ttt{tensor}\-\ttt{\_}\-\ttt{times}\-\ttt{\_}\-\ttt{vector} integrates all eight cases and executes either one of the first seven cases calling a single optimized and parallel \tf{DOT}/\tf{GEMV} or a recursive/iterative version of Algorithm~\ref{alg:ttv.sequential.blocked} either using one of the two parallel multi-loop versions for the last case.
+
+%\todo[noline]{Could we do also tensor transposition?}.
+%Table \ref{tab:mapping} extends the finding in \cite{dinapoli:2014:towards.efficient.use} precisely defining the mapping for any storage format. 
+%It also complies with the findings in \cite{li:2015:input}.
+
+
+\subsection{Parallel Algorithms with Slice-Vector Multiplications}
+\label{subsec:parallel.multi-loops}
+A straight-forward approach for generating a parallel version of Algorithm \ref{alg:ttv.sequential.blocked} is to divide the outer-most $\pi_p$-th loop into equally sized iterations and execute them in parallel using the \tf{OpenMP} \tf{parallel} \tf{for} directive\cite{bassoy:2018:fast}.
+%parallelize the multi-loops in case 8 is described by \cite{bassoy:2018:fast} where the outer-most $\pi_p$-th loop is divided into chunks of the same length. 
+With no critical sections and synchronization points, all threads within the parallel region execute their own sequential slice-vector multiplications.
+The outer-most dimension $n_{\pi_p}$ determines the degree of parallelism, i.e. the number of parallel threads executing their own instruction stream.
+
+
+%Yet, the number of parallelizable dimensions are dynamic and depend on the contraction mode $q$ and the storage layout of the tensor.
+%Considering Algorithm \ref{alg:ttv.sequential.blocked} executing slice-vector multiplications with order-$2$ slices.
+%The degree of parallelism can be improved by e.g. selecting other or additional loops.
+Fusing additional loops into a single one improves the degree of parallelism.
+%that are not required by the slice-vector multiplication in order to achieve a higher degree of parallelism.
+The number of fusible loops depends on the tensor order $p$ and contraction mode $q$ of the tensor-vector multiplication with $\mhq = (\pi^{-1})_q$.
+In case of mode-$q$ slice-vector multiplications, loops $\pi_{\mhq+1}, \dots, \pi_{p}$ are not involved in the multiplications and can be transformed into one single loop.
+For mode-$2$ slice-vector multiplications all loops except $\pi_1$ and $\pi_{\mhq}$ can be fused.
+%Moreover, the fused loops are not required by a slice-vector multiplication.
+When all fusible loops are lexically present and both parameters are known before compile time, loop fusion and parallel execution can be easily accomplished with the \tf{OpenMP} \tf{collapse} directive.
+The authors of \cite{li:2015:input} use this approach to generate parallel tensor-matrix functions.
+
+%\paragraph{Multi-Loop with Order-$\mhq$ Slices}
+%The parallelization of additional loops yields a higher degree of parallelism.
+With variable number of dimensions and a variable contraction mode, the iteration count of slice-vector multiplications and the slice selection needs to be determined at compile or run time.
+%The number of iterations of the fused loop is determined by the product of the outer dimensions and the increment is given by the slice size.
+If $\bar{n}$ is the number of tensor elements of $\mubA$, the total number of slice-vector multiplications with mode-$\mhq$ slices is given by $\bar{n}' = \bar{n} / w_{q}$.
+%\begin{equation}
+%\begin{split}
+%\bar{n}' & = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}} \\
+%         & = \bar{n} / w_{m}
+%\end{split}
+%\end{equation}
+%$\bar{n}_{k+1} = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}}$.
+Using Eq. \eqref{equ:stride.tuple}, the strides for the iteration are given by $w_{\pi_{\mhq+1}}$ for $\mubA$ and $v_{\pi_{\mhq}}$ for $\mubC$.
+In summary, one single parallel outer loop with an iteration count $\bar{n}'$ and an increment variable $j$ iteratively calls mode-$\mhq$ slice-vector multiplications with adjusted memory location $j \cdot w_{\pi_{\mhq+1}}$ and $j \cdot v_{\pi_{\mhq}}$ for $\mubA$ and $\mubC$, respectively.
+The degree of parallelism $\prod_{r=\mhq+1}^p n_r$ decreases with increasing $\mhq$ and corresponds for $\mhq = p-1$ to the first parallel version. 
+Tensor-vector multiplications with mode-$2$ slice-vector multiplications are further optimized by fusing additional $\mhq-2$ loops.
+%The layout, shape and stride tuples of $\mubA$ and $\mubC$ need to be divided in two parts.
+%Those without the modes $\pi_1$ and $\pi_q$ are needed to select order-$2$ slices by transforming the iteration index to relative memory locations of an order-$2$ slice with $\lambda_{\mbv''} \circ \gamma \circ \lambda^{-1}_{\mbw''}$.\todo{still need to finish this.}
+
+
+\begin{comment}
+Then
+\begin{equation}
+\mbpsi = 
+\begin{cases}
+(1,2) & \text{if} \ \pi_1 < \pi_k\\
+(2,1) & \text{otherwise.}
+\end{cases}
+\end{equation}
+\end{comment}
+
+\begin{comment}
+\begin{equation}
+\begin{array}{lllll}
+\pi_i''     &=& \pi_i   &\quad \text{if} & \quad \pi_i < \pi_1 \wedge \pi_i < \pi_k \\
+\pi_{i-1}'' &=& \pi_i-1 &\quad \text{if} & \quad (\pi_i > \pi_1 \wedge \pi_i < \pi_k) \vee (\pi_i < \pi_1 \wedge \pi_i > \pi_k) \\
+\pi_{i-2}'' &=& \pi_i-2 &\quad \text{if} & \quad \pi_i > \pi_1 \wedge \pi_i > \pi_k \\
+\end{array}
+\end{equation}
+\end{comment}
+
+
+
+
+
+\begin{comment}
+\begin{algorithm}[t]
+%\SetAlgoNoLine
+\DontPrintSemicolon
+\SetKwProg{Fn}{}{}{end}
+\SetKwFunction{TTV}{tensor\_times\_vector}%
+\SetAlgoVlined
+\hrule
+\BlankLine
+\Fn{\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r$}}
+{
+\uIf{$r > 1$ }
+{
+\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
+{
+\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r-1$}\;
+}		
+}	
+\Else%{$r\geq1 \wedge m \neq 1$}
+{			
+\For{$i_{\mbpi_1} \leftarrow 1$ \KwTo $n_{\mbpi_1}$}
+{
+$\mubC(i_1,\dots,i_{q-1},i_{q+1},\dots,i_{p})$ \ttt{+=} $\mubA(i_1,\dots,i_q,\dots,i_p) \cdot \mbb(i_q)$\;			
+}
+}
+}
+\BlankLine
+\hrule
+\caption{
+\footnotesize Sequential version of the mode-$q$ tensor-vector multiplication  with contiguous memory access for tensors with any order $p\geq 2$ and any non-hierarchical storage format. The function initially called with $r=p$ recursively loops over the complete multi-index space of $\mubA$ and $\mubC$.
+\label{alg:ttv.sequential.coalesced}
+}
+\end{algorithm}
+\end{comment}
