@@ -1,13 +1,21 @@
+%TODO: Correct the Gflops/s and results
+%TODO: Check tensor methods
 \begin{abstract}
-Tensor contraction is an important mathematical operation for many scientific computing applications that use tensors to store massive multidimensional data.
 %
-Based on the Loops-over-\tf{GEMM}s (\tf{LOG}) approach, this paper discusses the design of high-performance algorithms for the mode-$q$ tensor-vector multiplication using efficient implementations of the matrix-vector multiplication (\tf{GEMV}).
+%Say where the tensor-matrix multiplication plays a 
+The computation of the tensor-matrix product are required in various tensor methods, e.g. for computing the ALS or HOSVD.
 %
-Given dense tensors with any non-hierarchical storage format, tensor order and dimensions, the proposed algorithms either directly call \tf{GEMV} with tensors or recursively apply \tf{GEMV} on higher-order tensor slices multiple times.
+This paper presents a high-performance algorithm for the mode-$q$ tensor-matrix multiplication using the Loops-over-\tf{GEMM}s (\tf{LOG}) approach with dense tensors that can have any linear tensor layout, tensor order and dimensions.
 %
-We analyze strategies for loop-fusion and parallel execution of slice-vector multiplications with higher-order tensor slices. % 
+The proposed algorithm either directly call efficient implementations of \tf{GEMM} with tensors or recursively apply \tf{GEMM} on higher-order tensor slices multiple times.
 %
-Using \tf{OpenBLAS}, our parallel implementation attains $34.8$ Gflops/s in single precision on a Core i9-7900X Intel Xeon processor. %. that is $116$\% of the \tf{GEMV}'s sustained performance.
+%They are applicable to dense tensors with any linear tensor layout, tensor order and dimensions which can be runtime variable.
 %
-Our parallel version of the tensor-vector multiplication is on average $6.1$x and up to $12.6$x faster than state-of-the-art approaches.
+We discuss different strategies for fusing and executing the matrix-matrix multiplication in parallel.
+%
+Using \tf{OpenBLAS}, our parallel implementation attains $???$ Gflops/s in single precision on a Core i9-7900X Intel Xeon processor. %. that is $116$\% of the \tf{GEMV}'s sustained performance.
+%
+We show that the performance of our implementation is independent of the tensor layout and a performance of $???$ can be sustained for any linear tensor format.
+%
+Our version of the tensor-matrix multiplication is on average $???$x and up to $???$x faster than state-of-the-art approaches.
 \end{abstract}
