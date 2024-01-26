@@ -1,0 +1,100 @@
+\section{Optimizing the Multi-Index Algorithm}
+\label{sec:optimization}
+In this section we will turn to algorithms optimized for accessing subtensors.
+The first subsection will present an iterative algorithm for higher-order functions.
+The following sections describe successive optimizations of the multi-index recursive algorithm from Section~\ref{subsec:baseline.algorithms}.
+Three of those subsections explain methods that can be applied in order to reduce the runtime penalties caused by the recursive approach.
+The last subsection discusses data- and thread-level parallelization with which bandwidth utilization can be maximized.
+
+\begin{comment}
+\subsection{Iterative Multi-Index Algorithm \textit{\{iter\}}}
+The iterative multi-index algorithm accesses elements in ascending order in memory.
+It advances from one element to the next by applying an appropriate memory offset.
+It is an important observation that the multi-indices $\mathbf i'$ of successive elements contain only one index that is incremented (though others may be reset, as at the end of a matrix row).
+Because the elements of a subtensor form a rectangular grid, the offset depends only on which index is being incremented and can therefore be precomputed.
+Only for the index with the smallest stride $i_{\pi_1}'$, the offset is that stride, $o_{\pi_1} = w_{\pi_1}'$.
+The other offsets can be computed recursively according to:
+\begin{equation*}
+o_{\pi_r} = w_{\pi_r}' - \sum\limits_{s=1}^{r-1} (n_{\pi_s}'-1) \cdot o_{\pi_s}.
+\end{equation*}
+Applying this offset amounts to advancing by the stride of the incremented dimension and undoing the offsets applied since its previous incrementation.
+\end{comment}
+
+
+\begin{comment}
+\subsection{Reducing Index Computation \footnotesize{\textit{\{minindex\}}}}
+The baseline algorithm for higher-order functions computes relative memory indices in the inner-most loop. 
+We can further reduce the number of index computations by hoisting some of the summands to the previously executed loops. 
+In each recursion level $r$, line 3 and 6 only modify the $r$-th element $i_r$ of the multi-index $\mbi$.
+Moreover, the $k$-th function call at the $r$-th level adds $k$ to $i_r$, i.e. increments the previously calculated index. 
+We can therefore move the $r$-th summand $w_r \cdot i_r$ of Eq.~\eqref{equ:lambda} to the $r$-th recursion level. 
+In this way, unnecessary index computations in the inner-most loop can be eliminated allowing to pass a single index $j$ that is incremented by $w_r$. 
+Algorithm~\ref{alg:transform} therefore needs to be modified in line 3, 6 and 7 to substitute $j$.
+At the recursion level $r$, the single index $j$ is incremented $n_r$ times with $w_r$ until the stride $(r+1)$-th element of the stride tuple $\mbw$ is reached. 
+The last element of the stride tuple $\mbw$ is given by $w_p \cdot n_p$. 
+As $j$ denotes a memory index, we can manipulate pointers to the data structures in the same manner. 
+In this way only a dereferencing in the inner-most loop is necessary.
+The same holds for subtensor.
+\end{comment}
+
+\begin{comment}
+\begin{figure*}[t]
+	\input{figures/multi.index-rec.vs.multi-index-minindex.tex}
+	\caption{Comparison of the \textit{multi-index-rec}\textit{\{minindex\}} \ref{line:mi-rec-min} and \textit{multi-index-iter} \textit{\{minindex\}} \ref{line:mi-iter-min} implementations of the entrywise addition of two subtensors. Data is stored in single precision. Tests are executed on a single core with shape tuples of \textit{Setup 1}. \textit{Left}: Mean throughput. \textit{Right}: mean speedup over \textit{multi-index-rec} implementation.}
+	\label{fig:multi.index.vs.optimized.index}
+\end{figure*}
+\end{comment}
+
+
+\begin{comment}
+\subsection{Preserving Data Locality}
+\label{subsec:data.locality}
+The spatial data locality of Algorithm~\ref{alg:transform} is always preserved for the first-order storage as the inner-most loop increments the first multi-index by $w_1 = 1$.
+%The inner-most loop increments the first element of the multi-index by $w_1 = 1$.
+For any other layout tuple, the elements are accessed with a stride greater than one. 
+This can have a greatly influence the runtime of the higher-order function. 
+In order to access successive element, we can reorder the loops or stride tuple according to the layout tuple.
+However, the modification of a stride tuple can be performed before the initial function call.
+Using the property $1 \leq w_{\pi_q} \leq w_{\pi_r}$ for $\ 1\leq  q \leq r \leq p$, a new stride tuple $\mbv$ with $v_r = w_{\pi_r}$ for $1\leq r \leq p$ can be computed.
+The runtime penalty for the permutation of the stride tuple becomes then negligible.
+\end{comment}
+
+\begin{comment}
+\subsection{Reducing Recursive Function Calls \footnotesize{\textit{\{inline\}}}}
+\label{subsec:function.inlining}
+The recursion for the multi-index approach consists of multiple cases where each function call contains multiple recursive function calls, see~\cite{liu:1999:recursion}.
+Inlining can be guaranteed if a separate function is implemented and called for each order. 
+This can be accomplished with class templates and partial specialization with a static member function containing a loop in order to reduce the number of function implementations.
+The order of the tensor and subtensor is a template parameter that allows the compiler to generate jump instructions for the specified order and to avoid recursive function calls.
+In order to leave the order runtime flexible, the static function is called from a switch statement. 
+If the runtime-variable order is larger than the specified template parameter, the standard recursive implementation is called. 
+In order to prevent a code bloat of multiple implementations for different orders, we chose the order to $20$.
+\end{comment}
+
+\begin{comment}
+\begin{figure*}[t]
+	\input{figures/multi.loop.rec.inline.tex}
+	\caption{Comparison of the recursive multi-index implementations of the entrywise subtensor addition with \textit{\{minindex,inline\}} \ref{line:mi-rec-min-inline} and \textit{\{minindex\}} \ref{line:mi-rec-min2} optimizations. Data is stored in single precision. Tests are executed on a single core with shape tuples of \textit{Setup 2}. Left and right plots contain mean throughputs of the implementations executed with the first $\mbN_1$ and second shape tuple array $\mbN_2$, respectively.}
+	\label{fig:optimized.index.with.inline}
+\end{figure*}
+\end{comment}
+
+
+% Execution with Explicit Vectorization
+
+\begin{comment}
+\subsection{Data- and Thread-Parallelization \footnotesize{\textit{\{parallel,stream\}}}}
+\label{subsec:vectorization}
+By data-level parallelization we refer to the process of generating a single instruction for multiple data. 
+The inner-most loop of the higher-order function is an auto-vectorizable loop if the stride of a tensor or subtensor is equal to one.
+In such a case, the compiler generates vector instructions with unaligned loads and regular store operations. 
+In order to yield a better memory bandwidth utilization, we have explicitly placed Intel's aligned load and streaming intrinsics with the corresponding vector operation in the most inner loop.
+Note that pointers to the data structures must be aligned and the loop count must be set to a multiple of the vector size.
+
+By thread-level parallelization we refer to the process of finding independent instruction streams of a program or function.
+Thread-level parallel exuction is accomplished with C++ threads executing the higher-order function in parallel where the outer-most loop is divided into equally sized chunks.
+Each thread executes its own instruction stream using distinct memory addresses of the tensor or subtensor.
+In case of reduction operations such the inner product with greater data dependencies, threads perform their own reduction operation in parallel and provide their results to the parent thread. 
+The latter can perform the remaining reduction operation.
+%It is preferable that extents belonging to the outer-most loop to be greater than the number of physical cores.
+\end{comment}

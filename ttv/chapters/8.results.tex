@@ -1,0 +1,388 @@
+\begin{comment}
+\begin{figure*}[t]
+\input{figures/tlib.lb.pb2.performance.order1.single.surf}
+\input{figures/tlib.lb.pb2.performance.order2.single.surf}
+
+\input{figures/tlib.lb.pb2.performance.order3.single.surf}
+\input{figures/tlib.lb.pb2.performance.order10.single.surf}
+\caption{\footnotesize Average performance of the tensor-times-vector multiplication using the \textit{Tlib-LB-PN} version with variying contraction modes and tensor ranks. For most rank-mode constellations an average performance of $30$ Gflops can be observed. Tensor elements are encoded in single precision and stored contiguously in memory to the first-order, second-order, third-order and last-order storage formats. Arithmetic mean is calculated over the tensor size with a standard deviation ranging from $2$\% to $20$\%.}
+\label{fig:tlib.lb.pb2.vs.tlib.sb.pb3}
+\end{figure*}
+\end{comment}
+\begin{comment}
+\begin{figure*}[t!]
+\input{figures/performance.speedup.single.bar.symmetric}
+\caption{\footnotesize %
+%\footnotesize Dargestellt sind über die Tensorgröße und Tensorstufe gemittelten \textbf{Durchsätze in Gflops} der \textbf{Tensor}"=\textbf{Vektor}"=\textbf{Multiplikation}. \textbf{TLib-SB-P3} \ref{coord_perf_float:1_1},\textbf{TLib-LB-P3} \ref{coord_perf_float:2_1},\textbf{TCL} \ref{coord_perf_float:3_1},\textbf{TBLIS} %\ref{coord_perf_float:4_1},\textbf{EIGEN} \ref{coord_perf_float:5_1}. Daten sind in \textbf{Floating-Point<Single>} codiert.
+%\label{fig:ttv_plot_perf_float}	
+Average performance of tensor-times-vector multiplication implementations with varying contraction modes or tensor order. 
+\ref{coord_perf_float_symmetric_size_mode:1} \ttt{TLib-LB-P3}, \ref{coord_perf_float_symmetric_size_mode:2} \ttt{TLib-SB-P3}, \ref{coord_perf_float_symmetric_size_mode:3} \ttt{Tcl}, \ref{coord_perf_float_symmetric_size_mode:4} \ttt{TBlis}, \ref{coord_perf_float_symmetric_size_mode:5} \ttt{Eigen}.
+%Most order-mode combinations exhibit an average performance of $30$ Gflops. 
+Tensor are symmetrically shaped using the second test shape array.
+Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order format. 
+Arithmetic mean is calculated over the tensor size and either over mode or order.
+% with a standard deviation ranging from $2$\% to $20$\%
+\label{fig:performance.speedup.single.bar.symmetric}
+}
+\end{figure*}
+\end{comment}
+\begin{comment}
+\begin{figure*}[t!]
+\input{figures/performance.speedup.single.bar.nonsymmetric}
+\caption{\footnotesize %
+%\footnotesize Dargestellt sind über die Tensorgröße und Tensorstufe gemittelten \textbf{Durchsätze in Gflops} der \textbf{Tensor}"=\textbf{Vektor}"=\textbf{Multiplikation}. \textbf{TLib-SB-P3} \ref{coord_perf_float:1_1},\textbf{TLib-LB-P3} \ref{coord_perf_float:2_1},\textbf{TCL} \ref{coord_perf_float:3_1},\textbf{TBLIS} %\ref{coord_perf_float:4_1},\textbf{EIGEN} \ref{coord_perf_float:5_1}. Daten sind in \textbf{Floating-Point<Single>} codiert.
+%\label{fig:ttv_plot_perf_float}	
+Average performance of tensor-times-vector multiplication implementations with varying contraction modes or tensor order. 
+\ref{coord_perf_float_asymmetric_size_mode:1} \ttt{TLib-LB-P3}, \ref{coord_perf_float_asymmetric_size_mode:2} \ttt{TLib-SB-P3}, \ref{coord_perf_float_asymmetric_size_mode:3} \ttt{Tcl}, \ref{coord_perf_float_asymmetric_size_mode:4} \ttt{TBlis}, \ref{coord_perf_float_asymmetric_size_mode:5} \ttt{Eigen}.
+%Most order-mode combinations exhibit an average performance of $30$ Gflops. 
+Tensor are symmetrically shaped using the second test shape array.
+Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order format. 
+Arithmetic mean is calculated over the tensor size and either over mode or order.
+% with a standard deviation ranging from $2$\% to $20$\%
+\label{fig:performance.speedup.single.bar.nonsymmetric}
+}
+\end{figure*}
+\end{comment}
+\begin{comment}
+\begin{figure*}[t]
+\input{figures/performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+\caption{\footnotesize Average performance of the tensor-times-vector multiplication implemented by competing frameworks for variying contraction modes and tensor order. 
+Most order-mode combinations exhibit an average performance of $30$ Gflops. 
+Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order, second-order, third-order and last-order storage formats. 
+Arithmetic mean is calculated over the tensor size with a standard deviation ranging from $2$\% to $20$\%.}
+\label{fig:performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+\end{figure*}
+\end{comment}
+\begin{comment}
+\begin{figure*}[t]
+\input{figures/speedup.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+%\input{figures/tlib.lb.pb2.performance.order1.single.surf}
+%\input{figures/tlib.lb.pb2.performance.order2.single.surf}
+%\input{figures/tlib.lb.pb2.performance.order3.single.surf}
+%\input{figures/tlib.lb.pb2.performance.order10.single.surf}
+\caption{\footnotesize Average speedup of the tensor-times-vector multiplication implemented by competing frameworks for variying contraction modes and tensor order. 
+Most order-mode constellations exhibit an average performance of $30$ Gflops. 
+Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order, second-order, third-order and last-order storage formats. 
+Arithmetic mean is calculated over the tensor size with a standard deviation ranging from $2$\% to $20$\%.}
+\label{fig:speed.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+\end{figure*}
+\end{comment}
+
+
+
+\section{Results and Discussion}
+\label{sec:results}
+
+\begin{comment}
+The tensor-vector multiplication is a generalization of the two-dimensional case from the computational perspective.
+It computes a vector-matrix product for $p=2$ and $q=1$ and a matrix-vector product for $p=2$ and $q=2$. 
+Its arithmetic intensity is equal to that of a matrix-vector multiplication.
+Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
+Therefore, we expect the performance of the following tensor-vector multiplication and a GEMV matrix-vector multiplication is the goal.
+\end{comment}
+
+
+
+
+
+\begin{figure*}[t]
+\input{figures/performance.tlib.sb.lb.order1.single.surf.nonsymmetric}
+\caption{%
+\footnotesize %
+Average performance maps of four tensor-vector multiplications with varying tensor orders $p$  and contraction modes $q$.		
+Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order storage format.
+Tensors are \tit{asymmetrically}-\tit{shaped} with dimensions.
+%Arithmetic mean is calculated over the tensor size.
+\label{performance.tlib.sb.lb.order1.single.surf.nonsymmetric}
+}
+\end{figure*}
+\begin{comment}
+\begin{figure*}[t]
+	\input{figures/performance.tlib.lb.layout.single.surf.nonsymmetric}
+	\caption{
+		\footnotesize Average performance maps of the \tf{TLIB-LB-PN} implementation with varying contraction modes and tensor order. 
+		Tensor elements are encoded in single-precision and stored contiguously in memory according to the $1$-order, $2$-order, $9$-order and $10$-order storage format, respectively. 
+		Tensors are \tit{asymmetrically}-\tit{shaped} with dimensions from the first test setup.
+		%Arithmetic mean is calculated over the tensor size.
+		\label{fig:performance.tlib.lb.layout.single.surf.nonsymmetric}
+	}
+\end{figure*}
+\end{comment}
+\begin{figure*}[t]
+	\input{figures/performance.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric}
+	
+	\input{figures/performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+	\caption{ %
+		\footnotesize%
+		Average performance maps of tensor-vector multiplication implementations using \tit{asymmetrically}-\tit{shaped} (top) and \tit{symmetrically}-\tit{shaped} (bottom) tensors with varying contraction modes and tensor order.
+		Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order storage format. 
+		%Arithmetic mean is calculated over the tensor size.
+	}
+	\label{fig:mean.performance.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric}
+\end{figure*}
+\begin{figure*}[t]
+	\input{figures/speedup.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric}
+	
+	\input{figures/speedup.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+	\caption{ %
+		\footnotesize%
+		Relative average performance maps of tensor-vector multiplication implementations using \tit{asymmetrically} (top) and \tit{symmetrically} (bottom) shaped tensors with varying contraction modes and tensor order.
+		Relative performance (speedup) is the performance ratio of \tf{TLIB-SB-PN} (top) and \tf{TLIB-LB-PN} (bottom) to \tf{TBLIS}, \tf{TCL} and \tf{EIGEN}, respectively. 
+		Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order storage format. 
+		%Arithmetic mean is calculated over the tensor size.
+	}
+	\label{fig:performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+\end{figure*}
+
+%The z-axis minima and maxima are the global rounded minima and maxima performance of the corresponding implementation.
+
+%\subsubsection{Matrix-Vector Multiplication}
+%\label{subsec:performance.gemv}
+%utl::Range {utl::Dim{256,256*256}, utl::Dim{256,-256},  utl::Dim{256*256,256}},
+%\paragraph{Measurement 1:}
+\begin{comment}
+We have measured \tf{OpenBLAS}'s \tf{GEMV} routine with $2\times 256$ different matrix shapes featuring the same number of elements that are stored according to the column-major format.
+Starting with $256$ rows and $65536$ columns, we increased the number of rows and simultaneously decreased the number of columns by $256$.
+In general, \tf{GEMV} provides for column- and row-major matrices a sustained performance around $32$ Gflops/s in single precision.
+However, the performance diminishes with decreasing number of rows and columns for the column-major and row-major format. 
+%TODO: Say when
+In case of the column- and row-major format, the performance drops to one fourth of $32$ Gflops/s for matrix shapes $(256,65536)$ and $(65536,256)$, respectively.
+%-storage format combination are $(256,65536)$-column- and $(65536,256)$-row-major-format.
+%However, the performance continually diminishes with decreasing number of rows for the column-major. 
+%It finally drops to one fourth of the sustained performance when the matrix shape is equal to $(256,65536)$.
+% which explains some of the benchmark results of the implemented functions.
+% tensor-vector multiplication  for the cases $2$ to $7$ in Table \ref{tab:mapping}.
+%An application of \tf{MKL}'s \tf{GEMV} routine with a slightly better sustained performance of $31$ Gflops/s behaves differently for 
+
+%Assuming the order-$2$ tensor to be stored in the first-order storage format, the \ttt{gemv} might be a limiting factor for the cases 2, 3
+%fhg::profile::ranges3D_1: utl::Range {utl::Dim{16,256,1024}, utl::Dim{16,0,0},  utl::Dim{256,256,1024}},
+%fhg::profile::ranges3D_2: utl::Range {utl::Dim{256,16,1024}, utl::Dim{0,16,0},  utl::Dim{256,256,1024}},
+%\paragraph{Measurement 2:}
+The second measurement contains $2\times 2 \times 16$ measurements of the \ttt{gemv} with smaller matrices.\todo{finish.}
+%rows or columns 
+In case of the column-major format and with less than or equal to $256$ rows, the \ttt{gemv} also significantly slows down to $4$ Gflops/s.
+%Both operations having the same arithmetic intensity, we aim for the tensor-vector and matrix-vector
+\end{comment}
+
+%The following analysis considers four parallel versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN}.
+%\tf{SB} (small-block) and \tf{LB} (large-block) denote parallel slice-vector multiplications where each thread recursively calls a single-threaded \tf{GEMV} with mode-$2$ and mode-$\mhq$ slices, respectively.
+%\tf{P1} uses the outer-most dimension $n_{p}$ for parallel execution whereas \tf{PN} applies loop fusion and considers all fusible dimensions for parallel execution.
+%All of them use one multi-threaded \tf{GEMV} for the cases $2$ to $7$ according to the description provided in Section \ref{subsec:linear.algebra.routines} and Table \ref{tab:mapping}.
+%Their average performance values within the regions $2$, $3$, $6$ and $7$ are the same for all four versions, see Fig. \ref{fig:performance.map}.
+%The $8$-th case is implemented according to the description in Section \ref{subsec:parallel.multi-loops}.
+
+
+\subsubsection{Matrix-Vector Multiplication}
+Fig.~\ref{performance.tlib.sb.lb.order1.single.surf.nonsymmetric} shows average performance values of the four versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN} with asymmetrically-shaped tensors.
+In case $2$ (region $2$), the shape tuple of the two-order tensor is equal to $(n_2,n_1)$ where $n_2$ is set to $1024$ and $n_1$ is $c \cdot 2^{14}$ for $1 \leq c \leq 32$. % in the row"=major format 
+In case $6$ (region $6$), the $p$-order tensor is interpreted as a matrix with a shape tuple $(\bar{n}_1,n_1)$ where $n_1$ is $c \cdot 2^{15-r}$ for $1 \leq c \leq 32$ and $2 < r < 10$.
+The mean performance averaged over the matrix sizes is around $30$ Gflops/s in single-precision for both cases.
+When $p=2$ and $q>1$, all functions execute case $3$ with a single parallel \tf{GEMV} where the $2$-order tensor is interpreted as a matrix in column-major format with a shape tuple $(n_1,n_2)$.
+In this case, the performance is $16$ Gflops/s in region $3$ where the first dimension of the $2$-order tensor is equal to $1024$ for all tensor sizes.
+The performance of \tf{GEMV} increases in region $7$ with increasing tensor order and increasing number of rows $\bar{n}_q$ of the interpreted $p$-order tensor.
+In general, \tf{OpenBLAS}'s \tf{GEMV} provides a sustained performance around $31$ Gflops/s in single precision for column- and row-major matrices.
+However, the performance drops with decreasing number of rows and columns for the column-major and row-major format.
+The performance of case $8$ within region $8$ is analyzed in the next paragraph.
+
+
+%For case $7$ the shape is $(\bar{n}_q,n_q)$ with q=p and 2<q.
+%According to the test setup only n_1 (min=2^14,max=32*2^14) is incremented by 2^14 while n_2 is equal to 1024.
+%So n_2 stays the same at 1024.
+\subsubsection{Slicing and Parallelism}
+%For a reduced number of index computation when accessing tensor elements, we have additionally applied the optimization techniques using pointer arithmetic as it has been discussed in \cite{bassoy:2018:fast}.
+Functions with \tf{P1} run with $10$ Gflops/s in region $8$ when the contraction mode $q$ is chosen smaller than or equal to the tensor order $p$.
+ % with $1 < q \leq p$
+The degree of parallelism diminishes for $n_p=2$ as only $2$ threads sequentially execute a \tf{GEMV}.
+The second method \tf{PN} fuses additional loops and is able to generate a higher degree of parallelism.
+%In case of the \tf{LB} slicing, the outer dimensions with indices $\pi_{k+1}, \dots, \pi_{p}$ are executed in parallel. % except $\pi_{k}=q$ 
+Using the first-order storage format, the outer dimensions $n_{q+1}, \dots, n_p$ are executed in parallel.
+The \tf{PN} version speeds up the computation by almost a factor of $4$x except for $q = p-1$.
+% with one dimension $n_p$.
+This explains the notch in the left-bottom plot when $q = p-1$ and $n_{p} = 2$.
+%Except this case, the degree of parallelism is given by $\prod_{r=q+1}^p n_{r}$.
+%$n_{\pi_{k+1}} \cdots n_{\pi_{p}}$.
+
+In contrast to the \tf{LB} slicing method, \tf{SB} is able to additionally fuse the inner dimensions with their respective indices $2,3, \dots, p-2$ for $q=p-1$.
+%TODO: durch das hinzufügen mehr parallelität.
+The performance drop of the \tf{LB} version can be avoided, resulting in a degree of parallelism of $\prod_{r=2}^{p} n_{r} / n_q$.
+%For $q=1$ and any tensor order, a conventional \tf{GEMV} is applied with a tensor that is interpreted as a row-major matrix.
+Executing that many small slice-vector multiplications with a \tf{GEMV} in parallel yields a mean peak performance of up to $34.8$($15.5$) Gflops/s in single(double) precision.
+Around $60$\% of all $2880$ measurements exhibit at least $32$ Gflops/s that is \tf{GEMV}'s peak performance in single precision.
+In case of symmetrically-shaped tensors, both approaches achieve similar results with almost no variation of the performance achieving up on average $26$($14$) Gflops/s in single(double) precision.
+%\vspace{-0.4cm}
+%About $70$\% of all $2880$ measurements $80$\% exhibit \tf{gemv} peak performance.
+
+%$90 - 36 = 54 measurements \geq 32 Gflops/s$
+%$90 - 25 = 65 measurements \geq 25 Gflops/s$
+
+\subsubsection{Tensor Layouts}
+Applying the first setup configuration with asymmetrically-shaped tensors, we have analyzed the effects of the blocking and parallelization strategy.
+The \tf{LB}-\tf{PN} version processes tensors with different storage formats, namely the $1$-, $2$-, $9$- and $10$-order layout.
+The performance behavior is almost the same for all storage formats except for the corner cases $q = \pi_1$ and $q = \pi_p$.
+Even the performance drop for $q = p-1$ is almost unchanged.
+The standard deviation from the mean value is less than $10$\% for all storage formats.
+Given a contraction mode $q = \pi_k$ with $1 < k < p$, a permutation of the inner and outer tensor dimensions with their respective indices $\pi_1, \dots,  \pi_{k-1}$ and $\pi_{k+1}, \dots, \pi_{p}$ does influence the runtime where the \tf{LB}-\tf{PN} version calls \tf{GEMV} with the values $w_m$ and $n_m$.
+%With $w_m = n_{\pi_1} \cdot n_{\pi_2} \cdots n_{\pi_{k-1}}$ being the $q$-th stride, any change of the layout %tuple of its first $k-1$ elements yields the same stride $w_m$.
+The same holds true for the outer layout tuple.
+%\cem[inline]{One implementation is almost layout oblivious.}
+%\cem[inline]{What about double precision?}
+%\cem[inline]{What about TLib-SB-PN}
+
+
+
+\subsubsection{Comparison with other Approaches}
+%\paragraph{Eigen}
+The following comparison includes three state-of-the-art libraries that implement three different approaches.
+The library \tf{TCL} (\tf{v0.1.1}) implements the (\tf{TTGT}) approach with a high-perform tensor-transpose library \tf{HPTT} which is discussed in \cite{springer:2018:design}.
+%\paragraph{TBlis}
+\tf{TBLIS} (\tf{v1.0.0}) implements the \tf{GETT} approach that is akin to \tf{BLIS}'s algorithm design for matrix computations \cite{matthews:2018:high}.
+%It executes the tensor-vector multiplication in-place and uses its own thread control interface for parallel execution.
+The tensor extension of \tf{EIGEN} (\tf{v3.3.90}) is used by the Tensorflow framework and performs the tensor-vector multiplication in-place and in parallel with contiguous memory access \cite{abadi:2016:tensorflow}.
+\tf{TLIB} denotes our library that consists of sequential and parallel versions of the tensor-vector multiplication.
+Numerical results of \tf{TLIB} have been verified with the ones of \tf{TCL}, \tf{TBLIS} and \tf{EIGEN}.
+
+Fig. \ref{fig:mean.performance.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric} illustrates the average single-precision Gflops/s with asymmetrically- and symmetrically-shaped tensors in the first-order storage format.
+The runtime behavior of \tf{TBLIS} and \tf{EIGEN} with asymmetrically-shaped tensors is almost constant for varying tensor sizes with a standard deviation ranging between $2$\% and $13$\%.
+\tf{TCL} shows a different behavior with $2$ and $4$ Gflops/s for any order $p\geq 2$ peaking at $p = 10$ and $q=2$.
+The performance values however deviate from the mean value up to $60$\%.
+Computing the arithmetic mean over the set of contraction modes yields a standard deviation of less than $10$\% where the performance increases with increasing order peaking at $p = 10$.
+\tf{TBLIS} performs best for larger contraction dimensions achieving up to $7$ Gflops/s and slower runtimes with decreasing contraction dimensions.
+%Calculating the median and (minimum/maximum) values over all tensor order, tensor sizes and contraction modes, \tf{TLIB-SB-PN} attains $29.24$ ($6.13$/$35.81$), \tf{TBLIS} $31.33$ ($2.32$/$35.64$), \tf{TCL} $1.19$ ($0.54$/$32.11$) and \tf{EIGEN} $2.89$ ($0.04$/$7.41$) Gflops/s in single-precision.
+%For double precision, \tf{TLIB-SB-PN} achieves $13.91$ ($3.73$/$17.49$), \tf{TBLIS} $16.03$ ($1.85$/$17.93$), \tf{TCL} $0.87$ ($0.56$/$18.25$) and \tf{EIGEN} $1.44$ ($0.03$/$3.61$) Gflops/s.\\
+In case of symmetrically-shaped tensors, \tf{TBLIS} and \tf{TCL} achieve up to $12$ and $25$ Gflops/s in single precision with a standard deviation between $6$\% and $20$\%, respectively.
+\tf{TCL} and \tf{TBLIS} behave similarly and perform better with increasing contraction dimensions. 
+\tf{EIGEN} executes faster with decreasing order and increasing contraction mode with at most $8$ Gflops/s at $p=2$ and $q\geq 2$.
+%Having initialized the threadpool device with the same number of threads, we did not observe parallel execution of the tensor-vector multiplication. 
+%The performance of Eigen's implementation decreases almost linearly with increasing tensor order for symmetrically and asymmetrically shaped tensors.
+
+%Calculating the median and (minimum/maximum) values over all tensor order, tensor sizes and contraction modes, \tf{TLIB-SB-PN} attains $29.24$ ($6.13$/$35.81$), \tf{TBLIS} $31.33$ ($2.32$/$35.64$), \tf{TCL} $1.19$ ($0.54$/$32.11$) and \tf{EIGEN} $2.89$ ($0.04$/$7.41$) Gflops/s in single-precision.
+%For double precision, \tf{TLIB-SB-PN} achieves $13.91$ ($3.73$/$17.49$), \tf{TBLIS} $16.03$ ($1.85$/$17.93$), \tf{TCL} $0.87$ ($0.56$/$18.25$) and \tf{EIGEN} $1.44$ ($0.03$/$3.61$) Gflops/s.
+
+
+Fig. \ref{fig:performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric} illustrates relative performance maps of the same tensor-vector multiplication implementations.
+%For the comparisons we have taken \tf{TLib-SB-PN} for asymmetrically shaped tensors and \tf{TLIB-LB-PN} for symmetrically shaped tensors.
+%The performance ratios reveal that \tf{TLib-SB-PN} and \tf{TLib-LB-PN} provide faster executions than \tf{TCL} and \tf{TBLIS} resulting in speedups up to a factor of $11$ 
+%\tf{TLib-SB-PN} is able to speed yields faster execution times and achieves speedups up to $10$x.
+Comparing \tf{TCL} performance, \tf{TLIB-SB-PN} achieves an average speedup of $6$x and more than $8$x for $42$\% of the test cases with asymmetrically shaped tensors and executes on average $5$x faster with symmetrically shaped tensors.
+In comparison with \tf{TBLIS}, \tf{TLIB-SB-PN} computes the tensor-vector product on average $4$x and $3.5$x faster for asymmetrically and symmetrically shaped tensors, respectively.
+%achieves between $50$\% and $80$\% of \tf{TBLIS}'s performance in case of asymmetrically shaped tensors when $q = p$.
+%With \tf{TLIB-SB-PN} executing one \tf{GEMV} with parameters, 
+%In these cases \tf{TBLIS}'s tensor-vector multiplication is faster than the corresponding multi-threaded matrix-vector implementation of \tf{OpenBLAS}.
+%However \tf{TLib-SB-PN} avoids the performance losses of \tf{TBLIS} for $q=p-1$ and $q=p-2$ resulting in a speedup of more than $2$x for about $12$\% of the test cases.
+%For symmetrically shaped tensors, \tf{TLIB-LB-PN} performs for $95$\% of the test cases at least $4$x faster than \tf{TBLIS}.
+
+%It is able to execute tensor contractions in parallel using a threadpool devices \cite{abadi:2016:tensorflow}.
+
+% Overall measurement over order x size x modes
+%For asymmetrically shaped tensors:
+
+%Performance[Float] (TLib-SB-P3)  27.04 / 29.24 / 6.13 /  35.81 (mean/median/min/max)
+%Performance[Float] (TLib-LB-P3)  23.04 / 24.55 / 7.26 /  35.04 (mean/median/min/max)
+%Performance[Float] (Tcl)          2.35 /  1.19 / 0.54 /  32.11 (mean/median/min/max)
+%Performance[Float] (TBlis)        7.00 /  6.62 / 2.11 /  11.62 (mean/median/min/max)
+%Performance[Float] (Eigen)        3.53 /  2.89 / 0.04 /   7.41 (mean/median/min/max)
+
+%Speedup[Float] (Tcl)    6.1 /  5.9 / 0.2 /  12.6  (mean/median/min/max)
+%Speedup[Float] (TBlis)  4.0 /  4.0 / 0.9 /  10.4  (mean/median/min/max)
+%Speedup[Float] (Eigen) 54.2 / 10.1 / 1.1 / 932.2  (mean/median/min/max)
+
+
+%Performance[Double] (TLib-SB-P3)  12.34 / 13.91 / 3.73 /  17.49 (mean/median/min/max)
+%Performance[Double] (TLib-LB-P3)  12.26 / 13.90 / 0.73 /  16.40 (mean/median/min/max)
+%Performance[Double] (Tcl)          1.88 /  0.87 / 0.56 /  18.25 (mean/median/min/max)
+%Performance[Double] (TBlis)        3.61 /  3.31 / 2.00 /   7.91 (mean/median/min/max)
+%Performance[Double] (Eigen)        1.70 /  1.44 / 0.03 /   3.61 (mean/median/min/max)
+
+%Speedup[Double] (Tcl)    3.0 / 2.3 / 0.2 /   6.8  (mean/median/min/max)
+%Speedup[Double] (TBlis)  3.5 / 3.3 / 0.8 /   7.5  (mean/median/min/max)
+%Speedup[Double] (Eigen) 29.4 / 7.9 / 1.4 / 488.8  (mean/median/min/max)
+
+
+% Overall measurement over order x size x modes
+%For symmetrically shaped tensors:
+
+%Performance[Float] (TLib-SB-P3)  22.82 / 24.96 / 2.31 /  35.29 (mean/median/min/max)
+%Performance[Float] (TLib-LB-P3)  26.10 / 27.31 / 4.04 /  35.59 (mean/median/min/max)
+%Performance[Float] (Tcl)         11.16 / 11.72 / 0.73 /  31.23 (mean/median/min/max)
+%Performance[Float] (TBlis)        7.42 /  7.45 / 2.10 /  14.51 (mean/median/min/max)
+%Performance[Float] (Eigen)        3.34 /  3.34 / 0.07 /   7.50 (mean/median/min/max)
+
+%Speedup[Float] (Tcl)    4.8 / 2.3 / 0.4 /  34.0  (mean/median/min/max)
+%Speedup[Float] (TBlis)  3.7 / 3.5 / 1.0 /  16.9  (mean/median/min/max)
+%Speedup[Float] (Eigen) 39.8 / 8.1 / 2.9 / 318.7  (mean/median/min/max)
+
+
+%Performance[Double] (TLib-SB-P3)  12.80 / 13.67 / 0.73 /  16.96 (mean/median/min/max)
+%Performance[Double] (TLib-LB-P3)  13.40 / 14.08 / 0.73 /  16.46 (mean/median/min/max)
+%Performance[Double] (Tcl)          7.90 /  8.54 / 0.73 /  16.67 (mean/median/min/max)
+%Performance[Double] (TBlis)        4.40 /  4.13 / 2.03 /   8.65 (mean/median/min/max)
+%Performance[Double] (Eigen)        1.76 /  1.70 / 0.07 /   3.70 (mean/median/min/max)
+
+%Speedup[Double] (Tcl)    3.2 / 1.5 / 0.5 /  19.6  (mean/median/min/max)
+%Speedup[Double] (TBlis)  3.2 / 3.2 / 1.2 /   6.5  (mean/median/min/max)
+%Speedup[Double] (Eigen) 20.4 / 8.3 / 3.6 / 146.3  (mean/median/min/max)
+
+%TODO: Why does Eigen perform so bad in general. what is the conclusion <- that i cannot say
+%TODO: Why does TBlis perform so good with asymmetrically-shaped and so bad with symmetrically-shaped tensors
+%TODO: Why does Tcl sperform so bad with asymmetrically-shaped and so much better with symmetrically-shaped tensors
+%TODO: Why is there a different behavior between symmetric and asymmetric?
+%TODO: What about double precision?
+
+%In case of symmetrically shaped tensors, we can observe a constant performance decrease with increasing order and decreasing contraction modes.
+%This is observation can be explained by the fact, that \ttt{gemv} using a column-major format exhibits a lower throughput when the contraction dimension decreases.
+
+
+\begin{comment}
+For symmetrically shaped tensors
+
+Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 22.8216, Median: 24.9619, Err: 33.1349, Min: 2.31063, Max: 35.2933
+Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 26.1065, Median: 27.3168, Err: 20.8065, Min: 4.04763, Max: 35.5989
+Library: TCL, Metric: Durchsatz [GFlops], Mean: 11.1673, Median: 11.7269, Err: 62.6903, Min: 0.730161, Max: 31.232
+Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 5.14274, Median: 5.13439, Err: 20.5751, Min: 2.0764, Max: 7.08505
+Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 3.34621, Median: 3.34808, Err: 68.0423, Min: 0.0696001, Max: 7.57743
+
+Library: TLib-SB-P3, Metric: Verhältnis, Mean: 1.32094, Median: 1.00252, Err: 58.3911, Min: 0.658816, Max: 9.2561
+Library: TCL, Metric: Verhältnis, Mean: 4.8441, Median: 2.29375, Err: 118.434, Min: 0.394262, Max: 34.045
+Library: TBLIS, Metric: Verhältnis, Mean: 5.29438, Median: 5.22745, Err: 31.3928, Min: 0.89494, Max: 17.1445
+Library: EIGEN, Metric: Verhältnis, Mean: 39.8732, Median: 8.10803, Err: 177.189, Min: 2.98625, Max: 318.705
+
+Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 12.801, Median: 13.647, Err: 21.6625, Min: 3.04772, Max: 16.9634
+Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 13.4008, Median: 14.0823, Err: 18.428, Min: 3.17677, Max: 16.466
+Library: TCL, Metric: Durchsatz [GFlops], Mean: 7.90581, Median: 8.54108, Err: 57.0887, Min: 0.735993, Max: 16.6725
+Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 2.79088, Median: 2.79605, Err: 14.6806, Min: 1.85941, Max: 3.48239
+Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 1.7621, Median: 1.70748, Err: 60.8023, Min: 0.0785265, Max: 3.70968
+
+Library: TLib-SB-P3, Metric: Verhältnis, Mean: 1.0662, Median: 1.00156, Err: 15.0763, Min: 0.489739, Max: 1.84845
+Library: TCL, Metric: Verhältnis, Mean: 3.25808, Median: 1.57523, Err: 113.979, Min: 0.499374, Max: 19.5649
+Library: TBLIS, Metric: Verhältnis, Mean: 4.86979, Median: 4.77341, Err: 21.6733, Min: 1.25961, Max: 7.13199
+Library: EIGEN, Metric: Verhältnis, Mean: 20.467, Median: 8.31226, Err: 152.739, Min: 3.6743, Max: 146.345
+\end{comment}
+
+
+
+\begin{comment}
+%For asymmetrically shaped tensors
+
+Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 27.0423, Median: 29.2409, Err: 23.4531, Min: 6.13397, Max: 35.8119
+Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 23.0486, Median: 24.5508, Err: 30.8481, Min: 7.26238, Max: 34.0461
+Library: TCL, Metric: Durchsatz [GFlops], Mean: 2.35291, Median: 1.19859, Err: 158.571, Min: 0.546151, Max: 32.1105
+Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 27.6481, Median: 31.3302, Err: 27.2441, Min: 2.32361, Max: 35.6441
+Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 3.53203, Median: 2.89545, Err: 58.5541, Min: 0.0352698, Max: 7.41757
+
+Library: TLib-LB-P3, Metric: Verhältnis, Mean: 1.27989, Median: 1.06763, Err: 44.5219, Min: 0.579426, Max: 4.67212
+Library: TCL, Metric: Verhältnis, Mean: 6.1586, Median: 5.93457, Err: 61.3256, Min: 0.236183, Max: 12.6793
+Library: TBLIS, Metric: Verhältnis, Mean: 1.13472, Median: 0.939283, Err: 64.1752, Min: 0.486509, Max: 9.54629
+Library: EIGEN, Metric: Verhältnis, Mean: 54.2246, Median: 10.1984, Err: 273.677, Min: 1.13043, Max: 932.292
+
+Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 12.3436, Median: 13.9135, Err: 30.5003, Min: 3.73841, Max: 17.4949
+Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 12.2615, Median: 13.9074, Err: 29.2714, Min: 3.67566, Max: 16.4004
+Library: TCL, Metric: Durchsatz [GFlops], Mean: 1.8821, Median: 0.875671, Err: 140.447, Min: 0.560876, Max: 18.2588
+Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 15.3524, Median: 16.0365, Err: 15.4604, Min: 5.03959, Max: 17.9311
+Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 1.70814, Median: 1.44493, Err: 56.4276, Min: 0.0322254, Max: 3.6154
+
+Library: TLib-LB-P3, Metric: Verhältnis, Mean: 1.00174, Median: 1.00157, Err: 4.75513, Min: 0.712074, Max: 1.3795
+Library: TCL, Metric: Verhältnis, Mean: 3.09321, Median: 2.36365, Err: 64.6174, Min: 0.213133, Max: 6.83632
+Library: TBLIS, Metric: Verhältnis, Mean: 0.813319, Median: 0.869508, Err: 37.1465, Min: 0.35507, Max: 2.78573
+Library: EIGEN, Metric: Verhältnis, Mean: 29.292, Median: 7.90342, Err: 236.317, Min: 1.43805, Max: 488.886
+\end{comment}
+

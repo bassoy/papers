@@ -1,0 +1,13 @@
+\begin{abstract}
+Tensor contraction is an important mathematical operation for many scientific computing applications that use tensors to store massive multidimensional data.
+%
+Based on the Loops-over-\tf{GEMM}s (\tf{LOG}) approach, this paper discusses the design of high-performance algorithms for the mode-$q$ tensor-vector multiplication using efficient implementations of the matrix-vector multiplication (\tf{GEMV}).
+%
+Given dense tensors with any non-hierarchical storage format, tensor order and dimensions, the proposed algorithms either directly call \tf{GEMV} with tensors or recursively apply \tf{GEMV} on higher-order tensor slices multiple times.
+%
+We analyze strategies for loop-fusion and parallel execution of slice-vector multiplications with higher-order tensor slices. % 
+%
+Using \tf{OpenBLAS}, our parallel implementation attains $34.8$ Gflops/s in single precision on a Core i9-7900X Intel Xeon processor. %. that is $116$\% of the \tf{GEMV}'s sustained performance.
+%
+Our parallel version of the tensor-vector multiplication is on average $6.1$x and up to $12.6$x faster than state-of-the-art approaches.
+\end{abstract}

@@ -1,0 +1,254 @@
+\documentclass{llncs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[colorlinks=true,urlcolor=black,pdftex,bookmarks,citecolor=blue]{hyperref}
+\usepackage{lmodern}    %Schriftbild in Adobe PDf sonst unleserlich
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage[usenames,dvipsnames]{xcolor} % 
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage[english,linesnumbered,vlined]{algorithm2e} % ,vlined
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{subfigure}
+\usepackage{fancyhdr} % for footer
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\setlength{\footskip}{3cm}
+\fancyfoot[C]
+{
+To cite this paper please use the final published version:\newline
+{\color{black}\url{https://dx.doi.org/10.1007/978-3-030-22734-0_3}}
+} % except the center
+\renewcommand{\footrulewidth}{0.4pt} %untere Trennlinie
+
+
+
+\renewcommand{\headrulewidth}{0pt} %obere Trennlinie
+
+%\renewcommand{\headrulewidth}{0pt}
+%\renewcommand{\footrulewidth}{0pt}}
+
+%\usepackage[textsize=scriptsize]{todonotes}
+%\usepackage[running]{lineno}
+%\linenumbers
+
+%\usepackage{draftwatermark}
+%\SetWatermarkText{Draft}
+%\SetWatermarkScale{1}
+%\SetWatermarkColor[gray]{0.85}
+%\SetWatermarkAngle{30}
+
+%\SetAlgoCaptionLayout{centerline}
+\SetAlgoCaptionLayout{footnotesize}
+%\SetCustomAlgoRuledWidth{1cm}
+%\IncMargin{4em}
+%\setlength{\algomargin}{4em}
+%\SetAlgoCaptionLayout{textbf}
+%\SetCustomAlgoRuledWidth{10cm}
+%\SetAlgoLined
+\SetAlCapSkip{1ex}
+
+
+
+
+
+%\linenumbers
+
+%\newcommand{\volker}[2][]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommand{\cem}[2][]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+%\newcommand{\cem}[2][]{}
+
+
+\usetikzlibrary{calc}
+\usetikzlibrary{patterns}
+\usepgfplotslibrary{patchplots}
+
+
+\pgfplotscreateplotcyclelist{myCycleList1}{%
+	every mark/.append style={fill=.!80!black,scale=1},mark=*\\%
+	every mark/.append style={fill=.!80!black,scale=1},mark=square*\\%
+	every mark/.append style={fill=.!00!white},mark=triangle*\\%
+	every mark/.append style={fill=.!00!white},mark=diamond*\\%
+	every mark/.append style={fill=.!00!white},mark=pentagon*\\%
+}
+
+\pgfplotscreateplotcyclelist{myCycleList2}{%
+	every mark/.append style={fill=.!80!black,scale=1},mark=*\\%
+	%every mark/.append style={fill=.!80!black,scale=1},mark=square*\\%
+	every mark/.append style={fill=.!00!white},mark=triangle*\\%
+	every mark/.append style={fill=.!00!white},mark=diamond*\\%
+	every mark/.append style={fill=.!00!white},mark=pentagon*\\%
+}
+
+\pgfplotscreateplotcyclelist{myCycleList3}{%
+	%every mark/.append style={fill=.!80!black,scale=1},mark=*\\%
+	every mark/.append style={fill=.!80!black,scale=1},mark=square*\\%
+	every mark/.append style={fill=.!00!white},mark=triangle*\\%
+	every mark/.append style={fill=.!00!white},mark=diamond*\\%
+	every mark/.append style={fill=.!00!white},mark=pentagon*\\%
+}
+
+
+\newcommand{\tf}[1]{{\texttt{\small #1}}}
+\newcommand{\tsmall}[1]{\texttt{\small {#1}}}
+%\newcommand{\tsmall}[1]{\texttt{#1}}
+\newcommand{\ttt}[1]{\texttt{#1}}
+\newcommand{\tit}[1]{\textit{#1}}
+\newcommand{\mtm}{\tilde{m}}
+
+\newcommand{\mbA}{\mathbf{A}}
+\newcommand{\mbB}{\mathbf{B}}
+\newcommand{\mbC}{\mathbf{C}}
+\newcommand{\mbM}{\mathbf{M}}
+\newcommand{\mbN}{\mathbf{N}}
+\newcommand{\mbR}{\mathbf{R}}
+\newcommand{\mbU}{\mathbf{U}}
+\newcommand{\mbV}{\mathbf{V}}
+
+\newcommand{\mubA}{\underline{\mathbf{A}}}
+\newcommand{\mubB}{\underline{\mathbf{B}}}
+\newcommand{\mubC}{\underline{\mathbf{C}}}
+\newcommand{\mubS}{\underline{\mathbf{S}}}
+\newcommand{\mubV}{\underline{\mathbf{V}}}
+\newcommand{\mubW}{\underline{\mathbf{W}}}
+\newcommand{\mubZ}{\underline{\mathbf{Z}}}
+\newcommand{\bbN}{\mathbb{N}}
+\newcommand{\bbZ}{\mathbb{Z}}
+
+\newcommand{\mba}{\mathbf{a}}
+\newcommand{\mbb}{\mathbf{b}}
+\newcommand{\mbc}{\mathbf{c}}
+\newcommand{\mbs}{\mathbf{s}}
+\newcommand{\mbr}{\mathbf{r}}
+\newcommand{\mbf}{\mathbf{f}}
+\newcommand{\mbi}{\mathbf{i}}
+\newcommand{\mbj}{\mathbf{j}}
+\newcommand{\mbk}{\mathbf{k}}
+\newcommand{\mbm}{\mathbf{m}}
+\newcommand{\mbn}{\mathbf{n}}
+\newcommand{\mbo}{\mathbf{o}}
+\newcommand{\mbu}{\mathbf{u}}
+\newcommand{\mbv}{\mathbf{v}}
+\newcommand{\mbw}{\mathbf{w}}
+\newcommand{\mbz}{\mathbf{z}}
+
+\newcommand{\mhq}{\hat{q}}
+
+\newcommand{\mcI}{\mathcal{I}}
+\newcommand{\mcJ}{\mathcal{J}}
+\newcommand{\mcK}{\mathcal{K}}
+\newcommand{\mcW}{\mathcal{W}}
+
+\newcommand{\mbpi}{\boldsymbol{\pi}}
+\newcommand{\mbtau}{\boldsymbol{\tau}}
+\newcommand{\mbpsi}{\boldsymbol{\psi}}
+\newcommand{\mbdelta}{\boldsymbol{\delta}}
+\newcommand{\mbvarphi}{\boldsymbol{\varphi}}
+
+\lstdefinelanguage{cplusplus}
+{ % \Small, \scriptsize \footnotesize 
+	language=C++, %
+	basicstyle=\small\ttfamily,% \singlespacing
+	%backgroundcolor=\color{lightgray}, % , % Seashell1
+	%showstringspaces=false,
+	stringstyle=\color{white}\normalsize\ttfamily,
+	numbersep=5pt,
+	%frame=single,
+	%frameround={tttt},
+	keepspaces=true,
+	tabsize=2,
+	breaklines=false,
+	breakatwhitespace=false,
+	title=\lstname,
+	numberstyle=\small\color{black},
+	commentstyle=\small\ttfamily, % \color{Snow4}
+	stringstyle=\small\ttfamily, % \color{Purple4}
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morecomment=[n]{(*}{*)},
+	%morekeywords={size_t},
+	alsoletter={.}
+	true=sensitive,
+	classoffset=0,
+	morekeywords={constexpr,decltype},
+	keywordstyle=\small\bfseries, %\color{Yellow4}, %\bfseries%\color{Yellow4}, \color{black}\footnotesize \color{Blue4}
+	classoffset=1,
+	keywordstyle=\small\bfseries, %\color{Blue4}, %\color{Magenta4},\bfseries \color{Green4}
+	morekeywords={T,F,I,Fn,Simd}, % ,std,
+	classoffset=0,
+	showtabs=false,
+	showspaces=false,
+	showstringspaces=false,  
+	escapeinside={\%*}{*)},
+	%aboveskip=0pt,
+	belowskip=-5pt, 
+	abovecaptionskip=0pt, 
+	belowcaptionskip=0pt,
+	columns=fullflexible,
+	captionpos=b
+}
+
+\newcommand{\MYhref}[3][blue]{\href{#2}{\color{#1}{#3}}}%
+
+\begin{document}
+
+
+\lstset{language=cplusplus}
+
+%\title{Flexible High-Performance Tensor-Vector Multiplication for Numerical Tensor Calculus}
+%\title{High-Performance Tensor-Vector Multiplication for Numerical Tensor Calculus} % and Flexible 
+\title{Design of a High-Performance \\Tensor-Vector Multiplication with BLAS} % and Flexible 
+
+\titlerunning{High-Performance Tensor-Vector Multiplication}
+
+\author{Cem Bassoy}
+%\orcidID{0000-1111-2222-3333}\inst{1}
+\authorrunning{C. Bassoy} % abbreviated author list (for running head)
+%
+%%%% list of authors for the TOC (use if author list has to be modified)
+\tocauthor{Cem Bassoy}
+%
+\institute{Fraunhofer IOSB, Ettlingen 76275, Germany,\\
+\email{cem.bassoy@iosb.fraunhofer.de}}
+
+
+% make the title area
+\maketitle
+
+% As a general rule, do not put math, special symbols or citations
+% in the abstract
+\input{chapters/0.abstract}
+
+\input{chapters/1.introduction}
+
+\input{chapters/2.related}
+
+\input{chapters/3.preliminaries}
+
+%\input{chapters/7.setup}
+
+\input{chapters/5.baseline}
+
+%\input{chapters/6.optimization}
+
+\input{chapters/4.methodology}
+
+\input{chapters/8.results}
+
+\input{chapters/9.conclusion}
+
+
+\bibliographystyle{splncs04}
+\bibliography{bib}
+
+\end{document}
+
+

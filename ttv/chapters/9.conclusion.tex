@@ -1,0 +1,29 @@
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+Based on the \tf{LOG} approach, we have presented in-place and parallel tensor-vector multiplication algorithms of \tf{TLIB}.
+Using highly-optimized \tf{DOT} and \tf{GEMV} routines of \tf{OpenBLAS}, our proposed algorithms is designed for dense tensors with arbitrary order, dimensions and any non-hierarchical storage format.
+\tf{TLIB}'s algorithms either directly call \tf{DOT}, \tf{GEMV} or recursively perform parallel slice-vector multiplications using \tf{GEMV} with tensor slices and fibers.
+%In seven cases \tf{TLIB} utilizes \tf{GEMV} reaching peak performances around $32$ Gflops/s. 
+
+Our findings show that loop-fusion improves the performance of \tf{TLIB}'s parallel version on average by a factor of $5$x achieving up to $34.8$/$15.5$ Gflops/s in single/double precision for asymmetrically shaped tensors. %, exceeding \tf{GEMV}'s average performance by $12$\%. 
+With symmetrically shaped tensors resulting in small contraction dimensions, the results suggest that higher-order slices with larger dimensions should be used.
+%Our findings also revealed that the performance of \tf{OpenBLAS}'s \tf{GEMV} can decrease in some circumstances
+%\cem[noline]{Last-Order Storage Format more beneficial?}
+We have demonstrated that the proposed algorithms compute the tensor-vector product on average $6.1$x and up to $12.6$x faster than the \tf{TTGT}-based implementation provided by \tf{TCL}.
+%\tf{TLIB} achieves $92$\% of \tf{TBLIS}'s \tf{GETT}-based implementation and attains better performance results for $30$\% of the test set with asymmetrically shaped tensors.
+In comparison with \tf{TBLIS}, \tf{TLIB} achieves speedups on average of $4.0$x and at most $10.4$x.
+In summary, we have shown that a \tf{LOG}-based tensor-vector multiplication implementation can outperform current implementations that use a \tf{TTGT} and \tf{GETT} approaches.
+
+In the future, we intend to design and implement the tensor-matrix multiplication with the same requirements also supporting tensor transposition and subtensors.
+Moreover, we would like to provide an in-depth analysis of \tf{LOG}-based implementations of tensor contractions with higher arithmetic intensity.
+\subsubsection{Project and Source Code Availability}
+\tf{TLIB} has evolved from the Google Summer of Code 2018 project for extending \tf{Boost}'s \tf{uBLAS} library with tensors. 
+Project description and source code can be found at {\footnotesize \MYhref[red]{https://github.com/bassoy/ttv}{https://github.com/bassoy/ttv}}.
+The sequential tensor-vector multiplication of \tf{TLIB} is part of \tf{uBLAS} and in the official release of \tf{Boost} \tf{v1.70.0}.
+\subsubsection{Acknowledgements}
+The author would like to thank Volker Schatz and Banu Sözüar for proofreading. 
+He also thanks Michael Arens for his support.
+%He thanks for the support of Thomas Perschke and Michael Arens from Fraunhofer IOSB.
+%\vspace{-0.2cm}
+%\paragraph{Acknowledgments}
+%The author would like to thank Volker Schatz for a critical reading and useful suggestions. 

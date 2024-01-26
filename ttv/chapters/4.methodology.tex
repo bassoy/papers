@@ -1,0 +1,64 @@
+\section{Experimental Setup}
+\label{sec:experimental.setup}
+\subsubsection{Computing System} 
+The experiments were carried out on a Core i9-7900X Intel Xeon processor with 10 cores and 20 hardware threads running at 3.3 GHz.
+It has a theoretical peak memory bandwidth of $85.312$ GB/s resulting from four $64$-bit wide channels with a data rate of $2666$MT/s. The sizes of the L3-cache and each L2-cache are 14MB and 1024KB.
+%\paragraph{Compilation and Execution}
+The source code has been compiled with \tf{GCC} \tf{v7.3} using the highest optimization level \tf{-Ofast} and \tf{-march=native}, \tf{-pthread} and \tf{-fopenmp}. 
+Parallel execution for the general case (8) has been accomplished using \tf{GCC}'s implementation of the \tf{OpenMP} \tf{v4.5} specification.
+We have used the \tf{DOT} and \tf{GEMV} implementation of the \tf{OpenBLAS} library \tf{v0.2.20}.
+The benchmark results of each function are the average of 10 runs.
+
+
+\subsubsection{Tensor Shapes} 
+We have used \tit{asymmetrically}-\tit{shaped} and \textit{symmetrically}-\tit{shaped} tensors in order to provide a comprehensive test coverage. 
+\tit{Setup 1} performs runtime measurements with \tit{asymmetrically}-\tit{shaped} tensors.
+Their dimension tuples are organized in $10$ two-dimensional arrays $\mbN_q$ with $9$ rows and $32$ columns where the dimension tuple $\mbn_{r,c}$ of length $r+1$ denotes an element $\mbN_q(r,c)$ of $\mbN_q$ with $1 \leq q \leq 10$.
+The dimension $\mbn_{r,c}(i)$ of $\mbN_q$ is $1024$ if $i = 1$, $c \cdot 2^{15-r}$ if $i = \min(r+1,q)$ and $2$ for any other index $i$ with $1 < q \leq 10$.
+The dimension $\mbn_{r,c}(i)$ of $\mbN_1$ is given by $c \cdot 2^{15-r}$ if $i=1$, $1024$ if $i=2$ and $2$ for any other index $i$.
+Dimension tuples of the same array column have the same number of tensor elements.
+Please note that with increasing tensor order (and row-number), the contraction mode is halved and with increasing tensor size, the contraction mode is multiplied by the column number.
+Such a setup enables an orthogonal test-set in terms of tensor elements ranging from $2^{25}$ to $2^{29}$ and tensor order ranging from $2$ to $10$.
+\tit{Setup 2} performs runtime measurements with \tit{symmetrically}-\tit{shaped} tensors.
+Their dimension tuples are organized in one two-dimensional array $\mbM$ with $6$ rows and $8$ columns where the dimension tuple $\mbm_{r,c}$ of length $r+1$ denotes an element $\mbM(r,c)$ of $\mbM$.
+For $c=1$, the dimensions of $\mbm_{r,c}$ are given by $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$ with descending row number $r$ from $6$ to $1$.
+For $c>1$, the remaining dimensions are given by $\mbm_{r,c} = \mbm_{r,c} + k \cdot (c-1)$ where $k$ is $2^9$, $2^5$, $2^3$, $2^2$, $2$, $1$ with descending row number $r$ from $6$ to $1$.
+In this setup, shape tuples of a column do not yield the same number of subtensor elements.
+
+
+\subsubsection{Performance Maps} 
+%In this setup, a mode-$q$ tensor-vector multiplication is executed with the shape array $\mbN_q$.
+% where the contraction dimension is equal to the largest dimension.
+Measuring a single tensor-vector multiplication with the first setup produces $2880 = 9\times32\times 10$ runtime data points where the tensor order ranges from $2$ to $10$, with $32$ shapes for each order and $10$ contraction modes.
+The second setup produces $336 = 6\times8\times 7$ data points with $6$ tensor orders ranging from $2$ to $7$, $8$ shapes for each order and $7$ contraction modes.
+Similar to the findings in \cite{bassoy:2018:fast}, we have observed a performance loss for small dimensions of the mode with the highest priority.
+% is small with a standard deviation where the performance values deviate from the mean between $5$\% and $20$\%.
+The presented performance values are the arithmetic mean over the set of tensor sizes that vary with the tensor order and contraction mode resulting in a three dimensional performance plot.
+A schematic countour view of the plots is given in Fig. \ref{fig:performance.map} which is divided into $5$ regions.
+The cases $2$, $3$, $6$ and $7$ generate performance values within the regions $2$, $3$, $6$ and $7$ where only a single parallel \tf{GEMV} is executed, see Table \ref{tab:mapping}.
+Please note that the contraction mode $q$ is set to the tensor order $p$ if $q>p$.
+Performance values within region $8$ result from case $8$ which executes \tf{GEMV}'s with tensor slices in parallel.
+
+%The contraction mode $q$ is set equal to the tensor order $p$ for all measurements if $q>p$.
+%There are a lot of data runtime measurement data.
+%A function is measured with 2880 and 480 different shape tuples for one data type.
+\begin{figure*}[t]
+	\centering
+	\includegraphics[width=0.5\textwidth]{figures/performance_map_color}
+	\caption{
+		\footnotesize %
+		Schematic contour view of the following average performance maps for the tensor-vector multiplication with tensors that are stored according to the first-order storage format.
+		Each case $x$ in Table \ref{tab:mapping} affects a different region $x$ within the performance map.
+		Performance values are the arithmetic mean over the set of tensor sizes with $32$ and $8$ elements in case of the first and second test setup, respectively.
+		Contraction mode $q=p$ for $q>p$ where $p$ is the tensor order.
+		\label{fig:performance.map}
+	}
+\end{figure*}
+The following analysis considers four parallel versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN}.
+\tf{SB} (small-block) and \tf{LB} (large-block) denote parallel slice-vector multiplications where each thread recursively calls a single-threaded \tf{GEMV} with mode-$2$ and mode-$\mhq$ slices, respectively.
+\tf{P1} uses the outer-most dimension $n_{p}$ for parallel execution whereas \tf{PN} applies loop fusion and considers all fusible dimensions for parallel execution.
+%Figure Schematic contour view of the following average performance maps
+%\subsubsection{Variations of Case $8$} 
+%According to Table \ref{tab:mapping}
+%executing \tf{GEMV}s with tensor slices in parallel is given by the upper triangular covering the $8$-th case. 
+%Average performance values of the cases $2$, $3$, $6$ and $7$ are covered by the remaining parts of the map.
