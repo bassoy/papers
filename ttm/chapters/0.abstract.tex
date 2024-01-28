@@ -3,19 +3,19 @@
 \begin{abstract}
 %
 %Say where the tensor-matrix multiplication plays a 
-The computation of the tensor-matrix product are required in various tensor methods, e.g. for computing the ALS or HOSVD.
+The tensor-matrix product is a compute-bound tensor operations and required in various tensor methods, e.g. for computing the ALS or HOSVD.
 %
 This paper presents a high-performance algorithm for the mode-$q$ tensor-matrix multiplication using the Loops-over-\tf{GEMM}s (\tf{LOG}) approach with dense tensors that can have any linear tensor layout, tensor order and dimensions.
 %
-The proposed algorithm either directly call efficient implementations of \tf{GEMM} with tensors or recursively apply \tf{GEMM} on higher-order tensor slices multiple times.
+The proposed algorithm either directly calls efficient implementations of \tf{GEMM} with tensors or recursively apply \tf{GEMM} on higher-order tensor slices multiple times.
 %
 %They are applicable to dense tensors with any linear tensor layout, tensor order and dimensions which can be runtime variable.
 %
 We discuss different strategies for fusing and executing the matrix-matrix multiplication in parallel.
 %
-Using \tf{OpenBLAS}, our parallel implementation attains $???$ Gflops/s in single precision on a Core i9-7900X Intel Xeon processor. %. that is $116$\% of the \tf{GEMV}'s sustained performance.
+Using \tf{OpenBLAS}, our parallel implementation attains \tq Gflops/s in single precision on a Core i9-7900X Intel Xeon processor. %. that is $116$\% of the \tf{GEMV}'s sustained performance.
 %
-We show that the performance of our implementation is independent of the tensor layout and a performance of $???$ can be sustained for any linear tensor format.
+We show that the performance of our implementation is independent of the tensor layout and a performance of \tq can be sustained for any linear tensor format.
 %
-Our version of the tensor-matrix multiplication is on average $???$x and up to $???$x faster than state-of-the-art approaches.
+Our version of the tensor-matrix multiplication is on average \tq x and up to \tq x faster than state-of-the-art approaches.
 \end{abstract}
