@@ -1,76 +1,50 @@
 \section{Background}
 \label{sec:preliminaries}
 
-\begin{comment}
-\begin{figure}[t]
-	\centering
-	\subfigure[]{\includegraphics[height=3cm,width=.2\linewidth]{figures/3D-Subdomain-Sliced.eps} }	
-	\hspace{1cm}
-	\subfigure[]{\includegraphics[height=3cm,width=.2\linewidth]{figures/3D-Subdomain-Strides.eps} }
-	\hspace{1cm}
-	\subfigure[]{\includegraphics[height=3cm,width=.2\linewidth]{figures/3D-Subdomain-Strides3.eps} }
-	\caption{Subtensors with an index offset $f_r > 1$ where (a) is generated with $t_r=1$ for all $r \in \{1,2,3\}$, (b) with $t_1 > 1$ and $t_2 = t_3 = 1$ and (c) with $t_r > 1$ for all $r \in \{1,2,3\}$.}
-	\label{fig:fig}
-\end{figure}
-\end{comment}
-
 \subsubsection{Notation}
-%\paragraph{Tensor}
-An order-$p$ \tit{tensor} is a $p$-dimensional array or hypermatrix with $p$ modes \cite{lim:2017:hypermatrices}.
-For instance, scalars, vectors and matrices are order-$0$, order-$1$ and order-$2$ tensors.
-We write $a$, $\mba$, $\mbA$ and $\mubA$ in order to denote scalars, vectors, matrices and tensors. % \cite{lee:2018:fundamental}
-In general we will assume the order of a tensor to be $p$ and explicitly mention it otherwise.
-Each dimension $n_r$ of the $r$-th mode shall satisfy $n_r>1$.
-The $p$-tuple $\mbn$ with $\mbn = (n_1,n_2,\dots,n_p)$ will be referred to as a \tit{dimension tuple}.
-We will use round brackets $\mubA(i_1,i_2,\dots,i_p)$ or $\mubA(\mbi)$ together with a multi-index $\mbi = (i_1,i_2,\dots,i_p)$ to identify tensor elements.
-The set of all multi-indices of a tensor is denoted by $\mcI$ which is defined as the Cartesian product of all index sets $I_r = \{1,\dots,n_r\}$.
-The set $\mcJ = \{0,\dots,\bar{n}-1\}$ contains (relative) memory positions of an order-$p$ tensor with $\bar{n} = n_1 \cdot n_2 \cdots n_p$ contiguously stored elements with $|\mcI| = |\mcJ|$.
-A \tit{subtensor} denoted by $\mubA'$ shall reference or view a subset of tensor elements where the references are specified in terms of $p$ index ranges.
-The $r$-th \tit{index} \tit{range} shall be given by an index pair denoted by $f_r \colon l_r$ with $1 \leq f_r \leq l_r \leq n_r$.
-%The parameter $t_r$ with $t_r > 0$ is the step size or increment of the $r$-th mode.
-%For convenience we might also write $\mbr_r$ to denote an index range. 
-We will use $\colon_r$ to specify a range with all elements of the $r$-th index set.
-% such that $\mbr_r \in I_{r}^{m_r}$.
-%An \tit{index} \tit{lattice} $\mbR$ with $\mbR = (\mbr_1, \dots, \mbr_p)$ is then an element of the set $\prod_{r=1}^p I_{1}^{m_r}$.
-%We might specify a subtensor by using round brackets $\mubS = \mubA(\mbR)$ which is the same as $\mubS = \mubA(f_1 \colon l_1, \dots, f_p \colon l_p)$ if only index pairs are considered. 
-%The index sets $K_r$ and the multi-index set $\mcK$ of a subtensor is defined in analogy to the index and multi-index set of tensor where the $r$-th dimension $m_r$ with $|K_r| = m_r$ is given by $m_r = l_r - f_r + 1$.
-A subtensor is an order-$p'$ \tit{slice} if all modes of the corresponding order-$p$ tensor are selected either with a full index range or a single index where $p'$ with $p'\leq p$ is the number of all non-singleton dimensions.
-A \tit{fiber} is a tensor slice with only one dimension greater than $1$. 
+An order-$p$ tensor is a $p$-dimensional array \cite{lim:2017:hypermatrices} where tensor elements are contiguously stored in memory. % \cite{lee:2018:fundamental}
+We write $a$, $\mba$, $\mbA$ and $\mubA$ in order to denote scalars, vectors, matrices and tensors. 
+In general we assume a tensor $\mubA$ to have a tensor order with $p>2$.
+The $p$-tuple $\mbn$ with $\mbn = (n_1,n_2,\dots,n_p)$ will be referred to as a dimension tuple with $n_r>1$.
+We will use round brackets $\mubA(i_1,i_2,\dots,i_p)$ or $\mubA(\mbi)$ to denote a tensor element where $\mbi = (i_1,i_2,\dots,i_p)$ is a multi-index.
+%The set of all multi-indices of a tensor is denoted by $\mcI \in \bbN^p$ with $\mcI = \prod{r=1}^p I_r$ and $I_r = \{1,\dots,n_r\}$.
+%The set $\mcJ = \{0,\dots,\bar{n}-1\}$ shall denote the single-index space of a tensor with $\bar{n} = n_1 \cdot n_2 \cdots n_p$ contiguously stored elements where $|\mcI| = |\mcJ|$.
+%TODO: do we still need subtensor definition?
+
+A subtensor denoted by $\mubA'$ references a subset of tensor elements.
+The subtensor elements are specified with $p$ index ranges and form a selection grid.
+The $r$-th index range shall be given by an index pair denoted by $f_r \colon l_r$ with $1 \leq f_r \leq l_r \leq n_r$ with $l_r - f_r + 1 = n_r'$.
+%TODO: correct the $p'$
+A subtensor is an order-$p'$ slice if all modes of the corresponding order-$p$ tensor are selected either with a full index range or a single index where $p'$ with $p'\leq p$ is the number of all non-singleton dimensions.
+A fiber is a tensor slice with only one dimension greater than $1$. 
 
 
-\subsubsection{Non-Hierarchical Storage Formats and Memory Access}
-Given a dense order-$p$ tensor, we use a \tit{layout} \tit{tuple} $\mbpi \in \bbN^p$ to encode non-hierarchical storage formats such as the well known first-order or last-order layout.
+\subsubsection{Linear Tensor Layouts}
+
+We use a layout tuple $\mbpi \in \bbN^p$ to encode all linear tensor layouts including the first-order or last-order layout.
 They contain permuted tensor modes whose priority is given by their index.
-%Given a layout tuple of length $p$ and $k \in \bbN$ with $k \leq p$, 
-For $1 \leq k \leq p$, an element $\pi_r$ of \tit{$k$-order} \tit{layout} tuple is defined as $k-r+1$ if $1 < r \leq k$ and $r$ in any other case. 
-The well-known first- and last-order storage formats are then given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
-%The set $\{\mbpi \in \bbN^p \mid \pi_r \neq \pi_q \wedge 1 \leq r \neq q \leq p\}$
-%Using a permutationelements of an order-$p$ tensor can be stored in $p!$ different ways  non-hierarchical storage formats of an order-$p$ tensor contains 
-%Hence, elements of an order-$p$ tensor can be stored in $p!$ different ways.
-Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a \tit{stride} \tit{tuple} is given by
-\begin{equation}
-\label{equ:stride.tuple}
-w_{\pi_r} = n_{\pi_{1}} \cdot n_{\pi_{2}}  \cdots n_{\pi_{r-1}} \quad \text{for} \ 1 < r \leq p.
-\end{equation}
-With $w_{\pi_1} = 1$, tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
-In contrast to hierarchical storage formats, all tensor elements with one differing multi-index element exhibit the same stride. 
+For instance, the first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
+Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple is given by $w_{\pi_r} = \prod_{k=1}^{r-1}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
+Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
 
-%\subsection{Memory Access}
-%Given an order-$p$ tensor with $\bar{n} = n_1 \cdot n_2 \cdots n_p$ contiguously stored elements, 
-%Let $\mcJ = \{0,\dots,\bar{n}-1\}$ contain (relative) memory positions of an order-$p$ tensor with $\bar{n} = n_1 \cdot n_2 \cdots n_p$ contiguously stored elements.
-%Let also $I_r = \{1,\dots,n_r\}$ be the $r$-th index set and $\mcI$ the Cartesian product of all index sets with $|\mcI| = |\mcJ|$.
-%The relationship between elements of $\mcJ$ and $\mcI$ is defined in terms of the storage format or layout of a tensor. 
-%Note that $|\mcI| = |\mcJ|$.
-%, there must be a bijection between the elements of both sets for a given storage format.
-%Let $\mbpi$ be a layout tuple and let $\mbw$ be its corresponding stride tuple according to Eq. \eqref{equ:stride.tuple}.
-The location of tensor elements within the allocated memory space is determined by the storage format of a tensor and the corresponding \tit{layout} \tit{function}.
-For a given layout and stride tuple, a layout function $\lambda_{\mbw} : \mcI \rightarrow \mcJ$ maps a multi-index to a scalar index according to 
-\begin{equation}
-\label{equ:lambda}
-\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)
-\end{equation}
-%Using round brackets $\mubA(i_1,i_2,\dots,i_p)$ or $\mubA(\mbi)$ together with a multi-index $\mbi = (i_1,i_2,\dots,i_p)$ to identify tensor elements, 
+The location of tensor elements within the allocated memory space is determined by the tensor layout and the corresponding layout function.
+For a given layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$.
 With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
+
+%\begin{equation}
+%\label{equ:lambda}
+%\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)
+%\end{equation}
+
+
+%TODO: use other frameworks to explain how those two index sets are connected.
+%The location of tensor elements within the allocated memory space is determined by the storage format of a tensor and the corresponding \tit{layout} \tit{function}.
+%For a given layout and stride tuple, a layout function $\lambda_{\mbw} : \mcI \rightarrow \mcJ$ maps a multi-index to a scalar index according to 
+%\begin{equation}
+%\label{equ:lambda}
+%\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)
+%\end{equation}
+%With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 
 %
 %from \cite{bassoy:2018:fast,rogers:2016:efficient}
@@ -98,46 +72,20 @@ With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an elemen
 %such that $j = \lambda_{\mbw} \left( \gamma \left ( \lambda_{\mbw'}^{-1} \left (j' \right ) \right ) \right )$ 
 
 
-\subsubsection{Tensor-Vector Multiplication}
-Let $\mubA$ be an order-$p$ input tensor with a dimension tuple $\mbn = (n_1,\dots,n_q,\dots,n_p)$ and let $\mbb$ be a vector of length $n_q$ with $p>1$. 
-Let $\mubC$ be a tensor with $p-1$ modes with a dimension tuple $\mbm =(n_1,\dots,n_{q-1},n_{q+1},\dots,n_p)$.
-A mode-$q$ tensor-vector multiplication is denoted by $\mubC = \mubA \times_q \mbb$ where
+\subsubsection{Tensor-Matrix Multiplication (TTM)}
+Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = (n_1,\dots,n_q,\dots,n_p)$ and $\mbn_c =(n_1,\dots,n_{q-1},m,n_{q+1},\dots,n_p)$. 
+Let $\mbB$ be a matrix of shape $\mbn_b = (m,n_q)$.
+A mode-$q$ TTM is denoted by $\mubC = \mubA \times_q \mbB$ where an element of $\mubC$ is given by
 \begin{equation}
-\label{equ:tensor.vector.multplikation}
-c_{i_1, \dots, i_{q-1}, i_{q+1}, \dots, i_p} = \sum_{i_q=1}^{n_q} a_{i_1, \dots, i_q, \dots, i_p} \cdot b_{i_q}
+\label{equ:tensor.matrix.multplication}
+\mubC(i_1, \dots, i_{q-1}, j, i_{q+1}, \dots, i_p) = \sum_{i_q=1}^{n_q} \mubA(i_1, \dots, i_q, \dots, i_p) \cdot \mbB(j,i_q)
 \end{equation}
-is an element of $\mubC$.
-Eq. \eqref{equ:tensor.vector.multplikation} is an inner product of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
-The mode $q$ is its \tit{contraction} \tit{mode}.
-We additionally term $\mbpi$ as the layout tuple of the input tensor $\mubA$ with a stride tuple $\mbw$ that is given by Eq. \eqref{equ:stride.tuple}.
-With no transposition of $\mubA$ or $\mubC$, elements of the layout tuple $\mbvarphi$ of the mode-$q$ tensor-vector product $\mubC$ are given by
-%Für die nachfolgende Untersuchung der Tensor"=Vektor"=Multiplikation ist zudem gefordert, dass die Operation keine Transponierung des Ein"= oder Ausgabetensors durchführen muss. 
-%Ein Eingabetensor $\mubA$ der Stufe $p$ mit einem Anordungstupel $\mbpi$ der Länge $p$, soll der Ausgabetensor $\mubC$ der Stufe $p-1$ mit $\mubC = \mubA \bullet_m \mbb$ einen Anordnungstupel $\mbvarphi$ der Länge $p-1$ besitzen, dessen Werte sich von $\mbpi$ wie Folgt zusammensetzen.
-\begin{equation}
-\label{equ:tensor.times.vector.output.format}
-\varphi_j = 
-\begin{cases}
-\pi_k       & \text{if} \ \pi_k < \pi_q\\ %  \wedge k < m 
-\pi_k-1     & \text{if} \ \pi_k > \pi_q %  \wedge k < m 
-\end{cases}
-\quad \text{and} \quad
-j = 
-\begin{cases}
-k   & \text{if} \ k < q \\
-k-1 & \text{if} \ k > q 
-\end{cases} 
-\end{equation}
-for $k=1,\dots,p$.
-The stride tuple $\mbv$ is given by Eq. \eqref{equ:stride.tuple} using the shape $\mbm$ and permutation tuple $\mbvarphi$ of $\mubC$. 
-%The tensor-vector multiplication is a generalization of the two-dimensional case from the computational perspective.
-%It computes a vector-matrix product for $p=2$ and $q=1$ and a matrix-vector product for $p=2$ and $q=2$. 
-%Its arithmetic intensity is equal to that of a matrix-vector multiplication.
+with $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$.
+%Similar to the tensor-vector multiplication, the multiplication consists of multiple inner productd of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
+The mode $q$ is the \tit{contraction} \tit{mode} of the TTM  with $1 \leq q \leq p$.
+The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
+Its arithmetic intensity is equal to that of a matrix-matrix multiplication and is not memory-bound.
 %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
+In the following, we assume that the tensors $\mubA$ and $\mubC$ have the same tensor layout $\mbpi$. 
+Elements of matrix $\mubB$ can stored in either the column-major or row-major format.
 
-
-\begin{comment}
-\subsection{Basic Linear Algebra Subroutines (BLAS)}
-The BLAS specification provide efficient and portable subroutines with three levels. 
-Subroutines herafter called routines of level three have the highest arithmetic intensity that can reach the peak performance of a computing system. 
-In this work, 
-\end{comment}
