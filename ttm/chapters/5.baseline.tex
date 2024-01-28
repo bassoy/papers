@@ -1,32 +1,34 @@
 \section{Algorithm Design}
 \label{sec:design}
-\subsection{Standard Algorithms with Contiguous Memory Access}
-The control and data flow of the basic tensor-vector multiplication algorithm implements Eq. \eqref{equ:tensor.vector.multplikation} with a single function.
-It uses tree recursion with a control flow akin to one of Algorithm 1 in \cite{bassoy:2018:fast}.
-%Starting with the recursion level $p$, the basic algorithm computes a tensor-vector product $\mubC$ for $q>1$ in a nonlinear recursive fashion.
-Instead of combining two scalars elementwise in the inner-most loop, the tensor-vector multiplication algorithm computes an inner product and skips the iteration over the $q$-th index set, i.e. the $q$-th loop.
-%We consider the recursive version with a tree-recursion for convenience.
-%Starting with the most outer mode with $r=p$, \texttt{transform} iterates in each recursion level over the $r$th index set and calls itself with the value of that induction variable and a decremented $r$.
-%The elementwise scalar operation is applied when the function reaches $r=1$ favoring the first-order storage format for contiguous memory access.
-The algorithm supports tensors with arbitrary order, dimensions and any non-hierarchical storage format.
-%It also performs the inner products for any mode of the input tensor except for $q=1$.
-%Instead of inserting branches into inner-most recursion level, we prefer an additional function for a minimized control- and data-flow.
-%A specialized function for $q=1$ omits the statements in line 2, 3, 8 and sets the expression in line 9 into the inner-most loop body.
-%\subsection{Contiguous Memory Access}
-%\subsection{Data Locality}
-However, it accesses memory non-contiguously if the storage format does not prioritize the $q$-th mode with $\pi_1 \neq q$ and $w_q>1$, see Eq. \eqref{equ:stride.tuple}. % according to Eq. \eqref{equ:stride.tuple}  with the layout function $\lambda_{\mbw}$ 
-%according to the equations \eqref{equ:lambda} and \eqref{equ:stride.tuple} 
-The access pattern can be enhanced by modifying the tensor layout, i.e reordering tensor elements according to the storage format.
-A reordering however, limits its overall performance of the contraction operation \cite{shi:2016:tensor.contraction}.
-%Comprising a computational cost that is comparable with a tensor transposition that is amongst other works discussed  in~\cite{shi:2016:tensor.contraction}.
-%Elements should therefore according to the storage format by applying the optimization strategy as proposed in \cite{bassoy:2018:fast}.
-%In order to support of variable (static or dynamic) storage formats, we propose to access the multi-index with a the permutation tuple. %  instead of a loop-reordering
+\subsection{Sequential Baseline Algorithm}
+The sequential baseline algorithm implementing Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single C++ function.
+It consists of nested recursion with a control flow that resembles algorithm 1 in \cite{bassoy:2018:fast}, consisting of two \ttt{if} statements with an \ttt{else} branch.
+The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_q$ if $r = \mhq$ with $\mhq = \mbpi^{-1}_q$ where $\mbpi^{-1}$ is the inverse layout tuple.
+The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \neq \mhq \leq p$ with different multi-indices.
+Note that the second \ttt{if} statement is skipped for $q = \pi_1$ as the condition of the first one is evaluated to true.
+The \ttt{else} branch is the base case and consists of two loops that compute a fiber-matrix product.
+The inner loop iterates over the dimension $n_q$ of $\mubA$ and $\mbB$ with index $1\leq i_q \leq n_q$ computing an inner product.
+The outer loop iterates over the dimension $m$ of $\mubC$ and $\mbB$ with index $1 \leq j \leq m$.
+The baseline algorithm supports tensors with arbitrary order, dimensions and any non-hierarchical storage format.
 
-As proposed in \cite{bassoy:2018:fast}, elements can be accessed according to the storage format using a permutation tuple.
-In this way, the desired index set for a given recursion level can be selected.
-%The idea is to access index-elements with the help of the permutation tuple and therefore selecting the desired index set of a recursion level.
-%In this way contiguous memory access for any non-hierarchical storage format.
-%This approach generalizes the loop-reordering strategy for matrix operations that are well explained in \cite{golub:2013:matrix.computations}.
+\subsection{Modified Baseline Algorithm with Contiguous Memory Access}
+The baseline algorithm accesses memory of $\mubA$ and $\mubC$ non-contiguously whenever $\pi_1 \neq q$ so that indices $i_q$ and $j$ are incremented with steps greater than one.
+Matrix $\mbB$ is contiguously accessed if $i_q$ or $j$ is incremented with unit-steps depending on the storage format of $\mubB$.
+The access pattern could be improved by reordering tensor elements according to the storage format which results in copy operations reducing the overall throughput of the operation \cite{shi:2016:tensor.contraction}.
+
+A better approach is to access tensor elements according to the tensor layout using the permutation tuple $\mbpi$ as proposed in \cite{bassoy:2018:fast}.
+The modified algorithm with contiguous memory accesses is given in algorithm \ref{alg:ttm.sequential.coalesced} for $\pi_1 \neq q$ and $p > 1$.
+Each recursion level adjusts only one multi-index element $\mbi(\pi_r)$ with a stride $\mbw(\pi_r)$ as depicted in line 5.
+With increasing recursion level and decreasing $r$, indices are incremented with smaller step sizes as $\mbw(\pi_r) \leq \mbw(\pi_{r+1})$. 
+The condition of the second \ttt{if} statement in line 4 does exclude $r=1$.
+In this way, the loop incrementing with index $\mbpi(\pi_1)$ with the minimum stride $\mbw(\mbpi_1)$ can be included in the base case. 
+The ordering of the three loops within the base case are adjusted according to the tensor and matrix layout.
+The inner-most loop increments $\mbi(\pi_1)$ and therefore contiguously accesses tensor elements of $\mubA$ and $\mubC$.
+The second loop 
+
+
+if the corresponding loop of $\pi_1$ is 
+index sets and their corresponding strides can be adjusted for each recursion level.
 By inserting the $q$-th (contraction) loop into an already existing branch for $r>1$ additionally simplifies the algorithm's control-flow.
 %where $q$ is the contraction mode.
 %simultaneously simplifying the control- and data-flow.
@@ -35,32 +37,35 @@ By inserting the $q$-th (contraction) loop into an already existing branch for $
 %\SetAlgoNoLine
 \DontPrintSemicolon
 \SetKwProg{Fn}{}{}{end}
-\SetKwFunction{TTV}{tensor\_times\_vector\_recursive}%
+\SetKwFunction{function}{tensor\_times\_matrix}%
 %\SetAlgoNoEnd
 \footnotesize 
 \SetAlgoVlined
 \hrule
 \BlankLine
-\Fn{\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, q, \hat{q}, r$}}
+\Fn{\function{$\mubA, \mbB, \mubC, \mbn, \mbi, m, q, \hat{q}, r$}}
 {
 	\uIf{$r = \hat{q}$ }
 	{
-		\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, q, \hat{q}, r-1$ }
+		\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, \hat{q}, r-1$ }
 	}
 	\uElseIf{$r > 1$ }
 	{
 		\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
 		{
-			\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, q, \hat{q}, r-1$}\;
+			\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, \hat{q}, r-1$}\;
 		}		
 	}	
 	\Else%{$r\geq1 \wedge m \neq 1$}
 	{
-		\For{$i_q \leftarrow 1$ \KwTo $n_q$}
+		\For{$j \leftarrow 1$ \KwTo $m$}
 		{
-			\For{$i_{\pi_1} \leftarrow 1$ \KwTo $n_{\pi_1}$}
-			{
-				$\mubC(i_1,\dots,i_{q-1},i_{q+1},\dots,i_{p})$ \ttt{+=} $\mubA(i_1,\dots,i_q,\dots,i_p) \cdot \mbb(i_q)$\;
+			\For{$i_q \leftarrow 1$ \KwTo $n_q$}
+			{			
+				\For{$i_{\pi_1} \leftarrow 1$ \KwTo $n_{\pi_1}$}
+				{
+					$\mubC(i_1,...,i_{q-1},j,i_{q+1},...,i_{p})$ \ttt{+=} $\mubA(i_1,...,i_q,...,i_p) \cdot \mbB(j,i_q)$\;
+				}
 			}
 		}
 	}
@@ -68,9 +73,11 @@ By inserting the $q$-th (contraction) loop into an already existing branch for $
 \BlankLine
 \hrule
 \caption{
-	\footnotesize Recursive implementation of the tensor-vector multiplication starting with $r=p$ for $p \geq 2$ and $1 \leq \pi_1 \neq q \leq p$ with better data locality for large dimensions.
-	Iteration along mode $\mhq$ with $\mhq = (\pi^{-1})_q$ is moved into the inner-most recursion level.
-	\label{alg:ttv.sequential.blocked}
+\footnotesize %
+Recursive implementation of the tensor-matrix multiplication in Eq. \eqref{equ:tensor.matrix.multplication} for $p \geq 2$ and $1 \leq q \leq p$ and $\pi_1 \neq q$ with better data locality for large dimensions.
+The algorithm needs to be initially called with $r=p$ where $\mbn$ is the shape tuple of $\mubA$ and $m$ is the $q$-th dimension of $\mubC$. 
+Iteration along mode $\mhq$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
+\label{alg:ttm.sequential.coalesced}
 }
 \end{algorithm}
 %The function \ttt{tensor\_times\_vector<coalesced>} in Algorithm \ref{alg:ttv.sequential.coalesced} additionally includes the permutation tuple $\mbpi$ of $\mubA$ and iterates over the $\pi_r$-th mode adjusting the memory access according to $\mbpi$.
@@ -83,40 +90,6 @@ Yet the loop-reordering forces the first $\bar{n}_{k-1} = \prod_{r=1}^{k-1} n_{\
 If the number of reaccessed elements exceeds the last-level cache size, cache missus occur resulting in a poor performance of the algorithm with longer execution times.
 %The runtime behavior of such an algorithm therefore depends on the contraction mode.
 %Such artifacts might become more noticeable in case of a parallelized version when each thread favorably accesses its own smaller level-two or level-one data cache.
-\begin{comment}
-\begin{algorithm}[t]
-	%\SetAlgoNoLine
-	\DontPrintSemicolon
-	\SetKwProg{Fn}{}{}{end}
-	\SetKwFunction{TTV}{tensor\_times\_vector<coalesced>}%
-	\SetAlgoVlined
-	\hrule
-	\BlankLine
-	\Fn{\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r$}}
-	{
-		\uIf{$r > 1$ }
-		{
-			\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
-			{
-				\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r-1$}\;
-			}		
-		}	
-		\Else%{$r\geq1 \wedge m \neq 1$}
-		{			
-			\For{$i_{\mbpi_1} \leftarrow 1$ \KwTo $n_{\mbpi_1}$}
-			{
-				$\mubC(i_1,\dots,i_{q-1},i_{q+1},\dots,i_{p})$ \ttt{+=} $\mubA(i_1,\dots,i_q,\dots,i_p) \cdot \mbb(i_q)$\;			
-			}
-		}
-	}
-	\BlankLine
-	\hrule
-	\caption{
-		\footnotesize Sequential version of the mode-$q$ tensor-vector multiplication  with contiguous memory access for tensors with any order $p\geq 2$ and any non-hierarchical storage format. The function initially called with $r=p$ recursively loops over the complete multi-index space of $\mubA$ and $\mubC$.
-		\label{alg:ttv.sequential.coalesced}
-	}
-\end{algorithm}
-\end{comment}
 
 Algorithm \ref{alg:ttv.sequential.blocked} improves the data locality if the number of elements $\bar{n}_{k-1}$ exceeds the cache size.
 By nesting the $\pi_1$-th loop inside the $i_q$-th loop, the function only reuses $n_{\pi_1}$ elements.
