@@ -3,8 +3,10 @@
 \subsection{Sequential Baseline Algorithm}
 The sequential baseline algorithm implementing Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single C++ function.
 It consists of nested recursion with a control flow that resembles algorithm 1 in \cite{bassoy:2018:fast}, consisting of two \ttt{if} statements with an \ttt{else} branch.
-The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_q$ if $r = \mhq$ with $\mhq = \mbpi^{-1}_q$ where $\mbpi^{-1}$ is the inverse layout tuple.
-The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \neq \mhq \leq p$ with different multi-indices.
+The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_q$ if $r = q$.
+%TODO: check if q or \mhq
+% with $\mhq = \mbpi^{-1}_q$ where $\mbpi^{-1}$ is the inverse layout tuple.
+The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \leq p$ with different multi-indices where $r\neq q$.
 Note that the second \ttt{if} statement is skipped for $q = \pi_1$ as the condition of the first one is evaluated to true.
 The \ttt{else} branch is the base case and consists of two loops that compute a fiber-matrix product.
 The inner loop iterates over the dimension $n_q$ of $\mubA$ and $\mbB$ with index $1\leq i_q \leq n_q$ computing an inner product.
@@ -39,17 +41,17 @@ The simple ordering of the three loops is discussed in \cite{golub:2013:matrix.c
 \SetAlgoVlined
 \hrule
 \BlankLine
-\Fn{\function{$\mubA, \mbB, \mubC, \mbn, \mbi, m, q, \hat{q}, r$}}
+\Fn{\function{$\mubA, \mbB, \mubC, \mbn, \mbi, m, q, r$}}
 {
-	\uIf{$r = \hat{q}$ }
+	\uIf{$r = q$ }
 	{
-		\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, \hat{q}, r-1$ }
+		\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, r-1$ }
 	}
 	\uElseIf{$r > 1$ }
 	{
 		\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
 		{
-			\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, \hat{q}, r-1$}\;
+			\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, r-1$}\;
 		}		
 	}	
 	\Else%{$r\geq1 \wedge m \neq 1$}
@@ -73,7 +75,7 @@ The simple ordering of the three loops is discussed in \cite{golub:2013:matrix.c
 Modified baseline algorithm with contiguous memory access for the tensor-matrix multiplication.
 The tensor order must be greater than one and for the contraction mode $1 \leq q \leq p$ and $\pi_1 \neq q$ must hold.
 The algorithm needs to be initially called with $r=p$ where $\mbn$ is the shape tuple of $\mubA$ and $m$ is the $q$-th dimension of $\mubC$. 
-Iteration along mode $\mhq$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
+%Iteration along mode $q$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
 \label{alg:ttm.sequential.coalesced}
 }
 \end{algorithm}
