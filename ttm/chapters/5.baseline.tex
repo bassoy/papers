@@ -20,19 +20,15 @@ A better approach is to access tensor elements according to the tensor layout us
 The modified algorithm with contiguous memory accesses is given in algorithm \ref{alg:ttm.sequential.coalesced} for $\pi_1 \neq q$ and $p > 1$.
 Each recursion level adjusts only one multi-index element $\mbi(\pi_r)$ with a stride $\mbw(\pi_r)$ as depicted in line 5.
 With increasing recursion level and decreasing $r$, indices are incremented with smaller step sizes as $\mbw(\pi_r) \leq \mbw(\pi_{r+1})$. 
-The condition of the second \ttt{if} statement in line 4 does exclude $r=1$.
-In this way, the loop incrementing with index $\mbpi(\pi_1)$ with the minimum stride $\mbw(\mbpi_1)$ can be included in the base case. 
+The condition of the second \ttt{if} statement in line 4 is changed from $r \geq 1$ to $r > 1$.
+In this way, the loop incrementing with index $\mbpi(\pi_1)$ with the minimum stride $\mbw(\mbpi_1)$ can be included in the base case.
+The base case therefore contains three loops performing a slice-matrix multiplication. 
 The ordering of the three loops within the base case are adjusted according to the tensor and matrix layout.
 The inner-most loop increments $\mbi(\pi_1)$ and therefore contiguously accesses tensor elements of $\mubA$ and $\mubC$.
-The second loop 
+The second loop increments $i_q$ with which elements of $\mbB$ are contiguously accessed if $\mbB$ is stored in the row-major format.
+The third loop increments $j$ and could be placed as the second loop if $\mbB$ is stored in the column-major format.
+The simple ordering of the three loops is discussed in \cite{golub:2013:matrix.computations}.
 
-
-if the corresponding loop of $\pi_1$ is 
-index sets and their corresponding strides can be adjusted for each recursion level.
-By inserting the $q$-th (contraction) loop into an already existing branch for $r>1$ additionally simplifies the algorithm's control-flow.
-%where $q$ is the contraction mode.
-%simultaneously simplifying the control- and data-flow.
-%Inserting the $q$-th loop into the branch with $r>1$ also results in an simplified control-flow.
 \begin{algorithm}[t]
 %\SetAlgoNoLine
 \DontPrintSemicolon
@@ -74,42 +70,25 @@ By inserting the $q$-th (contraction) loop into an already existing branch for $
 \hrule
 \caption{
 \footnotesize %
-Recursive implementation of the tensor-matrix multiplication in Eq. \eqref{equ:tensor.matrix.multplication} for $p \geq 2$ and $1 \leq q \leq p$ and $\pi_1 \neq q$ with better data locality for large dimensions.
+Modified baseline algorithm with contiguous memory access for the tensor-matrix multiplication.
+The tensor order must be greater than one and for the contraction mode $1 \leq q \leq p$ and $\pi_1 \neq q$ must hold.
 The algorithm needs to be initially called with $r=p$ where $\mbn$ is the shape tuple of $\mubA$ and $m$ is the $q$-th dimension of $\mubC$. 
 Iteration along mode $\mhq$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
 \label{alg:ttm.sequential.coalesced}
 }
 \end{algorithm}
-%The function \ttt{tensor\_times\_vector<coalesced>} in Algorithm \ref{alg:ttv.sequential.coalesced} additionally includes the permutation tuple $\mbpi$ of $\mubA$ and iterates over the $\pi_r$-th mode adjusting the memory access according to $\mbpi$.
-%In this way the function is able to provide a contiguous memory access for any non-hierarchical storage format which is similar to what is suggested in \cite{bassoy:2018:fast} for elementwise tensor operations.
-Yet the loop-reordering forces the first $\bar{n}_{k-1} = \prod_{r=1}^{k-1} n_{\pi_r}$ elements of $\mubC$ to be accessed $n_q$-times with $\pi_k = q$.
-%\begin{equation}
-%\mubC(\mbk) \leftarrow \mubC(\mbk) + \mubA(\mbi) \cdot \mbb.
-%\end{equation}
-%The downside of this approach can be observed 
-If the number of reaccessed elements exceeds the last-level cache size, cache missus occur resulting in a poor performance of the algorithm with longer execution times.
-%The runtime behavior of such an algorithm therefore depends on the contraction mode.
-%Such artifacts might become more noticeable in case of a parallelized version when each thread favorably accesses its own smaller level-two or level-one data cache.
 
-Algorithm \ref{alg:ttv.sequential.blocked} improves the data locality if the number of elements $\bar{n}_{k-1}$ exceeds the cache size.
-By nesting the $\pi_1$-th loop inside the $i_q$-th loop, the function only reuses $n_{\pi_1}$ elements.
-%\todo[noline]{Complete the description of Algorithm 2.}
-This is done by inserting an \ttt{if}-statement at the very beginning of the function which skips the $q$-th loop when $r = \mhq$ with $\mhq = (\pi^{-1})_q$ where
-$\mhq$ is the index position of $q$ within $\mbpi$.
-%Eq. \eqref{equ:subtensor.small} assumes $\pi_1 < q$. 
-%For $\pi_1 > q$ the selection of the $\pi_1$-th mode must be on the right-hand side of $q$-th mode.
-The proposed algorithm constitutes the starting point for \tf{BLAS} utilization.
-%is able to select accordingly and to provide high spatial data locality for any given non-hierarchical storage format and dimensions. 
-%Please note that Eq. \eqref{equ:subtensor.small} assumes $\pi_1 < q$.
-%For $\pi_1 > q$ e.g. in case of the last-order storage format, the selection of the $\pi_1$-th mode in Eq. \eqref{equ:subtensor.small} must be on the right-hand side of $q$-th mode.
-%The tuple $\mbpi^{-1}$ is the inverse of the layout tuple $\mbpi$ where $\pi_q^{-1}$ denotes the $q$-th element\todo{Put this into the notation}. 
-%It constitutes the starting point for the utilization of linear algebra routines.
+While the spatial data locality is improved by adjusting the loop ordering, the temporal data locality of tensors $\mubA$ and $\mubC$ differ.
+Note that slice $\mubA(..,i_{\pi_1},..i_q,..)$ is accessed $m$ times, fiber $\mubC(..,i_{\pi_1},..)$ is accessed $\mbn(q)$ times and element $\mubB(j,i_q)$ is accessed $\mbn(\pi_1)$ times.
+While the specified fiber of $\mubC$ can fit into first or second level cache, slice elements of $\mubA$ are unlikely to fit in the local caches if the slice size $n_{\pi_1} \times n_q$ is large leading to higher cache misses and suboptimal performance.
+%TODO: hier mehr paper, die BLAS Implementierung referenzieren?
+Optimized tiling for better temporal data locality has been discussed in \cite{goto:2008:gemm} which suggests to use existing high-performance BLAS implementations.
+The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
 
 \subsection{Extended Algorithms utilizing BLAS}
 \label{subsec:linear.algebra.routines}
 \vspace{-0.3em}
-The number of reused elements in Algorithm \ref{alg:ttv.sequential.blocked} can be further minimized by tiling the inner-most loops.
-Instead of applying loop transformations as proposed in \cite{springer:2018:design,matthews:2018:high}, we apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input,shi:2016:tensor.contraction} for class 3 tensor operations.
+We apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input, shi:2016:tensor.contraction}.
 The function and parameter configurations for the tensor multiplication can be divided into eight cases.
 
 \tit{Case 1 $(p=1)$:}
