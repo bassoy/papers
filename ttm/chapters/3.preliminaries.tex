@@ -15,8 +15,8 @@ A subtensor denoted by $\mubA'$ references a subset of tensor elements.
 The subtensor elements are specified with $p$ index ranges and form a selection grid.
 The $r$-th index range shall be given by an index pair denoted by $f_r \colon l_r$ with $1 \leq f_r \leq l_r \leq n_r$ with $l_r - f_r + 1 = n_r'$.
 %TODO: correct the $p'$
-A subtensor is an order-$p'$ slice if all modes of the corresponding order-$p$ tensor are selected either with a full index range or a single index where $p'$ with $p'\leq p$ is the number of all non-singleton dimensions.
-A fiber is a tensor slice with only one dimension greater than $1$. 
+A subtensor is called a slice $\mubA_{u,v}'$ if two modes $1 \leq u \neq v \leq p$ of the corresponding tensor $\mubA$ are selected with a full index range and the remaining modes are selected with a single index so that only two dimensions of the slice are greater than one.
+A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 
 
 \subsubsection{Linear Tensor Layouts}

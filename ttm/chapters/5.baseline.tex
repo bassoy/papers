@@ -81,83 +81,99 @@ The algorithm needs to be initially called with $r=p$ where $\mbn$ is the shape 
 \end{algorithm}
 
 While the spatial data locality is improved by adjusting the loop ordering, the temporal data locality of tensors $\mubA$ and $\mubC$ differ.
-Note that slice $\mubA(..,i_{\pi_1},..i_q,..)$ is accessed $m$ times, fiber $\mubC(..,i_{\pi_1},..)$ is accessed $\mbn(q)$ times and element $\mubB(j,i_q)$ is accessed $\mbn(\pi_1)$ times.
+Note that slice $\mubA_{\pi_1,q}'$ is accessed $m$ times, fiber $\mubC_{\pi_1}$ is accessed $\mbn(q)$ times and element $\mubB(j,i_q)$ is accessed $\mbn(\pi_1)$ times.
 While the specified fiber of $\mubC$ can fit into first or second level cache, slice elements of $\mubA$ are unlikely to fit in the local caches if the slice size $n_{\pi_1} \times n_q$ is large leading to higher cache misses and suboptimal performance.
 %TODO: hier mehr paper, die BLAS Implementierung referenzieren?
-Optimized tiling for better temporal data locality has been discussed in \cite{goto:2008:gemm} which suggests to use existing high-performance BLAS implementations.
-The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
+Optimized tiling for better temporal data locality has been discussed in \cite{goto:2008:gemm} which suggests to use existing high-performance BLAS implementations for the base case.
+%The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
 
-\subsection{Extended Algorithms utilizing BLAS}
+\subsection{BLAS-based Algorithm}
 \label{subsec:linear.algebra.routines}
-\vspace{-0.3em}
-We apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input, shi:2016:tensor.contraction}.
-The function and parameter configurations for the tensor multiplication can be divided into eight cases.
-
-\tit{Case 1 $(p=1)$:}
-The tensor-vector product $\mubA \times_1 \mbb$ can be computed with a \tf{DOT} operation $\mba^T \mbb$ where $\mubA$ is an order-$1$ tensor, i.e. a vector $\mba$ of length $n_1$.
-
-\tit{Case 2-5 $(p=2)$:}
-Let $\mbA$ be an order-$2$ tensor, i.e. matrix with dimensions $n_1$ and $n_2$.
-If $m=2$ and if $\mbA$ is stored according to the column-major $\mbpi=(1,2)$ or row-major format $\mbpi=(2,1)$, the tensor-vector multiplication can be trivially executed by a \tf{GEMV} routine using the tensor's storage format.
-The two remaining cases for $m=1$ require an interpretation of the order-$2$ tensor. 
-In case of the column-major format $\mbpi=(1,2)$, the tensor-vector product can be computed with a \tf{GEMV} routine, interpreting the columns of the matrix as rows with permuted dimensions.
-Analogously, a \tf{GEMV} routine executes a tensor-vector multiplication with $\mbpi=(2,1)$.
-
-%\paragraph{Case 6-7 ($p>2$):}
-%\label{subsubsec:order.p.ge.1}
-\tit{Case 6-7 $(p>2)$:}
-General tensor-vector multiplications with higher-order tensors execute the \tf{GEMV} routine multiple times over different slices of the tensor.
-There are two exceptions to the general case.%, namely when $\pi_1$ or $\pi_p$ is equal to the contraction mode $q$.
-If $\pi_1 = q$, a single \tf{GEMV} routine is sufficient for any storage layout.
-The tensor can be interpreted as a matrix with $\bar{n}_q = \prod_{r=1}^p n_r / n_q$ rows and $n_q$ columns.
-The leading dimension \tf{LDA} for $\pi_1=q$ is $n_q$.
-Tensor fibers with contiguously stored elements are therefore interpreted as matrix rows.
-In case of $\pi_p=q$, the leading dimension \tf{LDA} is given by $\bar{n}_q$ where all fibers with the exception of the dimension $\pi_p$ are interpreted as matrix columns.
-The interpretation of tensor objects does not copy data elements.
+%\vspace{-0.3em}
+The proposed algorithm \ref{alg:ttm.sequential.coalesced} is the starting point for the \tf{BLAS}-based algorithm which computes the tensor-matrix product with a \tf{GEMM} routine.
+Besides the illustrated algorithm, we have identified seven other cases where a single \tf{GEMM} call suffices to compute the tensor-matrix product even if the tensor order $p$ is greater than two.
+In summary there are eight cases with a single \tf{GEMM} call using different arguments which are listed in table \ref{tab:mapping}.
+The table is complete with no limitation on tensor order and contraction mode, supporting all linear tensor layout.
+\tf{GEMM} arguments are chosen depending on the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ except for the \tf{CBLAS\_ORDER} which is \tf{CblasRowMajor}.
+However, all linear tensor layouts can be supported by setting the remaining parameters of \tf{GEMM}.
 
 \begin{table}[t]
 %\captionsetup{width=0.7\textheight}
 \centering
-%\footnotesize
 \footnotesize
-\begin{tabular}{ c c c c c c c c c c c } % 
+%\scriptsize
+\begin{tabular}{ c c c c c c c c c c c c c c } % 
 \toprule
-Case \ & Order $p$ \ \ & Layout $\mbpi$  & Mode $q$ & Routine \ & \tf{FORMAT} \ & \tf{M} & \tf{N} & \tf{LDA} \\
+Case \ & Order $p$ \ & Layout $\mbpi$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} & \tf{N} & \tf{K} & \tf{A} & \tf{LDA} & \tf{B} & \tf{LDB} & \tf{LDC} \\
 \midrule
-1 & $1$       & -           & $1$       & \tf{DOT}    & -        & $n_1$   & -     & -  \\ %[0.1cm]
+1 & $1$ & -       & $1$      & \tf{GEMV} & -       & $m$   & $n_1$ & -     & $\mbB$  & $n_1$ & $\mubA$  & - & - \\
 \midrule
-2 & $2$ & $(1,2)$     & $1$       & \tf{GEMV} & \tf{ROW} & $n_2$ & $n_1$ & $n_1$ \\ %[0.1cm]
-3 & $2$ & $(1,2)$     & $2$       & \tf{GEMV} & \tf{COL} & $n_1$ & $n_2$ & $n_1$ \\ %[0.1cm]
-4 & $2$ & $(2,1)$     & $1$       & \tf{GEMV} & \tf{COL} & $n_2$ & $n_1$ & $n_2$ \\ %[0.1cm]
-5 & $2$ & $(2,1)$     & $2$       & \tf{GEMV} & \tf{ROW} & $n_1$ & $n_2$ & $n_2$ \\ %[0.1cm]
+2 & $2$ & $(1,2)$ & $1$      & \tf{GEMM} & $\mbB$  & $n_2$ & $m$   & $n_1$ & $\mubA$ & $n_1$ & $\mbB$   & $n_1$ & $m$   \\
+3 & $2$ & $(1,2)$ & $2$      & \tf{GEMM} & -       & $m$   & $n_1$ & $n_2$ & $\mbB$  & $n_2$ & $\mubA$  & $n_1$ & $n_1$ \\
+4 & $2$ & $(2,1)$ & $1$      & \tf{GEMM} & -       & $m$   & $n_2$ & $n_1$ & $\mbB$  & $n_1$ & $\mubA$  & $n_2$ & $n_2$ \\
+5 & $2$ & $(2,1)$ & $2$      & \tf{GEMM} & $\mbB$  & $n_1$ & $m$   & $n_2$ & $\mubA$ & $n_2$ & $\mbB$   & $n_2$ & $m$   \\
 \midrule
-6 & $>2$ & any & $\pi_1$  & \tf{GEMV} & \tf{ROW} & $\bar{n}_q$ & $n_q$ & $n_q$ \\ %[0.1cm]
-7 & $>2$ & any & $\pi_p$  & \tf{GEMV} & \tf{COL} & $\bar{n}_q$ & $n_q$ & $\bar{n}_q$ \\ %[0.1cm]
+6 & $>2$ & any    & $\pi_1$  & \tf{GEMM} & $\mbB$  & $\mbnq$ & $m$     & $n_q$ & $\mubA$ & $n_q$ & $\mbB$  & $n_q$ & $m$\\
+7 & $>2$ & any    & $\pi_p$  & \tf{GEMM} & -       & $m$     & $\mbnq$ & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $\mbnq$ & $\mbnq$ \\
 \midrule
-8 & $>2$ & any & \ $\pi_2,\pi_3,\dots,\pi_{p-1}$ \ & \tf{GEMV*} & \tf{COL} & $\hat{n}_q$ & $n_q$ & $\hat{n}_q$\\%[0.1cm]
-%\midrule
-%$>2$      & any    & \ $\pi_2,\pi_3,\dots,\pi_{p-1}$ \ & \tf{GEMV}* & \tf{COL} & $w_q$ & $n_q$ & $w_q$\\ [0.1cm]
-\bottomrule\\
+%8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{GEMM*} & - & $m$ & $w_q$  & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $w_q$  & $w_q$ \\
+8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{GEMM*} & - & $m$ & $n_{\pi_1}$  & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $n_{\pi_1}$  & $n_{\pi_1}$ \\
+\bottomrule \\
 \end{tabular}
 %\vspace{0.2cm}
 \caption%
 {%
 \footnotesize
-Parameter configuration of the \tf{DOT}- and \tf{GEMV} with eight cases executing a tensor-vector multiplication with respect to the order $p$, layout $\mbpi$ and contraction mode $q$.
-All three parameters determine the values of \tf{FORMAT}, \tf{M}, \tf{N} and \tf{LDA}.
-\tf{GEMV*} denotes a multiple execution of \tf{GEMV} with different tensor slices.
-In case of order-$2$ and order-$\mhq$ slices, the number of rows must be equal to $\hat{n}_q = n_{\pi_1}$ and $\hat{n}_q =w_q$, respectively.
-The number of rows for case 6 and 7 is given by $\bar{n}_q = \prod_{r=1}^p n_r / n_q$.
+Parameter configuration of the \tf{GEMV}- and \tf{GEMM} routines with eight cases computing a tensor-matrix product.
+The routine arguments are chosen with respect to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ which determine the \tf{GEMM} arguments for \tf{T}, \tf{M} to \tf{LDC}.
+The parameter \tf{T} denotes the transposition for matrix $\mbB$. 
+The routine \tf{GEMM*} denotes multiple \tf{GEMM} calls with different tensor slices.
+%In case of order-$2$ and order-$q$ slices, the number of rows must be equal to $\mhn_q = n_{\pi_1}$ and $\mhn_q =w_q$, respectively.
+The number of rows for case 6 and 7 is given by $\bar{n}_q = \bar{n} / n_q$ with $\bar{n} = n_1 \cdots n_p$.
 %\vspace{-0.5cm}
 }
 \label{tab:mapping}
 \end{table}%\textbf{}
 
+%TODO: comment on previous impls maybe later in this section.
+%We apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input, shi:2016:tensor.contraction}.
+%The function and parameter configurations for the tensor multiplication can be divided into eight cases.
+
+%\todo[noline]{Could we do also tensor transposition?}.
+%Table \ref{tab:mapping} extends the finding in \cite{dinapoli:2014:towards.efficient.use} precisely defining the mapping for any storage format. 
+%It also complies with the findings in \cite{li:2015:input}.
+
+%TODO: need to decide which storage format the input and output arguments will have. row- or column-major <- this can be done later?
+
+%TODO: Mention that the following description is choosing the row-major interpretation of the 
+
+
+\tit{Case 1 $(p=1)$:}
+The tensor-vector product $\mubA \times_1 \mbB$ can be computed with a \tf{GEMV} operation $\mba^T \cdot \mbB$ where $\mubA$ is an order-$1$ tensor, i.e. a vector $\mba$ of length $n_1$.
+
+\tit{Case 2-5 $(p=2)$:}
+If $\mubA$ and $\mubC$ are order-$2$ tensors, i.e. a matrix $\mbA$ with dimensions $n_1$ and $n_2$, then a single \tf{GEMM} suffices to compute the tensor-matrix product. 
+If $\mbA$ and $\mbC$ have the column-major format with $\mbpi=(1,2)$, \tf{GEMM} either executes $\mbC = \mbA \cdot \mbB^T$ for $q =1$ or $\mbC = \mbB \cdot \mbA$ for $q=2$.
+Note that \tf{GEMM} interprets $\mbC$ and $\mbA$ as matrices in row-major format even though both are stored column-wise.
+If $\mbA$ and $\mbC$ have the row-major format with $\mbpi=(2,1)$, \tf{GEMM} either executes $\mbC = \mbB \cdot \mbA$ for $q =1$ or $\mbC = \mbA \cdot \mbB^T$ for $q=2$. 
+Note that the transposition of $\mbB$ is necessary for the cases 2,5 and independent of the chosen storage format.
+
+\tit{Case 6-7 $(p>2)$:}
+If the order of $\mubA$ and $\mubC$ is greater than $2$ and if the contraction mode $q$ is equal to $\pi_1$, a single \tf{GEMM} with the depicted parameters executes $\mbC = \mbA \cdot \mbB^T$ and computes a tensor-matrix product $\mubC = \mubA \times_{\pi_1} \mbB$ for any storage layout of $\mubA$ and $\mubC$.
+Tensors $\mubA$ and $\mubC$ are interpreted as matrices $\mbA$ and $\mbC$ with a row-major format where $\mbA$ has $\mbnq = \bar{n} / n_q$ rows and $n_q$ columns while matrix $\mbC$ has the same number of rows and $m$ columns.
+If $\pi_p=q$, the \tf{GEMM} executes $\mbC = \mbB \cdot \mbA$ and computes a tensor-matrix product $\mubC = \mubA \times_{\pi_p} \mbB$ for any storage layout of $\mubA$ and $\mubC$.
+The matrix $\mbA$ has $n_q$ rows and $\mbnq$ rows while matrix $\mbC$ has $m$ rows and the same number of columns.
+Note that in all cases no copy operation is performed in order to compute the desired contraction.
+
 \tit{Case 8 $(p>2)$:}
-For the last case with $\pi_1\neq q$ and $\pi_p \neq q$, we provide two methods that loop over tensor slices.
-%\vspace{-0.35cm}
-%\paragraph{Multi-Loop (v1) with Order-$2$ Slices:}
-%\cem{Besserer Übergang} 
+If the tensor order is greater than $2$, $\pi_1\neq q$ and $\pi_p \neq q$, the modified baseline algorithm \ref{alg:ttm.sequential.coalesced} is used to successively call $\bar{n} / (n_q \cdot n_{\pi_1})$ times \tf{GEMM} with different tensor slices of $\mubC$ and $\mubA$ in the base case.
+Each \tf{GEMM} computes one slice $\mubC_{\pi_1,q}'$ of the tensor-matrix product $\mubC$ using the corresponding tensor slices $\mubA_{\pi_1,q}'$ and the matrix $\mbB$.
+The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting both tensor slices as matrices $\mbC$ and $\mbA$ which have the dimensions $(n_{\pi_1},m)$ and $(n_q,n_{\pi_1})$, respectively.
+
+
+\begin{comment}
+%Algorithm \ref{alg:ttm.sequential.coalesced} calls $\prod_{r=1}^p n_q / (n_q \cdot n_{\pi_1})$ \tf{GEMM} with different tensor slices $\mubA'$, $\mubC'$ and the same matrix $\mbB$.
+
 Lines 8 to 10 of Algorithm \ref{alg:ttv.sequential.blocked} perform a slice-vector multiplication of the form $\mbc' = \mbA' \cdot \mbb$.
 It is executed with a \tf{GEMV} with no further adjustment of the algorithm.
 The vector $\mbc'$ denotes a fiber of $\mubC$ with $n_u$ elements and $\mbA'$ denotes an order-$2$ slice of $\mubA$ with dimensions $n_u$ and $n_v$ such that
@@ -182,12 +198,7 @@ Choosing the first-order storage format for convenience, the order-$\mhq$ and or
 \end{equation}
 The fiber $\mbc'$ of length $w_q = n_{1} \cdot n_2 \cdots n_{q-1}$ is the one-dimensional interpretation of $\mubC'$ and the order-$2$ slice $\mbA'$ with dimensions $w_q$ and $n_q$ the two-dimensional interpretation of $\mubA'$.
 The slice-vector multiplication in this case can be performed with a \tf{GEMV} that interprets the order-$\mhq$ slices as order-$2$ according to the description.
-Table~\ref{tab:mapping} summarizes the call parameters of the \tf{DOT} or \tf{GEMV} for all order, storage format and contraction mode combinations.
-%The final function \ttt{tensor}\-\ttt{\_}\-\ttt{times}\-\ttt{\_}\-\ttt{vector} integrates all eight cases and executes either one of the first seven cases calling a single optimized and parallel \tf{DOT}/\tf{GEMV} or a recursive/iterative version of Algorithm~\ref{alg:ttv.sequential.blocked} either using one of the two parallel multi-loop versions for the last case.
-
-%\todo[noline]{Could we do also tensor transposition?}.
-%Table \ref{tab:mapping} extends the finding in \cite{dinapoli:2014:towards.efficient.use} precisely defining the mapping for any storage format. 
-%It also complies with the findings in \cite{li:2015:input}.
+\end{comment}
 
 
 \subsection{Parallel Algorithms with Slice-Vector Multiplications}
