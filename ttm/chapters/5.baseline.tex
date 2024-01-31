@@ -1,12 +1,13 @@
 \section{Algorithm Design}
 \label{sec:design}
 \subsection{Sequential Baseline Algorithm}
+\label{sec:design:sequential.baseline.algorithm}
 The sequential baseline algorithm implementing Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single C++ function.
 It consists of nested recursion with a control flow that resembles algorithm 1 in \cite{bassoy:2018:fast}, consisting of two \ttt{if} statements with an \ttt{else} branch.
-The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_q$ if $r = q$.
+The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_{q}$ when $r = \mhq$ with $\pi_r = q$ and $\mhq = \mbpi^{-1}_q$ where $\mbpi^{-1}$ is the inverse layout tuple.
 %TODO: check if q or \mhq
-% with $\mhq = \mbpi^{-1}_q$ where $\mbpi^{-1}$ is the inverse layout tuple.
-The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \leq p$ with different multi-indices where $r\neq q$.
+% with 
+The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \neq \mhq \leq p$ with different multi-indices.
 Note that the second \ttt{if} statement is skipped for $q = \pi_1$ as the condition of the first one is evaluated to true.
 The \ttt{else} branch is the base case and consists of two loops that compute a fiber-matrix product.
 The inner loop iterates over the dimension $n_q$ of $\mubA$ and $\mbB$ with index $1\leq i_q \leq n_q$ computing an inner product.
@@ -14,6 +15,7 @@ The outer loop iterates over the dimension $m$ of $\mubC$ and $\mbB$ with index 
 The baseline algorithm supports tensors with arbitrary order, dimensions and any non-hierarchical storage format.
 
 \subsection{Modified Baseline Algorithm with Contiguous Memory Access}
+\label{sec:design:modified.baseline.algorithm}
 The baseline algorithm accesses memory of $\mubA$ and $\mubC$ non-contiguously whenever $\pi_1 \neq q$ so that indices $i_q$ and $j$ are incremented with steps greater than one.
 Matrix $\mbB$ is contiguously accessed if $i_q$ or $j$ is incremented with unit-steps depending on the storage format of $\mubB$.
 The access pattern could be improved by reordering tensor elements according to the storage format which results in copy operations reducing the overall throughput of the operation \cite{shi:2016:tensor.contraction}.
@@ -23,8 +25,7 @@ The modified algorithm with contiguous memory accesses is given in algorithm \re
 Each recursion level adjusts only one multi-index element $\mbi(\pi_r)$ with a stride $\mbw(\pi_r)$ as depicted in line 5.
 With increasing recursion level and decreasing $r$, indices are incremented with smaller step sizes as $\mbw(\pi_r) \leq \mbw(\pi_{r+1})$. 
 The condition of the second \ttt{if} statement in line 4 is changed from $r \geq 1$ to $r > 1$.
-In this way, the loop incrementing with index $\mbpi(\pi_1)$ with the minimum stride $\mbw(\mbpi_1)$ can be included in the base case.
-The base case therefore contains three loops performing a slice-matrix multiplication. 
+In this way, the loop incrementing with index $\mbi(\pi_1)$ and the minimum stride $\mbw(\mbpi_1)$ can be included in the base case which contains three loops performing a slice-matrix multiplication. 
 The ordering of the three loops within the base case are adjusted according to the tensor and matrix layout.
 The inner-most loop increments $\mbi(\pi_1)$ and therefore contiguously accesses tensor elements of $\mubA$ and $\mubC$.
 The second loop increments $i_q$ with which elements of $\mbB$ are contiguously accessed if $\mbB$ is stored in the row-major format.
@@ -41,17 +42,17 @@ The simple ordering of the three loops is discussed in \cite{golub:2013:matrix.c
 \SetAlgoVlined
 \hrule
 \BlankLine
-\Fn{\function{$\mubA, \mbB, \mubC, \mbn, \mbi, m, q, r$}}
+\Fn{\function{$\mubA, \mbB, \mubC, \mbn, \mbi, m, q, \mhq, r$}}
 {
-	\uIf{$r = q$ }
+	\uIf{$r = \mhq$ }
 	{
-		\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, r-1$ }
+		\function{$\mubA, \mbB, \mubC, \mbn, \mbi, m, q, \mhq, r-1$ }
 	}
 	\uElseIf{$r > 1$ }
 	{
 		\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
 		{
-			\function{$\mubA, \mbB, \mubC, \mbn, \mbi, q, r-1$}\;
+			\function{$\mubA, \mbB, \mubC, \mbn, \mbi, m, q, \mhq, r-1$}\;
 		}		
 	}	
 	\Else%{$r\geq1 \wedge m \neq 1$}
@@ -87,15 +88,15 @@ While the specified fiber of $\mubC$ can fit into first or second level cache, s
 Optimized tiling for better temporal data locality has been discussed in \cite{goto:2008:gemm} which suggests to use existing high-performance BLAS implementations for the base case.
 %The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
 
-\subsection{BLAS-based Algorithm}
-\label{subsec:linear.algebra.routines}
+\subsection{GEMM-based Algorithms}
+\label{sec:design:blas.based.algorithm}
 %\vspace{-0.3em}
-The proposed algorithm \ref{alg:ttm.sequential.coalesced} is the starting point for the \tf{BLAS}-based algorithm which computes the tensor-matrix product with a \tf{GEMM} routine.
+The proposed algorithm \ref{alg:ttm.sequential.coalesced} is the starting point for the BLAS-based algorithm which computes the tensor-matrix product with a \tf{GEMM} routine.
 Besides the illustrated algorithm, we have identified seven other cases where a single \tf{GEMM} call suffices to compute the tensor-matrix product even if the tensor order $p$ is greater than two.
 In summary there are eight cases with a single \tf{GEMM} call using different arguments which are listed in table \ref{tab:mapping}.
 The table is complete with no limitation on tensor order and contraction mode, supporting all linear tensor layout.
 \tf{GEMM} arguments are chosen depending on the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ except for the \tf{CBLAS\_ORDER} which is \tf{CblasRowMajor}.
-However, all linear tensor layouts can be supported by setting the remaining parameters of \tf{GEMM}.
+%Note , all linear tensor layouts can be supported by setting the remaining parameters of \tf{GEMM}.
 
 \begin{table}[t]
 %\captionsetup{width=0.7\textheight}
@@ -199,6 +200,19 @@ Choosing the first-order storage format for convenience, the order-$\mhq$ and or
 The fiber $\mbc'$ of length $w_q = n_{1} \cdot n_2 \cdots n_{q-1}$ is the one-dimensional interpretation of $\mubC'$ and the order-$2$ slice $\mbA'$ with dimensions $w_q$ and $n_q$ the two-dimensional interpretation of $\mubA'$.
 The slice-vector multiplication in this case can be performed with a \tf{GEMV} that interprets the order-$\mhq$ slices as order-$2$ according to the description.
 \end{comment}
+
+
+\subsection{Modified Baseline Algorithms with Adjustable Subtensor Size}
+\label{sec:design:blas.based.algorithm}
+
+Case 1-7 cannot be further optimized.
+Case 8 uses the modified baseline algorithm 1 to call slice-matrix multiplication.
+
+Enlarge tensor slice and include more modes for the non-contracting mode in order to have slice-matrix multiplications with more elements.
+
+What can be $(1,..,\pi_1,..,q,..,p)$ and $(1,..,q,..,\pi_1,..,p)$
+
+Take $\pi_1,..,q$ and 
 
 
 \subsection{Parallel Algorithms with Slice-Vector Multiplications}

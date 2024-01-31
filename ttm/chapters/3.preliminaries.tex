@@ -15,12 +15,12 @@ A subtensor denoted by $\mubA'$ references a subset of tensor elements.
 The subtensor elements are specified with $p$ index ranges and form a selection grid.
 The $r$-th index range shall be given by an index pair denoted by $f_r \colon l_r$ with $1 \leq f_r \leq l_r \leq n_r$ with $l_r - f_r + 1 = n_r'$.
 %TODO: correct the $p'$
-A subtensor is called a slice $\mubA_{u,v}'$ if two modes $1 \leq u \neq v \leq p$ of the corresponding tensor $\mubA$ are selected with a full index range and the remaining modes are selected with a single index so that only two dimensions of the slice are greater than one.
+A subtensor is called a slice $\mubA_{u,v}'$ if two modes $1 \leq u \neq v \leq p$ of the corresponding tensor $\mubA$ are selected with a full index range.
+The remaining modes are selected with a single index so that only two dimensions of the slice are greater than one.
 A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 
 
 \subsubsection{Linear Tensor Layouts}
-
 We use a layout tuple $\mbpi \in \bbN^p$ to encode all linear tensor layouts including the first-order or last-order layout.
 They contain permuted tensor modes whose priority is given by their index.
 For instance, the first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
@@ -31,6 +31,18 @@ Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
 The location of tensor elements within the allocated memory space is determined by the tensor layout and the corresponding layout function.
 For a given layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$.
 With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
+
+
+\subsubsection{Tensor unfolding without Copying}
+The common $q$-mode tensor unfolding operation copies tensor elements into a matrix, see \cite[p.459]{kolda:2009:decompositions}.
+In this work, we define tensor flattening or unfolding as a restructuring of shape, layout and stride tuple of the $p$-order tensor without any copying its elements.
+The flattening operation $f_{r,q}$ for modes $r$ to $q$ is defined as $\mubA = \hat{\mubA}$ with $\mbn_{\hat{a}} = (n_1,..,n_{r-1},m,n_{q+1},..,p)$ and $m = \prod_{k=r}^q n_k$ such that 
+\begin{equation}
+\mubA(i_1,..,i_r,..,i_q,..,i_p) = \hat{\mubA}(i_1,..,j,..,i_p),
+\end{equation}
+with $1 \leq j \leq m$ and $1 \leq r \leq q \leq p$ where $r \neq \pi_1$ and $q \neq \pi_1$.
+%TODO: weiter hier.
+The layout 
 
 %\begin{equation}
 %\label{equ:lambda}
