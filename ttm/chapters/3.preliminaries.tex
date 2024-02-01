@@ -2,6 +2,7 @@
 \label{sec:preliminaries}
 
 \subsubsection{Notation}
+\label{sec:preliminaries:notation}
 An order-$p$ tensor is a $p$-dimensional array \cite{lim:2017:hypermatrices} where tensor elements are contiguously stored in memory. % \cite{lee:2018:fundamental}
 We write $a$, $\mba$, $\mbA$ and $\mubA$ in order to denote scalars, vectors, matrices and tensors. 
 In general we assume a tensor $\mubA$ to have a tensor order with $p>2$.
@@ -21,6 +22,7 @@ A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 
 
 \subsubsection{Linear Tensor Layouts}
+\label{sec:preliminaries:layout}
 We use a layout tuple $\mbpi \in \bbN^p$ to encode all linear tensor layouts including the first-order or last-order layout.
 They contain permuted tensor modes whose priority is given by their index.
 For instance, the first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
@@ -33,21 +35,19 @@ For a given layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a m
 With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 
 
-\subsubsection{Tensor unfolding without Copying}
-The common $q$-mode tensor unfolding operation copies tensor elements into a matrix, see \cite[p.459]{kolda:2009:decompositions}.
-In this work, we define tensor flattening or unfolding as a restructuring of shape, layout and stride tuple of the $p$-order tensor without any copying its elements.
-The flattening operation $f_{r,q}$ for modes $r$ to $q$ is defined as $\mubA = \hat{\mubA}$ with $\mbn_{\hat{a}} = (n_1,..,n_{r-1},m,n_{q+1},..,p)$ and $m = \prod_{k=r}^q n_k$ such that 
-\begin{equation}
-\mubA(i_1,..,i_r,..,i_q,..,i_p) = \hat{\mubA}(i_1,..,j,..,i_p),
-\end{equation}
-with $1 \leq j \leq m$ and $1 \leq r \leq q \leq p$ where $r \neq \pi_1$ and $q \neq \pi_1$.
-%TODO: weiter hier.
-The layout 
+\subsubsection{Flattening and Reshaping}
+\label{sec:preliminaries:reshaping}
+The flattening operation $\varphi_{r,q}$ transforms an order-$p$ tensor $\mubA$ to another order-$p'$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p'$ with $p' = p-q+r$ and $1 \leq r < q \leq p$.
+It is related to the tensor unfolding operation as defined in \cite[p.459]{kolda:2009:decompositions} but does neither change the element ordering nor copies tensor elements.
+Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{r,q}$ is defined for contiguous modes $\mbpi_{r,q} = (\pi_r,\pi_{r+1}, \dots, \pi_{q})$ of $\mbpi$.
+Let $s = 0$ if $\pi_r < \max(\mbpi_{r,q})$ and $s = q-r$ if $\pi_k > \max(\mbpi_{r,q})$ for $1 \leq k \neq r \leq p'$.
+Let $j = 0$ if $k < r$ and $j = q-r$ if $k > r$, then the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is given by $\tau_r = \min(\mbpi_{r,q})$ and $\tau_{k+j} = \pi_k + s$ for $k \neq r$.
+Elements of the corresponding shape tuple $\mbm$ are given by $\mbm(\tau_r) = \prod_{k=r}^q \mbn(\pi_k)$ and $\mbm(\tau_k) = \mbn(\pi_{k+j})$ where $j = 0$ if $k < r$ and $j = q -r$ if $k > r$.
 
-%\begin{equation}
-%\label{equ:lambda}
-%\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)
-%\end{equation}
+The reshaping operation $\rho$ transforms an order-$p$ tensor $\mubA$ to another order-$p$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p$.
+In this work, it permutes the shape and layout tuple simultaneously without changing the element ordering.
+Given the permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ defining the reshaping operation, the resulting shape tuple $\mbm$ of $\mbn$ and the layout tuple $\mbtau$ are given by $m_r = \mbn(\rho_r)$ and $\tau_r = \mbpi(\rho_r)$, respectively.
+
 
 
 %TODO: use other frameworks to explain how those two index sets are connected.
