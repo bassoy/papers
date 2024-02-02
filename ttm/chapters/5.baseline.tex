@@ -160,8 +160,10 @@ If $\mbA$ and $\mbC$ have the row-major format with $\mbpi=(2,1)$, \tf{GEMM} eit
 Note that the transposition of $\mbB$ is necessary for the cases 2,5 and independent of the chosen storage format.
 
 \tit{Case 6-7 $(p>2)$:}
-If the order of $\mubA$ and $\mubC$ is greater than $2$ and if the contraction mode $q$ is equal to $\pi_1$, a single \tf{GEMM} with the depicted parameters executes $\mbC = \mbA \cdot \mbB^T$ and computes a tensor-matrix product $\mubC = \mubA \times_{\pi_1} \mbB$ for any storage layout of $\mubA$ and $\mubC$.
-Tensors $\mubA$ and $\mubC$ are flattened to row-major matrices $\mbA$ and $\mbC$ using $f_{2,p}$, see subsection \ref{sec:preliminaries:flattening}.
+If the order of $\mubA$ and $\mubC$ is greater than $2$ and if the contraction mode $q$ is equal to $\pi_1$ (case 6), a single \tf{GEMM} with the depicted parameters executes $\mbC = \mbA \cdot \mbB^T$ and computes a tensor-matrix product $\mubC = \mubA \times_{\pi_1} \mbB$ for any storage layout of $\mubA$ and $\mubC$.
+Tensors $\mubA$ and $\mubC$ are flattened to matrices $\mbA$ and $\mbC$ by applying $\varphi_{2,p}$ 
+
+$f_{2,p}$, see subsection \ref{sec:preliminaries:flattening}.
 Matrix $\mbA$ has $\mbnq = \bar{n} / n_q$ rows and $n_q$ columns while matrix $\mbC$ has the same number of rows and $m$ columns.
 If $\pi_p=q$, the \tf{GEMM} executes $\mbC = \mbB \cdot \mbA$ and computes a tensor-matrix product $\mubC = \mubA \times_{\pi_p} \mbB$ for any storage layout of $\mubA$ and $\mubC$.
 The matrix $\mbA$ has $n_q$ rows and $\mbnq$ rows while matrix $\mbC$ has $m$ rows and the same number of columns.

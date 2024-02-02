@@ -38,15 +38,16 @@ With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an elemen
 \subsubsection{Flattening and Reshaping}
 \label{sec:preliminaries:reshaping}
 The flattening operation $\varphi_{r,q}$ transforms an order-$p$ tensor $\mubA$ to another order-$p'$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p'$ with $p' = p-q+r$ and $1 \leq r < q \leq p$.
-It is related to the tensor unfolding operation as defined in \cite[p.459]{kolda:2009:decompositions} but does neither change the element ordering nor copies tensor elements.
+It is related to the tensor unfolding operation as defined in \cite[p.459]{kolda:2009:decompositions} but neither changes the element ordering nor copies tensor elements.
 Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{r,q}$ is defined for contiguous modes $\mbpi_{r,q} = (\pi_r,\pi_{r+1}, \dots, \pi_{q})$ of $\mbpi$.
-Let $s = 0$ if $\pi_r < \max(\mbpi_{r,q})$ and $s = q-r$ if $\pi_k > \max(\mbpi_{r,q})$ for $1 \leq k \neq r \leq p'$.
-Let $j = 0$ if $k < r$ and $j = q-r$ if $k > r$, then the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is given by $\tau_r = \min(\mbpi_{r,q})$ and $\tau_{k+j} = \pi_k + s$ for $k \neq r$.
-Elements of the corresponding shape tuple $\mbm$ are given by $\mbm(\tau_r) = \prod_{k=r}^q \mbn(\pi_k)$ and $\mbm(\tau_k) = \mbn(\pi_{k+j})$ where $j = 0$ if $k < r$ and $j = q -r$ if $k > r$.
+Let $j = 0$ if $k \leq r$ and $j = q-r$ otherwise for $1 \leq k \leq p'$.
+Let also $s_k = 0$ if $\pi_k < \max(\mbpi_{r,q})$ and $s_k = q-r$ if $\pi_{k+j} > \max(\mbpi_{r,q})$.
+Then the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is given by $\tau_r = \min(\mbpi_{r,q})$ and $\tau_{k} = \pi_{k+j} + s_k$ if $k \neq r$.
+Elements of the corresponding shape tuple $\mbm$ are given by $m_{\tau_r} = \prod_{k=r}^q n_{\pi_k}$ and $m_{\tau_k} = n_{\pi_{k+j}}$ if $k \neq r$.
 
 The reshaping operation $\rho$ transforms an order-$p$ tensor $\mubA$ to another order-$p$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p$.
-In this work, it permutes the shape and layout tuple simultaneously without changing the element ordering.
-Given the permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ defining the reshaping operation, the resulting shape tuple $\mbm$ of $\mbn$ and the layout tuple $\mbtau$ are given by $m_r = \mbn(\rho_r)$ and $\tau_r = \mbpi(\rho_r)$, respectively.
+In this work, it permutes the shape and layout tuple simultaneously without changing the element ordering and without copying tensor elements.
+Given the permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ defining the reshaping operation, the resulting shape tuple $\mbm$ and the layout tuple $\mbtau$ are given by $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
 
 
 
