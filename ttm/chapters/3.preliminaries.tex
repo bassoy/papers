@@ -36,13 +36,13 @@ With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an elemen
 
 
 \subsubsection{Flattening and Reshaping}
-\label{sec:preliminaries:reshaping}
+\label{sec:preliminaries:flattening.reshaping}
 The flattening operation $\varphi_{r,q}$ transforms an order-$p$ tensor $\mubA$ to another order-$p'$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p'$ with $p' = p-q+r$ and $1 \leq r < q \leq p$.
 It is related to the tensor unfolding operation as defined in \cite[p.459]{kolda:2009:decompositions} but neither changes the element ordering nor copies tensor elements.
-Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{r,q}$ is defined for contiguous modes $\mbpi_{r,q} = (\pi_r,\pi_{r+1}, \dots, \pi_{q})$ of $\mbpi$.
+Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{r,q}$ is defined for contiguous modes $\mbhpi = (\pi_r,\pi_{r+1}, \dots, \pi_{q})$ of $\mbpi$.
 Let $j = 0$ if $k \leq r$ and $j = q-r$ otherwise for $1 \leq k \leq p'$.
-Let also $s_k = 0$ if $\pi_k < \max(\mbpi_{r,q})$ and $s_k = q-r$ if $\pi_{k+j} > \max(\mbpi_{r,q})$.
-Then the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is given by $\tau_r = \min(\mbpi_{r,q})$ and $\tau_{k} = \pi_{k+j} + s_k$ if $k \neq r$.
+%Let also $s_k = 0$ if $\pi_k < \max(\mbpi_{r,q})$ and $s_k = q-r$ if $\pi_{k+j} > \max(\mbpi_{r,q})$.
+Then the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is given by $\tau_r = \min(\mbpi_{r,q})$ and $\tau_{k} = \pi_{k+j} + s_k$ if $k \neq r$ where $s_k = \left| \{ \pi_i \mid \pi_{k+j} > \pi_i \wedge \pi_i \neq \min(\mbhpi) \wedge r \leq i \leq p \} \right|$.
 Elements of the corresponding shape tuple $\mbm$ are given by $m_{\tau_r} = \prod_{k=r}^q n_{\pi_k}$ and $m_{\tau_k} = n_{\pi_{k+j}}$ if $k \neq r$.
 
 The reshaping operation $\rho$ transforms an order-$p$ tensor $\mubA$ to another order-$p$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p$.
