@@ -35,9 +35,9 @@ For a given layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a m
 With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 
 
-\subsubsection{Flattening and Reshaping}
+\subsubsection{Non-Modifying Flattening and Reshaping}
 \label{sec:preliminaries:flattening.reshaping}
-The flattening operation $\varphi_{r,q}$ transforms an order-$p$ tensor $\mubA$ to another order-$p'$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p'$ with $p' = p-q+r$ and $1 \leq r < q \leq p$.
+The flattening operation $\varphi_{r,q}$ transforms an order-$p$ tensor $\mubA$ to another order-$p'$ view $\mubB$ that has different a shape $\mbm$ and layout $\mbtau$ tuple of length $p'$ with $p' = p-q+r$ and $1 \leq r < q \leq p$.
 It is related to the tensor unfolding operation as defined in \cite[p.459]{kolda:2009:decompositions} but neither changes the element ordering nor copies tensor elements.
 Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{r,q}$ is defined for contiguous modes $\mbhpi = (\pi_r,\pi_{r+1}, \dots, \pi_{q})$ of $\mbpi$.
 Let $j = 0$ if $k \leq r$ and $j = q-r$ otherwise for $1 \leq k \leq p'$.
