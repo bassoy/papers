@@ -171,31 +171,20 @@ Note that in all cases no copy operation is performed in order to compute the de
 \tit{Case 8 $(p>2)$:}
 If the tensor order is greater than $2$ with $\pi_1\neq q$ and $\pi_p \neq q$, the modified baseline algorithm \ref{alg:ttm.sequential.coalesced} is used to successively call $\bar{n} / (n_q \cdot n_{\pi_1})$ times \tf{GEMM} with different tensor slices of $\mubC$ and $\mubA$ in the base case.
 Each \tf{GEMM} computes one slice $\mubC_{\pi_1,q}'$ of the tensor-matrix product $\mubC$ using the corresponding tensor slices $\mubA_{\pi_1,q}'$ and the matrix $\mbB$.
-The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting both tensor slices as row-major matrices $\mbA$ and $\mbC$ which have the dimensions $(n_q,n_{\pi_1})$ and $(n_{\pi_1},m)$, respectively.
+The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting both tensor slices as row-major matrices $\mbA$ and $\mbC$ which have the dimensions $(n_q,n_{\pi_1})$ and $(m,n_{\pi_1})$, respectively.
 
 \subsection{Modified Baseline Algorithms with Adjustable Subtensor Sizes}
 \label{sec:design:blas.based.algorithm}
 Case 1-7 cannot be further optimized as each case directly calls an highly optimized BLAS routine.
 Case 8 however, uses the modified baseline algorithm 1 to call slice-matrix multiplication where slice dimensions of $\mubA$ and $\mubC$ are given by $(n_q,n_{\pi_1})$ and $(n_{\pi_1},m)$, respectively.
 It is possible to select and flatten larger subtensors in order to executing multiple \tf{GEMM}s with larger matrices.
+Moreover, the maximum number of mergeable modes is $\mhq-1$ with $\mhq = \mbpi^{-1}(q)$ with the corresponding modes $\pi_1,\pi_2,\dots,\pi_{\mhq-1}$.
+Applying the operations $\varphi_{1,q-1}$ and $\rho$ with $\mbrho = (2,1)$ on a subtensor of $\mubA$ with dimensions $n_{\pi_1},\dots,n_{\pi_{\mhq-1}}, n_{q}$ yields a row-major matrix $\mbA$ with shape $(n_q,\prod_{r=1}^{\mhq-1} n_{\pi_r})$.
+This is done analogously for $\mubC$ resulting in a row-major matrix with a shape $(m, \prod_{r=1}^{\mhq-1} n_{\pi_r})$.
 
-The maximum number of mergeable modes is $\mhq-1$ with $\mhq = \mbpi^{-1}(q)$ with the corresponding modes $\pi_1,\pi_2,\dots,\pi_{\mhq-1}$.
-Applying the flattening operation $\varphi_{1,q-1}$ on a subtensor of $\mubA$ with dimensions $n_{\pi_1},\dots,n_{\pi_{\mhq-1}}, n_{q}$ yields a column-major matrix $\mbA$ with shape $(\prod_{r=1}^{q-1} n_{\pi_r}, n_q)$ which needs to be reshaped using $\mbrho = (2,1)$.
-
-
-Algorithm \ref{alg:ttv.sequential.blocked} needs a minor modification in order to loop over order-$\mhq$ slices. 
-With $\mhq = (\pi^{-1})_q$, the conditions in line 2 and 4 are changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
-The modified algorithms therefore omits the first $\mhq$ modes $\pi_1, \dots, \pi_{\mhq}$ including $\pi_{\mhq} = q$ where all elements of an order-$\mhq$ slice are contiguously stored.
-Choosing the first-order storage format for convenience, the order-$\mhq$ and order-$(\mhq-1)$ slices of both tensors are given by 
-\begin{equation}
-	\label{equ:order.mhq.slice}
-	\mubA' = \mubA(\colon_{\mkern-5.5mu1},\dots,\colon_{\mkern-5.5muq},i_{q+1},\dots,i_{p}) 
-	\ \text{and} \
-	\mubC' = \mubC(\colon_{\mkern-5.5mu1},\dots,\colon_{\mkern-5.5mu{q-1}},i_{q+1},\dots,i_p).
-\end{equation}
-The fiber $\mbc'$ of length $w_q = n_{1} \cdot n_2 \cdots n_{q-1}$ is the one-dimensional interpretation of $\mubC'$ and the order-$2$ slice $\mbA'$ with dimensions $w_q$ and $n_q$ the two-dimensional interpretation of $\mubA'$.
-The slice-vector multiplication in this case can be performed with a \tf{GEMV} that interprets the order-$\mhq$ slices as order-$2$ according to the description.
-
+Algorithm \ref{alg:ttm.sequential.coalesced} is modified as follows for calling \tf{GEMM} with order-$\mhq$ subtensors, i.e. larger matrices. 
+The conditions in line 2 and 4 are changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
+The new algorithm hence omits the first $\mhq$ modes $\pi_1, \dots, \pi_{\mhq}$ including $\pi_{\mhq} = q$ where all elements of an order-$\mhq$ slice are contiguously stored.
  
 \subsection{Parallel Algorithms with Slice-Vector Multiplications}
 \label{subsec:parallel.multi-loops}
