@@ -88,7 +88,7 @@ While the specified fiber of $\mubC$ can fit into first or second level cache, s
 Optimized tiling for better temporal data locality has been discussed in \cite{goto:2008:gemm} which suggests to use existing high-performance BLAS implementations for the base case.
 %The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
 
-\subsection{GEMM-based Algorithms}
+\subsection{BLAS-based Algorithms with Tensor Slices}
 \label{sec:design:blas.based.algorithm}
 %\vspace{-0.3em}
 The proposed algorithm \ref{alg:ttm.sequential.coalesced} is the starting point for the BLAS-based algorithm which computes the tensor-matrix product with a \tf{GEMM} routine.
@@ -173,7 +173,7 @@ If the tensor order is greater than $2$ with $\pi_1\neq q$ and $\pi_p \neq q$, t
 Each \tf{GEMM} computes one slice $\mubC_{\pi_1,q}'$ of the tensor-matrix product $\mubC$ using the corresponding tensor slices $\mubA_{\pi_1,q}'$ and the matrix $\mbB$.
 The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting both tensor slices as row-major matrices $\mbA$ and $\mbC$ which have the dimensions $(n_q,n_{\pi_1})$ and $(m,n_{\pi_1})$, respectively.
 
-\subsection{Modified Baseline Algorithms with Subtensors}
+\subsection{BLAS-Based Algorithms with Subtensors}
 \label{sec:design:blas.based.algorithm}
 It is possible to further optimize case 8 by selecting larger subtensors instead of slices and enable higher processor utilization by executing multiple \tf{GEMM}s with larger matrices.
 Note that the base case of the modified baseline algorithm \ref{alg:ttm.sequential.coalesced} calls slice-matrix multiplication with slices of which two dimensions are greater than one, i.e. $n_q,n_{\pi_1}$ and $m,n_{\pi_1}$ for $\mubA$ and $\mubC$, respectively.
@@ -186,106 +186,48 @@ Algorithm \ref{alg:ttm.sequential.coalesced} needs a minor modification that all
 Moreover, the modified algorithm needs to omit the first $\mhq$ modes $\pi_1, \dots, \pi_{\mhq}$ including $\pi_{\mhq} = q$ by only iterating over modes in the non-base case of the algorithm that are larger than $\mhq$.
 The conditions in line 2 and 4 are therefore changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
 The subtensors of $\mubA$ and $\mubC$ within the base case of the algorithm are defined by the indices $i_{\pi_{\mhq+1}},\dots,i_{\pi_{p}}$.
-All subtensor elements are contiguously stored and the number of the subtensors' dimensions greater than one is equal to $\mhq$.
-Hence, \tf{GEMM} is called with flattened and reshaped subtensors of $\mubA$ and $\mubC$.
+All subtensor elements are contiguously stored and the number of the subtensors' non-singleton dimensions is equal to $\mhq$.
+%Hence, \tf{GEMM} is called with flattened and reshaped subtensors of $\mubA$ and $\mubC$.
 
  
-\subsection{Parallel Algorithms with Slice-Vector Multiplications}
+\subsection{Parallel BLAS-based Algorithms}
 \label{subsec:parallel.multi-loops}
-A straight-forward approach for generating a parallel version of Algorithm \ref{alg:ttv.sequential.blocked} is to divide the outer-most $\pi_p$-th loop into equally sized iterations and execute them in parallel using the \tf{OpenMP} \tf{parallel} \tf{for} directive\cite{bassoy:2018:fast}.
-%parallelize the multi-loops in case 8 is described by \cite{bassoy:2018:fast} where the outer-most $\pi_p$-th loop is divided into chunks of the same length. 
-With no critical sections and synchronization points, all threads within the parallel region execute their own sequential slice-vector multiplications.
-The outer-most dimension $n_{\pi_p}$ determines the degree of parallelism, i.e. the number of parallel threads executing their own instruction stream.
+The previously described algorithm is able to sequentially call \tf{GEMM} with multiple threads.
+This can be beneficial if the contraction mode $q$ is large $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{q}$ are large and the outer-most dimension $n_{\pi_{p}}$ is small.
+The contrary of the above however might not lead to a desired utilization of the processor where each multi-threaded \tf{GEMM} is executed with small subtensors.
 
+%The performance of the algorithm however depends on the tensor dimensions, tensor order $p$ and contraction mode $q$.
+%While the cases 1 to 7 cannot be further parallelized, 
+%TODO: could include degree of parallelism.
+%TODO: could include this: The outer-most dimension $n_{\pi_p}$ determines the degree of parallelism, i.e. the number of parallel threads executing their own instruction stream.
 
-%Yet, the number of parallelizable dimensions are dynamic and depend on the contraction mode $q$ and the storage layout of the tensor.
-%Considering Algorithm \ref{alg:ttv.sequential.blocked} executing slice-vector multiplications with order-$2$ slices.
-%The degree of parallelism can be improved by e.g. selecting other or additional loops.
-Fusing additional loops into a single one improves the degree of parallelism.
-%that are not required by the slice-vector multiplication in order to achieve a higher degree of parallelism.
-The number of fusible loops depends on the tensor order $p$ and contraction mode $q$ of the tensor-vector multiplication with $\mhq = (\pi^{-1})_q$.
-In case of mode-$q$ slice-vector multiplications, loops $\pi_{\mhq+1}, \dots, \pi_{p}$ are not involved in the multiplications and can be transformed into one single loop.
-For mode-$2$ slice-vector multiplications all loops except $\pi_1$ and $\pi_{\mhq}$ can be fused.
-%Moreover, the fused loops are not required by a slice-vector multiplication.
-When all fusible loops are lexically present and both parameters are known before compile time, loop fusion and parallel execution can be easily accomplished with the \tf{OpenMP} \tf{collapse} directive.
-The authors of \cite{li:2015:input} use this approach to generate parallel tensor-matrix functions.
+Hence, we propose to provide a parallel version of the above algorithm and to execute single-threaded \tf{GEMM}s in parallel.
+A simple approach is to parallelize the outer-most loop $\pi_p$ using the OpenMP \tf{parallel} \tf{for} directive.
+The OpenMP threads can then execute their own sequential subtensor-matrix multiplications independently.
+However, the degree of parallelism might be limited if the outer-most dimension $n_{\pi_p}$ is small.
 
-%\paragraph{Multi-Loop with Order-$\mhq$ Slices}
-%The parallelization of additional loops yields a higher degree of parallelism.
-With variable number of dimensions and a variable contraction mode, the iteration count of slice-vector multiplications and the slice selection needs to be determined at compile or run time.
-%The number of iterations of the fused loop is determined by the product of the outer dimensions and the increment is given by the slice size.
+One possible solution is to fuse additional loops which depends on the tensor order $p$ and contraction mode $q$.
+In case of the general subensor-matrix approach, $\pi_{\mhq+1}, \dots, \pi_{p}$ loops can be fused.
+For the slice-matrix multiplications all loops except $\pi_1$ and $\pi_{\mhq}$ are fuseable.
+Hence, the degree of parallelism is $\prod_{r=\mhq+1}^{p} n_{\pi_r}$ or $\prod_{r=1}^{p} n_{r} / (n_{\pi_1} n_{\pi_{\mhq}})$, respectively.
+
+% When all fusible loops are lexically present and both parameters are known before compile time, loop fusion and parallel execution can be easily accomplished with the \tf{OpenMP} \tf{collapse} directive.
+% The authors of \cite{li:2015:input} use this approach to generate parallel tensor-matrix functions.
+
+%With variable number of dimensions and a variable contraction mode, the iteration count of slice-vector multiplications and the slice selection needs to be determined at compile or run time.
+%%The number of iterations of the fused loop is determined by the product of the outer dimensions and the increment is given by the slice size.
 If $\bar{n}$ is the number of tensor elements of $\mubA$, the total number of slice-vector multiplications with mode-$\mhq$ slices is given by $\bar{n}' = \bar{n} / w_{q}$.
-%\begin{equation}
-%\begin{split}
-%\bar{n}' & = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}} \\
-%         & = \bar{n} / w_{m}
-%\end{split}
-%\end{equation}
-%$\bar{n}_{k+1} = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}}$.
-Using Eq. \eqref{equ:stride.tuple}, the strides for the iteration are given by $w_{\pi_{\mhq+1}}$ for $\mubA$ and $v_{\pi_{\mhq}}$ for $\mubC$.
+%%\begin{equation}
+%%\begin{split}
+%%\bar{n}' & = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}} \\
+%%         & = \bar{n} / w_{m}
+%%\end{split}
+%%\end{equation}
+%%$\bar{n}_{k+1} = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}}$.
+%Using Eq. \eqref{equ:stride.tuple}, the strides for the iteration are given by $w_{\pi_{\mhq+1}}$ for $\mubA$ and $v_{\pi_{\mhq}}$ for $\mubC$.
 In summary, one single parallel outer loop with an iteration count $\bar{n}'$ and an increment variable $j$ iteratively calls mode-$\mhq$ slice-vector multiplications with adjusted memory location $j \cdot w_{\pi_{\mhq+1}}$ and $j \cdot v_{\pi_{\mhq}}$ for $\mubA$ and $\mubC$, respectively.
 The degree of parallelism $\prod_{r=\mhq+1}^p n_r$ decreases with increasing $\mhq$ and corresponds for $\mhq = p-1$ to the first parallel version. 
 Tensor-vector multiplications with mode-$2$ slice-vector multiplications are further optimized by fusing additional $\mhq-2$ loops.
 %The layout, shape and stride tuples of $\mubA$ and $\mubC$ need to be divided in two parts.
 %Those without the modes $\pi_1$ and $\pi_q$ are needed to select order-$2$ slices by transforming the iteration index to relative memory locations of an order-$2$ slice with $\lambda_{\mbv''} \circ \gamma \circ \lambda^{-1}_{\mbw''}$.\todo{still need to finish this.}
 
-
-\begin{comment}
-Then
-\begin{equation}
-\mbpsi = 
-\begin{cases}
-(1,2) & \text{if} \ \pi_1 < \pi_k\\
-(2,1) & \text{otherwise.}
-\end{cases}
-\end{equation}
-\end{comment}
-
-\begin{comment}
-\begin{equation}
-\begin{array}{lllll}
-\pi_i''     &=& \pi_i   &\quad \text{if} & \quad \pi_i < \pi_1 \wedge \pi_i < \pi_k \\
-\pi_{i-1}'' &=& \pi_i-1 &\quad \text{if} & \quad (\pi_i > \pi_1 \wedge \pi_i < \pi_k) \vee (\pi_i < \pi_1 \wedge \pi_i > \pi_k) \\
-\pi_{i-2}'' &=& \pi_i-2 &\quad \text{if} & \quad \pi_i > \pi_1 \wedge \pi_i > \pi_k \\
-\end{array}
-\end{equation}
-\end{comment}
-
-
-
-
-
-\begin{comment}
-\begin{algorithm}[t]
-%\SetAlgoNoLine
-\DontPrintSemicolon
-\SetKwProg{Fn}{}{}{end}
-\SetKwFunction{TTV}{tensor\_times\_vector}%
-\SetAlgoVlined
-\hrule
-\BlankLine
-\Fn{\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r$}}
-{
-\uIf{$r > 1$ }
-{
-\For{$i_{\pi_r} \leftarrow 1$ \KwTo $ n_{\pi_r}$}
-{
-\TTV{$\mubA, \mbb, \mubC, \mbn, \mbi, \mbpi, q, r-1$}\;
-}		
-}	
-\Else%{$r\geq1 \wedge m \neq 1$}
-{			
-\For{$i_{\mbpi_1} \leftarrow 1$ \KwTo $n_{\mbpi_1}$}
-{
-$\mubC(i_1,\dots,i_{q-1},i_{q+1},\dots,i_{p})$ \ttt{+=} $\mubA(i_1,\dots,i_q,\dots,i_p) \cdot \mbb(i_q)$\;			
-}
-}
-}
-\BlankLine
-\hrule
-\caption{
-\footnotesize Sequential version of the mode-$q$ tensor-vector multiplication  with contiguous memory access for tensors with any order $p\geq 2$ and any non-hierarchical storage format. The function initially called with $r=p$ recursively loops over the complete multi-index space of $\mubA$ and $\mubC$.
-\label{alg:ttv.sequential.coalesced}
-}
-\end{algorithm}
-\end{comment}
