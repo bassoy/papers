@@ -183,7 +183,7 @@ Applying flattening $\varphi_{1,q-1}$ and reshaping $\rho$ with $\mbrho = (2,1)$
 This is done analogously for $\mubC$ resulting in a row-major matrix with shape $(m, \prod_{r=1}^{\mhq-1} n_{\pi_r})$.
 
 Algorithm \ref{alg:ttm.sequential.coalesced} needs a minor modification that allow each \tf{GEMM} to be called with flattened subtensors of $\mubA$ and $\mubC$. 
-Moreover, the modified algorithm needs to omit the first $\mhq$ modes $\pi_1, \dots, \pi_{\mhq}$ including $\pi_{\mhq} = q$ by only iterating over modes in the non-base case of the algorithm that are larger than $\mhq$.
+The modified algorithm needs to omit the first $\mhq$ modes $\pi_1, \dots, \pi_{\mhq}$ including $\pi_{\mhq} = q$ by only iterating over modes in the non-base case of the algorithm that are larger than $\mhq$.
 The conditions in line 2 and 4 are therefore changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
 The subtensors of $\mubA$ and $\mubC$ within the base case of the algorithm are defined by the indices $i_{\pi_{\mhq+1}},\dots,i_{\pi_{p}}$.
 All subtensor elements are contiguously stored and the number of the subtensors' non-singleton dimensions is equal to $\mhq$.
@@ -192,29 +192,29 @@ All subtensor elements are contiguously stored and the number of the subtensors'
  
 \subsection{Parallel BLAS-based Algorithms}
 \label{subsec:parallel.multi-loops}
-The previously described algorithm is able to sequentially call \tf{GEMM} with multiple threads.
-This can be beneficial if the contraction mode $q$ is large $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{q}$ are large and the outer-most dimension $n_{\pi_{p}}$ is small.
-The contrary of the above however might not lead to a desired utilization of the processor where each multi-threaded \tf{GEMM} is executed with small subtensors.
+The previously described algorithm sequentially calls multi-threaded \tf{GEMM}s.
+This is beneficial if the contraction mode $q$ is large $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{q}$ are large or the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
+If the above conditions are not met, the processor cores might fully utilized where each multi-threaded \tf{GEMM} is executed with small subtensors.
 
-%The performance of the algorithm however depends on the tensor dimensions, tensor order $p$ and contraction mode $q$.
-%While the cases 1 to 7 cannot be further parallelized, 
-%TODO: could include degree of parallelism.
-%TODO: could include this: The outer-most dimension $n_{\pi_p}$ determines the degree of parallelism, i.e. the number of parallel threads executing their own instruction stream.
-
-Hence, we propose to provide a parallel version of the above algorithm and to execute single-threaded \tf{GEMM}s in parallel.
+Hence, we propose a parallel version of the above algorithm which executes single-threaded \tf{GEMM}s in parallel\footnote{Note that cases 1 to 7 only call a single \tss{GEMM} and cannot be further parallelized.}.
 A simple approach is to parallelize the outer-most loop $\pi_p$ using the OpenMP \tf{parallel} \tf{for} directive.
 The OpenMP threads can then execute their own sequential subtensor-matrix multiplications independently.
-However, the degree of parallelism might be limited if the outer-most dimension $n_{\pi_p}$ is small.
+However, the degree of parallelism is limited by the outer-most dimension $n_{\pi_p}$.
 
-One possible solution is to fuse additional loops which depends on the tensor order $p$ and contraction mode $q$.
-In case of the general subensor-matrix approach, $\pi_{\mhq+1}, \dots, \pi_{p}$ loops can be fused.
-For the slice-matrix multiplications all loops except $\pi_1$ and $\pi_{\mhq}$ are fuseable.
-Hence, the degree of parallelism is $\prod_{r=\mhq+1}^{p} n_{\pi_r}$ or $\prod_{r=1}^{p} n_{r} / (n_{\pi_1} n_{\pi_{\mhq}})$, respectively.
+The degree of parallelism can be increased if more modes are considered that are free (parallelizable).
+The general subensor-matrix approach contains $\pi_{\mhq+1}, \dots, \pi_{p}$ free modes.
+In case of the slice-matrix multiplications, all modes except $\pi_1$ and $\pi_{\mhq}$ are free.
+Their respective maximum degree of parallelism is $\prod_{r=\mhq+1}^{p} n_{\pi_r}$ and $\prod_{r=1}^{p} n_{r} / (n_{\pi_1} n_{\pi_{\mhq}})$.
+%todo: later mention that the number of free modes depends on the tensor order $p$ and contraction mode $q$.
 
-% When all fusible loops are lexically present and both parameters are known before compile time, loop fusion and parallel execution can be easily accomplished with the \tf{OpenMP} \tf{collapse} directive.
-% The authors of \cite{li:2015:input} use this approach to generate parallel tensor-matrix functions.
+One can utilize these free modes by directly parallelizing the corresponding (free) loops using the OpenMP \tf{taskloop} directive.
+Another approach is to fuse all loops and to parallelize the resulting loop with OpenMP \tf{parallel for} directive with flattened subtensors or to directly call batched matrix multiplication routines such as \tf{BLAS\_batched\_gemm}.
+%todo: include a reference.
+%todo: mention that there is only one implementation of the 
 
-%With variable number of dimensions and a variable contraction mode, the iteration count of slice-vector multiplications and the slice selection needs to be determined at compile or run time.
+
+%todo: How do you parallely execute those loops? Use OpenMP with taskloop and do 
+
 %%The number of iterations of the fused loop is determined by the product of the outer dimensions and the increment is given by the slice size.
 If $\bar{n}$ is the number of tensor elements of $\mubA$, the total number of slice-vector multiplications with mode-$\mhq$ slices is given by $\bar{n}' = \bar{n} / w_{q}$.
 %%\begin{equation}
