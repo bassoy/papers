@@ -8,16 +8,14 @@ We write $a$, $\mba$, $\mbA$ and $\mubA$ in order to denote scalars, vectors, ma
 In general we assume a tensor $\mubA$ to have a tensor order with $p>2$.
 The $p$-tuple $\mbn$ with $\mbn = (n_1,n_2,\dots,n_p)$ will be referred to as a dimension tuple with $n_r>1$.
 We will use round brackets $\mubA(i_1,i_2,\dots,i_p)$ or $\mubA(\mbi)$ to denote a tensor element where $\mbi = (i_1,i_2,\dots,i_p)$ is a multi-index.
-%The set of all multi-indices of a tensor is denoted by $\mcI \in \bbN^p$ with $\mcI = \prod{r=1}^p I_r$ and $I_r = \{1,\dots,n_r\}$.
-%The set $\mcJ = \{0,\dots,\bar{n}-1\}$ shall denote the single-index space of a tensor with $\bar{n} = n_1 \cdot n_2 \cdots n_p$ contiguously stored elements where $|\mcI| = |\mcJ|$.
-%TODO: do we still need subtensor definition?
-
-A subtensor denoted by $\mubA'$ references a subset of tensor elements.
-The subtensor elements are specified with $p$ index ranges and form a selection grid.
-The $r$-th index range shall be given by an index pair denoted by $f_r \colon l_r$ with $1 \leq f_r \leq l_r \leq n_r$ with $l_r - f_r + 1 = n_r'$.
-%TODO: correct the $p'$
-A subtensor is called a slice $\mubA_{u,v}'$ if two modes $1 \leq u \neq v \leq p$ of the corresponding tensor $\mubA$ are selected with a full index range.
-The remaining modes are selected with a single index so that only two dimensions of the slice are greater than one.
+A subtensor is denoted by $\mubA'$ and references elements of a tensor $\mubA$.
+They are specified with $p$ index ranges and form a selection grid.
+In this work, the index range shall either address all indices of a given mode or a single element that are given by single indices $i_r$ with $1 \leq r \leq p$. % denoted by $\colon$ 
+Elements $n_r'$ of a subtensor's dimension tuple $\mbn'$ are therefore $n_r$ if all indices of mode $r$ are selected and $1$ otherwise.
+We will annotate subtensors using only their non-unit modes such as $\mubA_{u,v,w}'$ where $n_u > 1$,$n_v > 1$ and $n_w >1$ and $1 \leq u \neq v \neq w \leq p$.
+It is sufficient to only provide non-unit modes as the remaining single indices correspond to the loop induction variables of the following algorithms.
+%todo: what is the order? p' <? p where all non-unit dimensions are counted and what happens with the layout?
+A subtensor is called a slice $\mubA_{u,v}'$ if the full range selection of $\mubA$ occurs with only two modes.
 A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 
 
