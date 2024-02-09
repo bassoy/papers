@@ -47,7 +47,7 @@ Elements of the corresponding shape tuple $\mbm$ are given by $m_{\tau_r} = \pro
 
 The reshaping operation $\rho$ transforms an order-$p$ tensor $\mubA$ to another order-$p$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p$.
 In this work, it permutes the shape and layout tuple simultaneously without changing the element ordering and without copying tensor elements.
-The reshaping operation is defined by the permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ which only modify shape and layout tuples.
+The operation $\rho$ uses a permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ to only modify shape and layout tuples.
 Elements of the resulting shape tuple $\mbm$ and the layout tuple $\mbtau$ are given by $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
 
 

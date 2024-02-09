@@ -200,37 +200,27 @@ Note that cases 1 to 7 only call a single \tss{GEMM} and cannot be further paral
 A simple approach is to parallelize the outer-most loop $\pi_p$ using the OpenMP \tf{parallel} \tf{for} directive which allows OpenMP threads to execute their own sequential subtensor-matrix multiplications independently.
 However, the degree of parallelism is limited by the outer-most dimension $n_{\pi_p}$.
 Hence, more available modes need to be considered to increase parallelism.
-The general subensor-matrix approach contains $\pi_{\mhq+1}, \dots, \pi_{p}$ free modes whereas in case of the slice-matrix multiplications, all modes except $\pi_1$ and $\pi_{\mhq}$ are free.
+The general subtensor-matrix approach contains $\pi_{\mhq+1}, \dots, \pi_{p}$ free modes whereas in case of the slice-matrix multiplications, all modes except $\pi_1$ and $\pi_{\mhq}$ are free.
 Their respective maximum degree of parallelism is $\prod_{r=\mhq+1}^{p} n_{\pi_r}$ and $\prod_{r=1}^{p} n_{r} / (n_{\pi_1} n_{\pi_{\mhq}})$.
 %todo: later mention that the number of free modes depends on the tensor order $p$ and contraction mode $q$.
 
 
-These free modes can be integrated by directly parallelizing the corresponding (free) loops utilizing the tasking concept of OpenMP. 
+These free modes can be utilized by directly parallelizing the corresponding (free) loops with the tasking concept of OpenMP. 
 We have placed the \tf{taskloop} directive in front of the loop in line 5 which allows to partition all free loops into tasks for parallel execution.
 This allows to collapse iterations of all free loops within the desired recursion levels into one larger divisible iteration space.
-We additionally specified the \tf{untied} clause which allows task regions to be executed by different threads.
+One advantage of this approach is that both tensors or subtensors do not need to be flattened or reshaped and the existing algorithm can be reused.
+%todo: mention later: We additionally specified the \tf{untied} clause which allows task regions to be executed by different threads.
+
+Alternatively, one can fuse available free loops and parallelize the resulting loop using the OpenMP \tf{parallel for} directive with flattened subtensors or directly call batched matrix multiplication routines such as \tf{BLAS\_batched\_gemm}.
+Considering the slice-matrix algorithm, both tensors are flattened twice with $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{2},\pi_{\mhq-1}}$. 
+% reshaped afterwards with $\mbrho = (1,3,2,4)$. 
+The resulting tensor is of order $4$ and has dimensions $n_{\pi_1}, n_{\pi_2}', n_{q}, n_{\pi_4}'$ where $n_{\pi_2}' = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $n_{\pi_4}' = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
+The corresponding algorithm consists of only two parallelizable loops where the outer- and inner-most loops iterate over the respective dimension $n_{\pi_4}'$ and $n_{\pi_2}'$ calling \tf{GEMM} with slices of $\mubA$ and $\mubC$.
+%todo: provide dimensions of the slices?
+%todo: what about reshaping if the inner-most dimension does not fit.
+
+%In case of the subtensor 
 
 
-Alternatively, one can fuse those loops and parallelize the resulting loop with OpenMP \tf{parallel for} directive with flattened subtensors or to directly call batched matrix multiplication routines such as \tf{BLAS\_batched\_gemm}.
 %todo: include a reference.
-%todo: mention that there is only one implementation of the 
-
-
-%todo: How do you parallely execute those loops? Use OpenMP with taskloop and do 
-
-%%The number of iterations of the fused loop is determined by the product of the outer dimensions and the increment is given by the slice size.
-If $\bar{n}$ is the number of tensor elements of $\mubA$, the total number of slice-vector multiplications with mode-$\mhq$ slices is given by $\bar{n}' = \bar{n} / w_{q}$.
-%%\begin{equation}
-%%\begin{split}
-%%\bar{n}' & = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}} \\
-%%         & = \bar{n} / w_{m}
-%%\end{split}
-%%\end{equation}
-%%$\bar{n}_{k+1} = n_{\pi_{k+1}} \cdot n_{\pi_{k+2}} \cdots n_{\pi_{p}}$.
-%Using Eq. \eqref{equ:stride.tuple}, the strides for the iteration are given by $w_{\pi_{\mhq+1}}$ for $\mubA$ and $v_{\pi_{\mhq}}$ for $\mubC$.
-In summary, one single parallel outer loop with an iteration count $\bar{n}'$ and an increment variable $j$ iteratively calls mode-$\mhq$ slice-vector multiplications with adjusted memory location $j \cdot w_{\pi_{\mhq+1}}$ and $j \cdot v_{\pi_{\mhq}}$ for $\mubA$ and $\mubC$, respectively.
-The degree of parallelism $\prod_{r=\mhq+1}^p n_r$ decreases with increasing $\mhq$ and corresponds for $\mhq = p-1$ to the first parallel version. 
-Tensor-vector multiplications with mode-$2$ slice-vector multiplications are further optimized by fusing additional $\mhq-2$ loops.
-%The layout, shape and stride tuples of $\mubA$ and $\mubC$ need to be divided in two parts.
-%Those without the modes $\pi_1$ and $\pi_q$ are needed to select order-$2$ slices by transforming the iteration index to relative memory locations of an order-$2$ slice with $\lambda_{\mbv''} \circ \gamma \circ \lambda^{-1}_{\mbw''}$.\todo{still need to finish this.}
-
+%todo: mention that there is only one implementation of the batched_gemm
