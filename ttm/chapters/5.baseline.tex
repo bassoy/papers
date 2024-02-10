@@ -182,10 +182,11 @@ Applying flattening $\varphi_{1,q-1}$ and reshaping $\rho$ with $\mbrho = (2,1)$
 This is done analogously for $\mubC$ resulting in a row-major matrix with shape $(m, \prod_{r=1}^{\mhq-1} n_{\pi_r})$.
 
 Algorithm \ref{alg:ttm.sequential.coalesced} needs a minor modification that allow each \tf{GEMM} to be called with flattened subtensors of $\mubA$ and $\mubC$. 
-The modified algorithm needs to omit the first $\mhq$ modes $\pi_1, \dots, \pi_{\mhq}$ including $\pi_{\mhq} = q$ by only iterating over modes in the non-base case of the algorithm that are larger than $\mhq$.
+The modified algorithm is omitted the first $\mhq$ modes $\mbpi_{1,\mhq} = (\pi_1, \dots, \pi_{\mhq})$ including $\pi_{\mhq} = q$.
+This is done by only iterating over modes in the non-base case of the algorithm that are larger than $\mhq$.
 The conditions in line 2 and 4 are therefore changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
-The subtensors of $\mubA$ and $\mubC$ within the base case of the algorithm are defined by the indices $i_{\pi_{\mhq+1}},\dots,i_{\pi_{p}}$.
-All subtensor elements are contiguously stored and the number of the subtensors' non-singleton dimensions is equal to $\mhq$.
+The single indices of the subtensors $\mubA_{\mbpi_{1,\mhq}}'$ and $\mubC_{\mbpi_{1,\mhq}}'$ within the base case of the algorithm are given by the loop induction variables that belong to the $\pi_r$-th loop with $\mhq+1 \leq r \leq p$.  %$i_{\pi_{\mhq+1}},\dots,i_{\pi_{p}}$.
+Subtensor elements are contiguously stored and the number of non-unit dimensions is equal to $\mhq$.
 %Hence, \tf{GEMM} is called with flattened and reshaped subtensors of $\mubA$ and $\mubC$.
 
  
@@ -211,11 +212,12 @@ This allows to collapse iterations of all free loops within the desired recursio
 One advantage of this approach is that both tensors or subtensors do not need to be flattened or reshaped and the existing algorithm can be reused.
 %todo: mention later: We additionally specified the \tf{untied} clause which allows task regions to be executed by different threads.
 
-Alternatively, one can fuse available free loops and parallelize the resulting loop using the OpenMP \tf{parallel for} directive with flattened subtensors or directly call batched matrix multiplication routines such as \tf{BLAS\_batched\_gemm}.
+Alternatively, it is possible to fuse available free loops and then to parallelize the resulting loop using either the OpenMP \tf{parallel for} directive with flattened subtensors or to directly call batched matrix multiplication routines, e.g. \tf{BLAS\_batched\_gemm} if such a rountine available.
 Considering the slice-matrix algorithm, both tensors are flattened twice with $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{2},\pi_{\mhq-1}}$. 
 % reshaped afterwards with $\mbrho = (1,3,2,4)$. 
-The resulting tensor is of order $4$ and has dimensions $n_{\pi_1}, n_{\pi_2}', n_{q}, n_{\pi_4}'$ where $n_{\pi_2}' = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $n_{\pi_4}' = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
-The corresponding algorithm consists of only two parallelizable loops where the outer- and inner-most loops iterate over the respective dimension $n_{\pi_4}'$ and $n_{\pi_2}'$ calling \tf{GEMM} with slices of $\mubA$ and $\mubC$.
+The resulting tensor is of order $4$ with dimensions $n_{\pi_1}, \mhn_{\pi_2}, n_{q}, \mhn_{\pi_4}$ where $\mhn_{\pi_2} = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_4} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
+The corresponding algorithm consists of two nested loops.
+The outer loop iterates over $\mhn_{\pi_4}$ while the inner loop iterates over $\mhn_{\pi_2}$ calling \tf{GEMM} with slices $\mubA_{\pi_1,q}'$ and $\mubC_{\pi_1,q}'$.
 %todo: provide dimensions of the slices?
 %todo: what about reshaping if the inner-most dimension does not fit.
 

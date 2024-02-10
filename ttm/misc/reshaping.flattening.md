@@ -134,13 +134,13 @@ for i(pi'(4)) = 1 to n(pi'(4))
 ```
 pi' = [ pi(1), pi(q') ] = [ pi(1), q ] 
 
-if pi(1) < q => column-major format
-if pi(1) > q => row-major format
+if pi(1) < q => column-major format ? 
+if pi(1) > q => row-major format ? 
 
 no cannot say so. it does not have any valid format
 
 
-z.B.
+e.g.
 
 q = 3 und pi(1) = 2 ==> pi' = [2, 3]    so that    i2..n2 with w2=1 and iq..nq with wq!=1
 A'=A{2,3} with n2,n3 and C'=C{2,3} with n2,m and B with m,n3     so that     C'(m,n2) = B(m,n3) * A(n3,n2)
