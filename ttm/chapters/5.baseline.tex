@@ -118,7 +118,7 @@ Case \ & Order $p$ \ & Layout $\mbpi$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} &
 7 & $>2$ & any    & $\pi_p$  & \tf{GEMM} & -       & $m$     & $\mbnq$ & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $\mbnq$ & $\mbnq$ \\
 \midrule
 %8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{GEMM*} & - & $m$ & $w_q$  & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $w_q$  & $w_q$ \\
-8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{GEMM*} & - & $m$ & $n_{\pi_1}$  & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $n_{\pi_1}$  & $n_{\pi_1}$ \\
+8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{GEMM*} & - & $m$ & $n_{\pi_1}$  & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $w_{q}$  & $w_{q}$ \\
 \bottomrule \\
 \end{tabular}
 %\vspace{0.2cm}
@@ -126,10 +126,9 @@ Case \ & Order $p$ \ & Layout $\mbpi$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} &
 {%
 \footnotesize
 Parameter configuration of the \tf{GEMV}- and \tf{GEMM} routines with eight cases computing a tensor-matrix product.
-The routine arguments are chosen with respect to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ which determine the \tf{GEMM} arguments for \tf{T}, \tf{M}, \tf{N}, etc.
-Parameter \tf{T} specifies what the transposed matrix.
+The arguments \tf{T}, \tf{M}, \tf{N}, etc. of the BLAS are chosen with respect to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
 \tf{GEMM*} denotes multiple \tf{GEMM} calls with different tensor slices.
-The number of rows for case 6 and 7 is given by $\bar{n}_q = \bar{n} / n_q$ with $\bar{n} = n_1 \cdots n_p$.
+The number of rows for case 6 and 7 is given by $\bar{n}_q = (n_1 \cdots n_p) / n_q$.
 \vspace{-0.5cm}
 }
 \label{tab:mapping}
@@ -170,6 +169,7 @@ Note that in all cases no copy operation is performed in order to compute the de
 If the tensor order is greater than $2$ with $\pi_1\neq q$ and $\pi_p \neq q$, the modified baseline algorithm \ref{alg:ttm.sequential.coalesced} is used to successively call $\bar{n} / (n_q \cdot n_{\pi_1})$ times \tf{GEMM} with different tensor slices of $\mubC$ and $\mubA$ in the base case.
 Each \tf{GEMM} computes one slice $\mubC_{\pi_1,q}'$ of the tensor-matrix product $\mubC$ using the corresponding tensor slices $\mubA_{\pi_1,q}'$ and the matrix $\mbB$.
 The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting both tensor slices as row-major matrices $\mbA$ and $\mbC$ which have the dimensions $(n_q,n_{\pi_1})$ and $(m,n_{\pi_1})$, respectively.
+%todo: note that the leading dimensions of A and C must be wq 
 
 \subsection{BLAS-Based Algorithms with Subtensors}
 \label{sec:design:blas.based.algorithm}

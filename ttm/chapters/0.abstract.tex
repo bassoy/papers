@@ -11,11 +11,12 @@ The proposed algorithm either directly calls efficient implementations of \tf{GE
 %
 %They are applicable to dense tensors with any linear tensor layout, tensor order and dimensions which can be runtime variable.
 %
-We discuss different strategies for fusing and executing the matrix-matrix multiplication in parallel.
+We discuss different tensor slicing methods and parallelization strategies using OpenMP with \tf{GEMM} and batched \tf{GEMM}.
 %
-Using \tf{OpenBLAS}, our parallel implementation attains \tq Gflops/s in single precision on a Core i9-7900X Intel Xeon processor. %. that is $116$\% of the \tf{GEMV}'s sustained performance.
+Our best implementation attains a median performance of $1.37$ single precision Tflops/s on an Intel Xeon Gold 6248R processor using Intel's \tf{MKL}.
+%. that is $116$\% of the \tf{GEMV}'s sustained performance.
 %
-We show that the performance of our implementation is independent of the tensor layout and a performance of \tq can be sustained for any linear tensor format.
+We show that the performance is only slightly affected by the tensor layout and the median performance is between \tq and \tq Tflops/s for a range of linear tensor formats.
 %
-Our version of the tensor-matrix multiplication is on average \tq x and up to \tq x faster than state-of-the-art approaches.
+Our fastest version of the tensor-matrix multiplication is on average at least $14.05$\% and up to $3.79$ x faster than other state-of-the-art implementations, including Libtorch and Eigen.
 \end{abstract}

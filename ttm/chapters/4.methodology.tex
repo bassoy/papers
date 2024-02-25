@@ -1,18 +1,16 @@
 \section{Experimental Setup}
 \label{sec:experimental.setup}
 \subsubsection{Computing System} 
-The experiments have been carried out on a Core i9-7900X Intel Xeon processor with $10$ cores and $20$ hardware threads running at $3.3$ GHz.
-%todo: mention the peak performance of GEMM?
-%todo: reduce Gflops for AVX-512 performance?
-It has a theoretical peak memory bandwidth of $85.312$ GB/s. % resulting from four $64$-bit wide channels with a data rate of $2666$MT/s. 
-%The sizes of the L3-cache and each L2-cache are 14MB and 1024KB.
-%\paragraph{Compilation and Execution}
-The source code has been compiled with \tf{GCC} \tf{v7.3} using the highest optimization level \tf{-Ofast} and \tf{-march=native}, \tf{-pthread} and \tf{-fopenmp}. 
-Loops within for the eighth case have been parallelized using \tf{GCC}'s \tf{OpenMP} \tf{v4.5} implementation.
-We have used the \tf{GEMV} and \tf{GEMM} implementation of the \tf{OpenBLAS} library \tf{v0.2.20}.
-%todo: include the correct versions.
-The benchmark results of each function are the average of 10 runs.
+The experiments have been carried out on an Intel Xeon Gold 6248R processor with a Cascade micro-architecture. The processor consists of $24$ cores operating at a base frequency of $3$ GHz for non-AVX512 instructions.
+%Supporting AVX-512 instruction sets, the processor can perform two fused multiply-add instructions with 8 double-precision floating-point numbers every clock cycle.
+With $24$ cores and a peak AVX-512 boost frequency of $2.5$ GHz, the processor achieves a theoretical data throughput of ca. $1.92$ double precision TFlops/s
+We measured a peak performance of $1.78$ double precision Tflops/s using the likwid performance tool \tq.
+%todo paper 
 
+The source code has been compiled with \tf{GCC} \tf{v10.2} using the highest optimization level \tf{-Ofast} and \tf{-march=native}, \tf{-pthread} and \tf{-fopenmp}. 
+Loops within for the eighth case have been parallelized using \tf{GCC}'s \tf{OpenMP} \tf{v4.5} implementation.
+We have used the \tf{GEMV} and \tf{GEMM} implementation of the 2024.0 Intel oneAPI Math Kernel Library (oneMKL) and its own threading library \tf{mkl\_intel\_thread} together with the threading runtime library \tf{libiomp5}.
+The benchmark results of each function are the average of 10 runs.
 
 \subsubsection{Tensor Shapes} 
 We have used asymmetrically-shaped and symmetrically-shaped tensors in order to cover many possible use cases. 
