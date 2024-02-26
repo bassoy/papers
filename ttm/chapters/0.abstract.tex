@@ -5,15 +5,15 @@
 %Say where the tensor-matrix multiplication plays a 
 The tensor-matrix product is a compute-bound tensor operations and required in various tensor methods, e.g. for computing the ALS or HOSVD.
 %
-This paper presents a high-performance algorithm for the mode-$q$ tensor-matrix multiplication using the Loops-over-\tf{GEMM}s (\tf{LOG}) approach with dense tensors that can have any linear tensor layout, tensor order and dimensions.
+This paper presents a high-performance algorithm for the mode-$q$ tensor-matrix multiplication using the Loops-over-\tf{GEMM}s (LOG) approach with dense tensors that can have any linear tensor layout, tensor order and dimensions.
 %
-The proposed algorithm either directly calls efficient implementations of \tf{GEMM} with tensors or recursively apply \tf{GEMM} on higher-order tensor slices multiple times.
+The proposed algorithm either directly calls efficient implementations of \tf{GEMM} or batched \tf{GEMM} with tensors or recursively apply \tf{GEMM} on higher-order tensor slices multiple times.
 %
 %They are applicable to dense tensors with any linear tensor layout, tensor order and dimensions which can be runtime variable.
 %
-We discuss different tensor slicing methods and parallelization strategies using OpenMP with \tf{GEMM} and batched \tf{GEMM}.
+We discuss different tensor slicing methods and parallelization strategies using OpenMP and quantify their performance for different cases.
 %
-Our best implementation attains a median performance of $1.37$ single precision Tflops/s on an Intel Xeon Gold 6248R processor using Intel's \tf{MKL}.
+Our best implementation attains a median performance of $1.37$ double precision Tflops/s on an Intel Xeon Gold 6248R processor using Intel's MKL.
 %. that is $116$\% of the \tf{GEMV}'s sustained performance.
 %
 We show that the performance is only slightly affected by the tensor layout and the median performance is between \tq and \tq Tflops/s for a range of linear tensor formats.

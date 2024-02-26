@@ -9,65 +9,36 @@ It is a compute-bound tensor operation and has the same arithmetic intensity as 
 %%with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
 
 To our best knowledge, there has been three main approaches for implementing tensor contractions.
-The Transpose-Transpose-\tf{GEMM}-Transpose (\tf{TGGT}) approach reorganizes (flattens) tensors in order to perform a tensor contraction with an optimized matrix-matrix multiplication (\tf{GEMM}) implementation \cite{bader:2006:algorithm862, solomonik:2013:cyclops}.
-Implementations of a more recent method (\tf{GETT}) are based on high-performance \tf{GEMM}-like algorithms \cite{springer:2018:design, matthews:2018:high, abadi:2016:tensorflow}.
-A different method is the \tf{LOG} approach in which BLAS are utilized with multiple tensor slices or subtensors if possible \cite{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction}.
-Implementations of the \tf{LOG} and \tf{TTGT} approaches are in general easier to maintain and faster to port than \tf{GETT} implementations which might need to adapt vector instructions or blocking parameters according to a processor's micro-architecture.
+The Transpose-Transpose-\tf{GEMM}-Transpose (TGGT) approach reorganizes (flattens) tensors in order to perform a tensor contraction with an optimized matrix-matrix multiplication (\tf{GEMM}) implementation \cite{bader:2006:algorithm862, solomonik:2013:cyclops}.
+Implementations of a more recent method (GETT) are based on high-performance \tf{GEMM}-like algorithms \cite{springer:2018:design, matthews:2018:high, abadi:2016:tensorflow}.
+A different method is the LOG approach in which BLAS are utilized with multiple tensor slices or subtensors if possible \cite{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction}.
+Implementations of the LOG and TTGT approaches are in general easier to maintain and faster to port than GETT implementations which might need to adapt vector instructions or blocking parameters according to a processor's micro-architecture.
 %Compiler-based approaches like as described in \cite{gareev:2018:high} 
 
-Our analysis is motivated by the similarity of \tf{LOG}-based algorithms for the tensor-matrix and tensor-vector multiplications with the former operation being the generalization of the latter.
-We therefore applied the approach described in \cite{bassoy:2019:ttv} and combined it with the findings presented in \cite{li:2015:input}.
-Our proposed recursive in-place algorithms compute the tensor-matrix multiplication by executing \tf{GEMM}s with general subtensors or tensor slices.
+Our work is motivated by the fact that LOG-based implementations of the tensor-matrix and tensor-vector multiplication are similar. 
+We have therefore applied the approach in \cite{bassoy:2019:ttv} and combined it with the findings that are provided in \cite{li:2015:input}.
+Our algorithms are in-place and compute the tensor-matrix multiplication in parallel using OpenMP and fast \tf{GEMM} implementations with subtensors or tensor slices.
 They support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
 Input and output tensors do not need to be transposed or flattened into two-dimensional matrices.
-Despite, the generality of our approach, the proposed algorithms are implemented with less than 100 lines of C++ code where the complexity is hidden by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
-
-
-
-The following discussion analysis if 
- hopefully providing performance of \tf{GETT} implementations.
-
-
-
-with only eight cases executing 
-
-while 
-
-
-
-
-The following discussion introduces the base algorithm and variations thereof. 
-
-Moreover, except for few corner cases, we demonstrate that our algorithm is able to perform the multiplication with any contraction mode using multiple slice-matrix multiplications and only one \tf{GEMM} parameter configuration.
-
-, only requiring few cases calling \tf{GEMM}s routines without transposing the input and output tensors.
-
-
-%This approach is akin to the one proposed in \cite{li:2015:input, shi:2016:tensor.contraction} but targets the utilization of general matrix-matrix multiplication routines (\tf{GEMM}).
-%todo: hier die beiden ansätze analysieren und sagen was anders ist.
-
-
+The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processors compute units.
+Despite, the generality of our approach, every proposed algorithm can be implemented with less than 100 lines of \tf{C++} code where the complexity is hidden by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
+We have provided an open and free reference implementation of all algorithms.
 While we have used Intel's MKL for our benchmarks, the user is free to choose any library that provides the BLAS interface.
-%However, the presented algorithm requires twice as many cases and has also additional implementation options which has not been previously discussed.
-%that computes the tensor-matrix multiplication by executing \tf{GEMM} with slices and fibers of tensors.
 
-For parallel execution, we propose a variable loop fusion method with respect to the slice order of slice-vector multiplications. 
-%Our algorithms support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode.
-
-
-We have quantified the impact of the tensor layout, tensor slice order and parallel execution of slice-matrix multiplications with varying contraction modes.
-The runtime measurements of our implementations are compared with those presented in \cite{springer:2018:design, abadi:2016:tensorflow,matthews:2018:high}.
+The following analysis quantifies the impact of the tensor layout, the tensor slicing method and parallel execution of slice-matrix multiplications with varying contraction modes.
+The runtime measurements of our implementations are compared with those presented in \cite{springer:2018:design, matthews:2018:high} including Libtorch and Eigen.
 In summary, the main findings of our work are:
 \begin{itemize}
 	\item 
 	%
-	A tensor-matrix multiplication is implementable by an in-place algorithm with $1$ \tf{GEMV} and $7$ \tf{GEMM} parameter configurations supporting all combinations of contraction mode, tensor order and dimensions.
+	A tensor-matrix multiplication is implementable by an in-place algorithm with $1$ \tf{GEMV} and $7$ \tf{GEMM} parameter configurations supporting all combinations of contraction mode, tensor order and dimensions for any linear tensor layout.
 	%TODO: integrate the recipe from  \cite{dinapoli:2014:towards.efficient.use}
 	% validating the second recipe in \cite{dinapoli:2014:towards.efficient.use} with a precise description.
 	\item 
-	Algorithms with variable loop fusion and parallel slice-matrix multiplications can achieve the peak performance of a \tf{GEMM} with large slice dimensions. %  for about $45$\% of about tests cases with asymmetrically shaped tensors of $30$ (16) Gflops/s \tf{OpenBLAS}'s 
-	Moreover, the proposed algorithm is layout oblivious and is able to achieve a sustainable performance throughput for any linear tensor layout.
-	%TODO: do you want to test slicing?
+	Algorithms with variable loop fusion and parallel subtensor-matrix multiplications achieves the peak performance of a \tf{GEMM} with large slice dimensions.
+	%todo: quantify.
+	Moreover, all our proposed algorithms are layout oblivious and achieve at least a median throughput of \tq for any linear tensor layout.
+	%todo: do you want to tell what slicing method is usefull?
 	%The use of order-$2$ tensor slices helps to retain the performance at a peak level.
 	\item
 	A \tf{LOG}-based tensor-times-matrix implementation can be faster than \tf{TTGT}- and \tf{GETT}-based implementations that have been described in \cite{springer:2018:design, matthews:2018:high}.
