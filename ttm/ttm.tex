@@ -1,4 +1,4 @@
-\documentclass{llncs}
+\documentclass[runningheads]{llncs}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[colorlinks=true,urlcolor=black,pdftex,bookmarks,citecolor=blue]{hyperref}
@@ -18,27 +18,33 @@
 \usepackage{tikz}
 \usepackage{tikz-3dplot}
 \usepackage{subfigure}
-\usepackage{fancyhdr} % for footer
-\pagestyle{fancy}
-\fancyhf{} % clear all header and footer fields
-\setlength{\footskip}{3cm}
-\fancyfoot[C]
-{
-To cite this paper please use the final published version:\newline
-{\color{black}\url{https://dx.doi.org/10.1007/978-3-030-22734-0_3}}
-} % except the center
-\renewcommand{\footrulewidth}{0.4pt} %untere Trennlinie
+
+
+%commented
+%\usepackage{fancyhdr} % for footer
+%\pagestyle{fancy}
+%\fancyhf{} % clear all header and footer fields
+%\setlength{\footskip}{3cm}
+
+%commented
+%\fancyfoot[C]
+%{
+%To cite this paper please use the final published version:\newline
+%{\color{black}\url{https://dx.doi.org/10.1007/978-3-030-22734-0_3}}
+%} % except the center
+%\renewcommand{\footrulewidth}{0.4pt} %untere Trennlinie
 
 
 
-\renewcommand{\headrulewidth}{0pt} %obere Trennlinie
+%commented, needs fancyhdr package
+%\renewcommand{\headrulewidth}{0pt} %obere Trennlinie
 
 %\renewcommand{\headrulewidth}{0pt}
 %\renewcommand{\footrulewidth}{0pt}}
 
 %\usepackage[textsize=scriptsize]{todonotes}
-%\usepackage[running]{lineno}
-%\linenumbers
+\usepackage[running]{lineno}
+\linenumbers
 
 %\usepackage{draftwatermark}
 %\SetWatermarkText{Draft}
@@ -82,12 +88,12 @@ To cite this paper please use the final published version:\newline
 
 \titlerunning{High-Performance Tensor-Matrix Multiplication}
 
-\author{Cem Bassoy}
+\author{Cem Sava\c{s} Ba\c{s}soy}
 %\orcidID{0000-1111-2222-3333}\inst{1}
-\authorrunning{C. Bassoy} % abbreviated author list (for running head)
+\authorrunning{CS. Ba\c{s}soy} % abbreviated author list (for running head)
 %
 %%%% list of authors for the TOC (use if author list has to be modified)
-\tocauthor{Cem Bassoy}
+\tocauthor{Cem Sava\c{s} Ba\c{s}soy}
 %
 \institute{Hamburg University of Technology, Schwarzenbergstrasse 95, Germany,\\
 \email{cem.bassoy@gmail.com}}
