@@ -125,7 +125,7 @@ Case \ & Order $p$ \ & Layout $\mbpi$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} &
 \caption%
 {%
 \footnotesize
-Parameter configuration of the \tf{GEMV}- and \tf{gemm} routines with eight cases computing a tensor-matrix product in which $\mbB$ has the row-major format.
+Parameter configuration of the \tf{gemv}- and \tf{gemm} routines with eight cases computing a tensor-matrix product in which $\mbB$ has the row-major format.
 The BLAS arguments \tf{T}, \tf{M}, \tf{N}, etc. are chosen with respect to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
 \tf{gemm*} denotes multiple \tf{gemm} calls with different tensor slices.
 The number of rows for case 6 and 7 is given by $\bar{n}_q = (n_1 \cdots n_p) / n_q$.
@@ -146,7 +146,7 @@ The number of rows for case 6 and 7 is given by $\bar{n}_q = (n_1 \cdots n_p) / 
 
 
 \tit{Case 1 $(p=1)$:}
-The tensor-vector product $\mubA \times_1 \mbB$ can be computed with a \tf{GEMV} operation $\mba^T \cdot \mbB$ where $\mubA$ is an order-$1$ tensor, i.e. a vector $\mba$ of length $n_1$.
+The tensor-vector product $\mubA \times_1 \mbB$ can be computed with a \tf{gemv} operation $\mba^T \cdot \mbB$ where $\mubA$ is an order-$1$ tensor, i.e. a vector $\mba$ of length $n_1$.
 
 \tit{Case 2-5 $(p=2)$:}
 If $\mubA$ and $\mubC$ are order-$2$ tensors, i.e. a matrix $\mbA$ with dimensions $n_1$ and $n_2$, then a single \tf{gemm} suffices to compute the tensor-matrix product. 
