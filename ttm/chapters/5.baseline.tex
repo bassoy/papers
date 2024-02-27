@@ -125,8 +125,8 @@ Case \ & Order $p$ \ & Layout $\mbpi$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} &
 \caption%
 {%
 \footnotesize
-Parameter configuration of the \tf{GEMV}- and \tf{GEMM} routines with eight cases computing a tensor-matrix product.
-The arguments \tf{T}, \tf{M}, \tf{N}, etc. of the BLAS are chosen with respect to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
+Parameter configuration of the \tf{GEMV}- and \tf{GEMM} routines with eight cases computing a tensor-matrix product in which $\mbB$ has the row-major format.
+The BLAS arguments \tf{T}, \tf{M}, \tf{N}, etc. are chosen with respect to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
 \tf{GEMM*} denotes multiple \tf{GEMM} calls with different tensor slices.
 The number of rows for case 6 and 7 is given by $\bar{n}_q = (n_1 \cdots n_p) / n_q$.
 \vspace{-0.5cm}
@@ -205,13 +205,15 @@ The general subtensor-matrix approach contains $\pi_{\mhq+1}, \dots, \pi_{p}$ fr
 Their respective maximum degree of parallelism is $\prod_{r=\mhq+1}^{p} n_{\pi_r}$ and $\prod_{r=1}^{p} n_{r} / (n_{\pi_1} n_{\pi_{\mhq}})$.
 %todo: later mention that the number of free modes depends on the tensor order $p$ and contraction mode $q$.
 These free modes can be utilized by directly parallelizing the corresponding (free) loops with the tasking concept of OpenMP. 
+\begin{comment}
+%note: did not implement this one.
 We have placed the \tf{taskloop} directive in front of the loop in line 5 which allows to partition all free loops into tasks for parallel execution.
 This allows to collapse iterations of all free loops within the desired recursion levels into one larger divisible iteration space.
 One advantage of this approach is that both tensors or subtensors do not need to be flattened or reshaped and the existing algorithm can be reused.
 We will refer to as the \tbf{taskloops} over \tbf{sequential} \tbf{gemm} with subtensors or slices.
-%todo: mention later: We additionally specified the \tf{untied} clause which allows task regions to be executed by different threads.
+\end{comment}
 
-Alternatively, it is possible to flatten the tree-recursion and collapse all loops into one or two loops depending on the available fusible loops.
+It is possible to flatten the tree-recursion and collapse all loops into one or two loops depending on the available fusible loops.
 %fuse available free loops and then to parallelize the resulting loop using either the OpenMP \tf{parallel for} directive with flattened subtensors or to directly call batched matrix multiplication routines, e.g. \tf{BLAS\_batched\_gemm} if such a rountine available.
 Considering the slice-matrix approach, both tensors are flattened twice with $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{2},\pi_{\mhq-1}}$. 
 The resulting tensor is of order $4$ with dimensions $n_{\pi_1}, \mhn_{\pi_2}, n_{q}, \mhn_{\pi_4}$ where $\mhn_{\pi_2} = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_4} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.

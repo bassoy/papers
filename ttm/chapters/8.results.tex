@@ -1,113 +1,18 @@
-\begin{comment}
-\begin{figure*}[t]
-\input{figures/tlib.lb.pb2.performance.order1.single.surf}
-\input{figures/tlib.lb.pb2.performance.order2.single.surf}
-
-\input{figures/tlib.lb.pb2.performance.order3.single.surf}
-\input{figures/tlib.lb.pb2.performance.order10.single.surf}
-\caption{\footnotesize Average performance of the tensor-times-vector multiplication using the \textit{Tlib-LB-PN} version with variying contraction modes and tensor ranks. For most rank-mode constellations an average performance of $30$ Gflops can be observed. Tensor elements are encoded in single precision and stored contiguously in memory to the first-order, second-order, third-order and last-order storage formats. Arithmetic mean is calculated over the tensor size with a standard deviation ranging from $2$\% to $20$\%.}
-\label{fig:tlib.lb.pb2.vs.tlib.sb.pb3}
-\end{figure*}
-\end{comment}
-\begin{comment}
-\begin{figure*}[t!]
-\input{figures/performance.speedup.single.bar.symmetric}
-\caption{\footnotesize %
-%\footnotesize Dargestellt sind über die Tensorgröße und Tensorstufe gemittelten \textbf{Durchsätze in Gflops} der \textbf{Tensor}"=\textbf{Vektor}"=\textbf{Multiplikation}. \textbf{TLib-SB-P3} \ref{coord_perf_float:1_1},\textbf{TLib-LB-P3} \ref{coord_perf_float:2_1},\textbf{TCL} \ref{coord_perf_float:3_1},\textbf{TBLIS} %\ref{coord_perf_float:4_1},\textbf{EIGEN} \ref{coord_perf_float:5_1}. Daten sind in \textbf{Floating-Point<Single>} codiert.
-%\label{fig:ttv_plot_perf_float}	
-Average performance of tensor-times-vector multiplication implementations with varying contraction modes or tensor order. 
-\ref{coord_perf_float_symmetric_size_mode:1} \ttt{TLib-LB-P3}, \ref{coord_perf_float_symmetric_size_mode:2} \ttt{TLib-SB-P3}, \ref{coord_perf_float_symmetric_size_mode:3} \ttt{Tcl}, \ref{coord_perf_float_symmetric_size_mode:4} \ttt{TBlis}, \ref{coord_perf_float_symmetric_size_mode:5} \ttt{Eigen}.
-%Most order-mode combinations exhibit an average performance of $30$ Gflops. 
-Tensor are symmetrically shaped using the second test shape array.
-Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order format. 
-Arithmetic mean is calculated over the tensor size and either over mode or order.
-% with a standard deviation ranging from $2$\% to $20$\%
-\label{fig:performance.speedup.single.bar.symmetric}
-}
-\end{figure*}
-\end{comment}
-\begin{comment}
-\begin{figure*}[t!]
-\input{figures/performance.speedup.single.bar.nonsymmetric}
-\caption{\footnotesize %
-%\footnotesize Dargestellt sind über die Tensorgröße und Tensorstufe gemittelten \textbf{Durchsätze in Gflops} der \textbf{Tensor}"=\textbf{Vektor}"=\textbf{Multiplikation}. \textbf{TLib-SB-P3} \ref{coord_perf_float:1_1},\textbf{TLib-LB-P3} \ref{coord_perf_float:2_1},\textbf{TCL} \ref{coord_perf_float:3_1},\textbf{TBLIS} %\ref{coord_perf_float:4_1},\textbf{EIGEN} \ref{coord_perf_float:5_1}. Daten sind in \textbf{Floating-Point<Single>} codiert.
-%\label{fig:ttv_plot_perf_float}	
-Average performance of tensor-times-vector multiplication implementations with varying contraction modes or tensor order. 
-\ref{coord_perf_float_asymmetric_size_mode:1} \ttt{TLib-LB-P3}, \ref{coord_perf_float_asymmetric_size_mode:2} \ttt{TLib-SB-P3}, \ref{coord_perf_float_asymmetric_size_mode:3} \ttt{Tcl}, \ref{coord_perf_float_asymmetric_size_mode:4} \ttt{TBlis}, \ref{coord_perf_float_asymmetric_size_mode:5} \ttt{Eigen}.
-%Most order-mode combinations exhibit an average performance of $30$ Gflops. 
-Tensor are symmetrically shaped using the second test shape array.
-Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order format. 
-Arithmetic mean is calculated over the tensor size and either over mode or order.
-% with a standard deviation ranging from $2$\% to $20$\%
-\label{fig:performance.speedup.single.bar.nonsymmetric}
-}
-\end{figure*}
-\end{comment}
-\begin{comment}
-\begin{figure*}[t]
-\input{figures/performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
-\caption{\footnotesize Average performance of the tensor-times-vector multiplication implemented by competing frameworks for variying contraction modes and tensor order. 
-Most order-mode combinations exhibit an average performance of $30$ Gflops. 
-Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order, second-order, third-order and last-order storage formats. 
-Arithmetic mean is calculated over the tensor size with a standard deviation ranging from $2$\% to $20$\%.}
-\label{fig:performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
-\end{figure*}
-\end{comment}
-\begin{comment}
-\begin{figure*}[t]
-\input{figures/speedup.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
-%\input{figures/tlib.lb.pb2.performance.order1.single.surf}
-%\input{figures/tlib.lb.pb2.performance.order2.single.surf}
-%\input{figures/tlib.lb.pb2.performance.order3.single.surf}
-%\input{figures/tlib.lb.pb2.performance.order10.single.surf}
-\caption{\footnotesize Average speedup of the tensor-times-vector multiplication implemented by competing frameworks for variying contraction modes and tensor order. 
-Most order-mode constellations exhibit an average performance of $30$ Gflops. 
-Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order, second-order, third-order and last-order storage formats. 
-Arithmetic mean is calculated over the tensor size with a standard deviation ranging from $2$\% to $20$\%.}
-\label{fig:speed.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
-\end{figure*}
-\end{comment}
-
-
-
 \section{Results and Discussion}
 \label{sec:results}
 
-\begin{comment}
-The tensor-vector multiplication is a generalization of the two-dimensional case from the computational perspective.
-It computes a vector-matrix product for $p=2$ and $q=1$ and a matrix-vector product for $p=2$ and $q=2$. 
-Its arithmetic intensity is equal to that of a matrix-vector multiplication.
-Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
-Therefore, we expect the performance of the following tensor-vector multiplication and a GEMV matrix-vector multiplication is the goal.
-\end{comment}
-
-
-
-
-
 \begin{figure*}[t]
-\input{figures/performance.tlib.sb.lb.order1.single.surf.nonsymmetric}
+\input{figures/performance.tlib.contour}
 \caption{%
 \footnotesize %
-Average performance maps of four tensor-vector multiplications with varying tensor orders $p$  and contraction modes $q$.		
-Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order storage format.
-Tensors are \tit{asymmetrically}-\tit{shaped} with dimensions.
+Performance maps in double-precision Tflops/s of TLIB algorithms for the tensor-matrix multiplication with varying tensor orders $p$  and contraction modes $q$. 
+Tensors are asymmetrically-shaped on the top and symmetrically-\tit{shaped} on the bottom.
+(a) and (e) \tf{gemm\_batch} with subtensors, (b) and (e) parallel loops over single-threaded \tf{gemm} with tensor slices, (c) and (f) parallel loops over single-threaded \tf{gemm} with subtensors.
 %Arithmetic mean is calculated over the tensor size.
 \label{performance.tlib.sb.lb.order1.single.surf.nonsymmetric}
 }
 \end{figure*}
-\begin{comment}
-\begin{figure*}[t]
-	\input{figures/performance.tlib.lb.layout.single.surf.nonsymmetric}
-	\caption{
-		\footnotesize Average performance maps of the \tf{TLIB-LB-PN} implementation with varying contraction modes and tensor order. 
-		Tensor elements are encoded in single-precision and stored contiguously in memory according to the $1$-order, $2$-order, $9$-order and $10$-order storage format, respectively. 
-		Tensors are \tit{asymmetrically}-\tit{shaped} with dimensions from the first test setup.
-		%Arithmetic mean is calculated over the tensor size.
-		\label{fig:performance.tlib.lb.layout.single.surf.nonsymmetric}
-	}
-\end{figure*}
-\end{comment}
+
 \begin{figure*}[t]
 	\input{figures/performance.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric}
 	
@@ -172,7 +77,7 @@ In case of the column-major format and with less than or equal to $256$ rows, th
 %The $8$-th case is implemented according to the description in Section \ref{subsec:parallel.multi-loops}.
 
 
-\subsubsection{Matrix-Vector Multiplication}
+\subsubsection{Matrix-Matrix Multiplication}
 Fig.~\ref{performance.tlib.sb.lb.order1.single.surf.nonsymmetric} shows average performance values of the four versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN} with asymmetrically-shaped tensors.
 In case $2$ (region $2$), the shape tuple of the two-order tensor is equal to $(n_2,n_1)$ where $n_2$ is set to $1024$ and $n_1$ is $c \cdot 2^{14}$ for $1 \leq c \leq 32$. % in the row"=major format 
 In case $6$ (region $6$), the $p$-order tensor is interpreted as a matrix with a shape tuple $(\bar{n}_1,n_1)$ where $n_1$ is $c \cdot 2^{15-r}$ for $1 \leq c \leq 32$ and $2 < r < 10$.
