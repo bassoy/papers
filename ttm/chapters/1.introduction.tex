@@ -44,6 +44,10 @@ In summary, the main findings of our work are:
 	A \tf{LOG}-based tensor-times-matrix implementation can be faster than \tf{TTGT}- and \tf{GETT}-based implementations that have been described in \cite{springer:2018:design, matthews:2018:high}.
 	%TODO: Put in the numbers.
 	Using symmetrically shaped tensors, an average speedup of \tq x to \tq x for single and double precision floating point computations can be achieved.
+	
+	%todo (idea): \item we show that by integrating only case 1 to 7, other libraries can improve the performance by...
+	%todo (idea): we show that multi-threading both free and contraction loops does not necessarily yield better performance
+	%todo (idea): parallel loops iterating over tensor slices with large leading and contraction dimensions perform better than a a batched_gemm iterating over subtensors with a larger leading dimension.
 \end{itemize}
 
 The remainder of the paper is organized as follows. 

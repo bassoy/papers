@@ -20,6 +20,47 @@
 \usepackage{subfigure}
 
 
+
+\usetikzlibrary{matrix,arrows,positioning,calc,patterns} % shapes,
+\usepgfplotslibrary{statistics}
+%\theoremstyle{remark}
+
+
+\pgfplotscreateplotcyclelist{white black cycle list 1}{%
+	every mark/.append style={fill=black},mark=*\\%
+	every mark/.append style={fill=white!80!black},mark=square*\\%
+	every mark/.append style={fill=white!60!black},mark=otimes*\\%
+	every mark/.append style={fill=white!40!black},mark=triangle*\\%
+	every mark/.append style={fill=white!20!black},mark=pentagon*\\%
+}
+
+\pgfplotscreateplotcyclelist{white black cycle list 2}{%
+	every mark/.append style={fill=black},mark=*\\%
+%	every mark/.append style={fill=white!80!black},mark=square*\\%
+	every mark/.append style={fill=white!60!black},mark=otimes*\\%
+	every mark/.append style={fill=white!40!black},mark=triangle*\\%
+	every mark/.append style={fill=white!20!black},mark=pentagon*\\%
+}
+
+\pgfplotscreateplotcyclelist{my exotic compare 1}{
+	black,   dashed, line width = 2, every mark/.append style={fill=teal!80!black}\\%,mark=*\\
+	orange,          line width = 2, every mark/.append style={fill=orange!80!black}\\%,mark=square*\\
+	cyan!90!black,   line width = 2, every mark/.append style={fill=cyan!80!black}\\%,mark=otimes*\\
+	purple!80!white, line width = 2, every mark/.append style={solid,fill=gray}\\%,mark=otimes*\\
+	lime!80!black,   line width = 2, every mark/.append style={solid,fill=yellow!80!black}\\%,mark=square*\\	
+}
+
+\pgfplotscreateplotcyclelist{my exotic compare 2}{
+	black,   dashed, line width = 2, every mark/.append style={fill=teal!80!black}\\%,mark=*\\
+	%orange,          line width = 2, every mark/.append style={fill=orange!80!black}\\%,mark=square*\\
+	cyan!90!black,   line width = 2, every mark/.append style={fill=cyan!80!black}\\%,mark=otimes*\\
+	purple!80!white, line width = 2, every mark/.append style={solid,fill=gray}\\%,mark=otimes*\\
+	lime!80!black,   line width = 2, every mark/.append style={solid,fill=yellow!80!black}\\%,mark=square*\\	
+}
+
+
+
+
 %commented
 %\usepackage{fancyhdr} % for footer
 %\pagestyle{fancy}

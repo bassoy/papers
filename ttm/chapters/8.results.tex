@@ -5,69 +5,71 @@
 \input{figures/performance.tlib.contour}
 \caption{%
 \footnotesize %
-Performance maps in double-precision Tflops/s of TLIB algorithms for the tensor-matrix multiplication with varying tensor orders $p$  and contraction modes $q$. 
-Tensors are asymmetrically-shaped on the top and symmetrically-\tit{shaped} on the bottom.
-(a) and (e) \tf{gemm\_batch} with subtensors, (b) and (e) parallel loops over single-threaded \tf{gemm} with tensor slices, (c) and (f) parallel loops over single-threaded \tf{gemm} with subtensors.
-%Arithmetic mean is calculated over the tensor size.
-\label{performance.tlib.sb.lb.order1.single.surf.nonsymmetric}
+Performance maps in double-precision Tflops/s of the proposed tensor-times-matrix algorithms with varying tensor orders $p$  and contraction modes $q$. 
+Tensors are asymmetrically-shaped on the upper plots and symmetrically-shaped on the lower plots.
+The algorithm of 
+(a) and (e) executes \tf{gemm\_batch} with subtensors, %
+(b) and (e) parallel loops over single-threaded \tf{gemm} with tensor slices, %
+(c) and (f) parallel loop over single-threaded \tf{gemm} with subtensors.
+\label{performance.tlib.contour}
 }
 \end{figure*}
 
+
 \begin{figure*}[t]
-	\input{figures/performance.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric}
-	
-	\input{figures/performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
-	\caption{ %
-		\footnotesize%
-		Average performance maps of tensor-vector multiplication implementations using \tit{asymmetrically}-\tit{shaped} (top) and \tit{symmetrically}-\tit{shaped} (bottom) tensors with varying contraction modes and tensor order.
-		Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order storage format. 
-		%Arithmetic mean is calculated over the tensor size.
-	}
-	\label{fig:mean.performance.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric}
-\end{figure*}
-\begin{figure*}[t]
-	\input{figures/speedup.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric}
-	
-	\input{figures/speedup.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
-	\caption{ %
-		\footnotesize%
-		Relative average performance maps of tensor-vector multiplication implementations using \tit{asymmetrically} (top) and \tit{symmetrically} (bottom) shaped tensors with varying contraction modes and tensor order.
-		Relative performance (speedup) is the performance ratio of \tf{TLIB-SB-PN} (top) and \tf{TLIB-LB-PN} (bottom) to \tf{TBLIS}, \tf{TCL} and \tf{EIGEN}, respectively. 
-		Tensor elements are encoded in single-precision and stored contiguously in memory according to the first-order storage format. 
-		%Arithmetic mean is calculated over the tensor size.
-	}
-	\label{fig:performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric}
+\input{figures/performance.tlib.case8}
+\caption{ %
+\footnotesize%
+Box plots visualizing performance statics in double-precision Tflops/s of the proposed tensor-times-matrix algorithms for the 8-th case.
+Tensors are asymmetrically-shaped on the left plot and symmetrically-shaped on the right plot.
+The Algorithm of
+(a) executes \tf{gemm\_batch} with subtensors,
+(b) and (e) sequential loops over multi-threaded \tf{gemm}, %
+(c) and (f) parallel loops over single-threaded \tf{gemm}, %
+(d) and (g) parallel loops over multi-threaded \tf{gemm}.
+The algorithms (b,c,d) and (e,f,g) are executed with tensor slices or subtensors, respectively.
+%(a) \texttt{tlib<bgemm,subtensor,all>}, (b) \texttt{tlib<tgemm,slice>}, (c) \texttt{tlib<ompfor,slice,all>}, (d) \texttt{tlib<ompfor,tgemm,slice,all>}, (e) \texttt{tlib<tgemm,subtensor>}, (f) \texttt{tlib<ompfor,subtensor,all>}, (g) \texttt{tlib<ompfor,tgemm,subtensor,outer>}, Tensor elements are \textbf{64-Bit floating point} numbers.\\
+%The dashed horizontal line denotes the measured upper bound of the available throughput.
+%The horizontal lines with a dot are the median throughput of the \tf{libstdc++}.
+%Numbers below the lower whisker are the median values of the corresponding boxes.
+}
+\label{fig:performance.tlib.case8}
 \end{figure*}
 
-%The z-axis minima and maxima are the global rounded minima and maxima performance of the corresponding implementation.
 
-%\subsubsection{Matrix-Vector Multiplication}
-%\label{subsec:performance.gemv}
-%utl::Range {utl::Dim{256,256*256}, utl::Dim{256,-256},  utl::Dim{256*256,256}},
-%\paragraph{Measurement 1:}
-\begin{comment}
-We have measured \tf{OpenBLAS}'s \tf{GEMV} routine with $2\times 256$ different matrix shapes featuring the same number of elements that are stored according to the column-major format.
-Starting with $256$ rows and $65536$ columns, we increased the number of rows and simultaneously decreased the number of columns by $256$.
-In general, \tf{GEMV} provides for column- and row-major matrices a sustained performance around $32$ Gflops/s in single precision.
-However, the performance diminishes with decreasing number of rows and columns for the column-major and row-major format. 
-%TODO: Say when
-In case of the column- and row-major format, the performance drops to one fourth of $32$ Gflops/s for matrix shapes $(256,65536)$ and $(65536,256)$, respectively.
-%-storage format combination are $(256,65536)$-column- and $(65536,256)$-row-major-format.
-%However, the performance continually diminishes with decreasing number of rows for the column-major. 
-%It finally drops to one fourth of the sustained performance when the matrix shape is equal to $(256,65536)$.
-% which explains some of the benchmark results of the implemented functions.
-% tensor-vector multiplication  for the cases $2$ to $7$ in Table \ref{tab:mapping}.
-%An application of \tf{MKL}'s \tf{GEMV} routine with a slightly better sustained performance of $31$ Gflops/s behaves differently for 
+\begin{figure*}[t]
+\input{figures/performance.tlib.format}
+\caption{ %
+\footnotesize%
+Box plots visualizing performance statics in double-precision Tflops/s of a tensor-times-matrix algorithm for linear $k$-order tensor formats.
+The algorithm loops over single-threaded \tf{gemm} with tensor slices with asymmetrically-shaped tensors on the left plot and with subtensors with symmetrically-shaped tensors on the right plot.
+Box plot number $k$ denotes the utilized $k$-order storage.
+}
+\label{fig:performance.tlib.format}
+\end{figure*}
 
-%Assuming the order-$2$ tensor to be stored in the first-order storage format, the \ttt{gemv} might be a limiting factor for the cases 2, 3
-%fhg::profile::ranges3D_1: utl::Range {utl::Dim{16,256,1024}, utl::Dim{16,0,0},  utl::Dim{256,256,1024}},
-%fhg::profile::ranges3D_2: utl::Range {utl::Dim{256,16,1024}, utl::Dim{0,16,0},  utl::Dim{256,256,1024}},
-%\paragraph{Measurement 2:}
-The second measurement contains $2\times 2 \times 16$ measurements of the \ttt{gemv} with smaller matrices.\todo{finish.}
-%rows or columns 
-In case of the column-major format and with less than or equal to $256$ rows, the \ttt{gemv} also significantly slows down to $4$ Gflops/s.
-%Both operations having the same arithmetic intensity, we aim for the tensor-vector and matrix-vector
-\end{comment}
+\begin{figure*}[t]
+\input{figures/performance.comparison}
+\caption{ %
+\footnotesize%
+Cumulative performance distributions of tensor-times-matrix algorithms in double-precision Tflops/s.
+Each distribution line belongs to a library:
+\textbf{tlib} (\ref{coord:nonsymmetric.tlib.slice}), %
+\textbf{tcl} (\ref{coord:nonsymmetric.tcl}), %
+\textbf{tblis} (\ref{coord:nonsymmetric.tblis}), %
+\textbf{libtorch} (\ref{coord:nonsymmetric.libtorch}), %
+\textbf{eigen} (\ref{coord:nonsymmetric.eigen}).
+Libraries have been tested with asymmetrically-shaped (left plot) and symmetrically-shaped tensors (right plot).
+%Box plot number $k$ denotes the utilized $k$-order storage.
+%\caption{
+%\footnotesize 
+%Figure contains \textbf{throughput} data for the tensor-times-matrix product.  Tensor elements are \textbf{64-Bit floating point} numbers.
+%\label{fig:plot_performance_double}
+%The whole test set contains 9 tensors with different tensor sizes.}
+%\end{figure}
+}
+\label{fig:performance.comparison}
+\end{figure*}
 
 %The following analysis considers four parallel versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN}.
 %\tf{SB} (small-block) and \tf{LB} (large-block) denote parallel slice-vector multiplications where each thread recursively calls a single-threaded \tf{GEMV} with mode-$2$ and mode-$\mhq$ slices, respectively.

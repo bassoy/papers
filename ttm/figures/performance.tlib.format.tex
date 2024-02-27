@@ -1,0 +1,67 @@
+\begin{tikzpicture}
+\begin{axis}[boxplot/draw direction=y,
+width=0.5\textwidth,
+height=0.3\textheight,
+style={font=\footnotesize},
+grid=major,
+grid style={dotted},
+align=center,
+%xlabel={Function},
+ylabel={TFlops/s},
+ylabel near ticks,
+%title={Performance (Tflops/s)},
+xtick={1,2,3,4,5,6,7},
+xticklabels={(a),(b),(c),(d),(e),(f),(g)},
+ymin=0,
+ymax=1200,
+ytick={0,400,800,1200},
+yticklabels={0,0.4,0.8,1.2},
+cycle list={{black}},
+boxplot/variable width,
+boxplot/box extend=0.5,
+boxplot/every box/.style={fill=black,thick},
+boxplot/every median/.style={draw=white,thin},
+]
+\addplot+[boxplot prepared={lower whisker = 266.569447, lower quartile = 376.350335, median = 624.036498, upper quartile = 832.132643, upper whisker = 1016.769812} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 143.498209, lower quartile = 539.122155, median = 599.114424, upper quartile = 716.857247, upper whisker = 853.256164} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 251.719547, lower quartile = 795.744268, median = 878.876999, upper quartile = 990.600358, upper whisker = 1083.141315} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 253.062096, lower quartile = 769.524033, median = 876.813618, upper quartile = 996.367393, upper whisker = 1089.961445} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 232.646362, lower quartile = 543.572929, median = 612.591153, upper quartile = 772.430992, upper whisker = 907.405842} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 115.525636, lower quartile = 245.501766, median = 474.268480, upper quartile = 827.340091, upper whisker = 1074.841432} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 115.736707, lower quartile = 244.313241, median = 476.310064, upper quartile = 850.940231, upper whisker = 1081.524877} ] coordinates{};
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[boxplot/draw direction=y,
+width=0.5\textwidth,
+height=0.3\textheight,
+style={font=\footnotesize},
+grid=major,
+grid style={dotted},
+align=center,
+%xlabel={Function},
+ylabel={Tflops/s},
+ylabel near ticks,
+%title={},
+xtick={1,2,3,4,5,6,7},
+xticklabels={(a),(b),(c),(d),(e),(f),(g)},
+ymin=0,
+ymax=700,
+ytick={0,200,500,700},
+yticklabels={0,0.2,0.5,0.7},
+cycle list={{black}},
+boxplot/variable width,
+boxplot/box extend=0.5,
+boxplot/every box/.style={fill=black,thick},
+boxplot/every median/.style={draw=white,thin},
+]
+\addplot+[boxplot prepared={lower whisker = 16.534967, lower quartile = 72.196876, median = 99.108364, upper quartile = 184.879657, upper whisker = 555.167929} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 2.673579, lower quartile = 5.507544, median = 8.244625, upper quartile = 17.668563, upper whisker = 118.410396} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 7.173401, lower quartile = 27.357526, median = 67.526123, upper quartile = 170.218147, upper whisker = 652.655485} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 7.260287, lower quartile = 27.337755, median = 68.777435, upper quartile = 169.466827, upper whisker = 646.502407} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 4.375178, lower quartile = 11.429636, median = 30.269009, upper quartile = 64.143799, upper whisker = 225.166743} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 13.490677, lower quartile = 69.719918, median = 104.479408, upper quartile = 192.081053, upper whisker = 657.021845} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 13.539225, lower quartile = 70.920634, median = 104.708396, upper quartile = 192.224309, upper whisker = 657.014464} ] coordinates{};
+\end{axis}
+\end{tikzpicture}
