@@ -9,7 +9,10 @@ We measured a peak performance of $1.78$ double precision Tflops/s using the lik
 The source code has been compiled with \tf{GCC} \tf{v10.2} using the highest optimization level \tf{-O3} and \tf{-march=native}, \tf{-pthread} and \tf{-fopenmp}. 
 Loops within for the eighth case have been parallelized using \tf{GCC}'s \tf{OpenMP} \tf{v4.5} implementation.
 We have used the \tf{GEMV} and \tf{GEMM} implementation of the 2024.0 Intel MKL and its own threading library \tf{mkl\_intel\_thread} together with the threading runtime library \tf{libiomp5}.
+%todo: number of threads set in openmp and for intel mkl.
 The benchmark results of each function are the average of 10 runs.
+
+
 
 \subsubsection{Tensor Shapes} 
 We have used asymmetrically-shaped and symmetrically-shaped tensors in order to cover many possible use cases. 

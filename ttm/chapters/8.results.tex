@@ -79,7 +79,15 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 %The $8$-th case is implemented according to the description in Section \ref{subsec:parallel.multi-loops}.
 
 
-\subsubsection{Matrix-Matrix Multiplication}
+\subsubsection{Slicing and Parallelism}
+Fig. \ref{performance.tlib.contour} shows mean performance values of the <omp-par,seq-gemm> version with subtensors or tensor slices and the <gemm-batch> version with subtensors.
+
+
+
+
+the four versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN} with asymmetrically-shaped tensors.
+
+
 Fig.~\ref{performance.tlib.sb.lb.order1.single.surf.nonsymmetric} shows average performance values of the four versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN} with asymmetrically-shaped tensors.
 In case $2$ (region $2$), the shape tuple of the two-order tensor is equal to $(n_2,n_1)$ where $n_2$ is set to $1024$ and $n_1$ is $c \cdot 2^{14}$ for $1 \leq c \leq 32$. % in the row"=major format 
 In case $6$ (region $6$), the $p$-order tensor is interpreted as a matrix with a shape tuple $(\bar{n}_1,n_1)$ where $n_1$ is $c \cdot 2^{15-r}$ for $1 \leq c \leq 32$ and $2 < r < 10$.
