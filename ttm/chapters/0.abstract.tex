@@ -2,26 +2,21 @@
 %TODO: Check tensor methods
 \begin{abstract}
 %
-%Say where the tensor-matrix multiplication plays a 
 The tensor-matrix product is a basic tensor operation that is required by various tensor methods such as the ALS or the HOSVD.
 %
-This paper presents flexible high-performance algorithms for the mode-$q$ tensor-matrix multiplication that computes the product according to the the Loops-over-\tf{gemm}s (LOG) approach.
+This paper presents flexible high-performance algorithms for the mode-$q$ tensor-matrix multiplication that computes the product according to the the Loops-over-\tf{gemm}s (LOG) approach with \tf{gemm} being the general matrix multiply
 %
 Our algorithms can process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
 %
-%They are applicable to dense tensors with any linear tensor layout, tensor order and dimensions which can be runtime variable.
+We discuss different tensor slicing methods with parallelization strategies and propose six variations of a base algorithm which calls a \tf{gemv}, \tf{gemm} and/or a \tf{gemm\_batch} with subtensors or tensor slices.
 %
-We discuss different tensor slicing methods with parallelization strategies and propose six variations of a base algorithm which calls a \tf{gemv}, \tf{gemm}s and/or a \tf{gemm\_batch} with subtensors or tensor slices.
-%
-%The algorithms either call a \tf{gemm} with tensors, a \tf{gemm\_batch} with subtensors or multiple \tf{gemm}s with subtensors or tensor slices.
-%
-Their performance is quantified for a large tensor set that contains tensors with various shapes.
+Their performance is quantified for a set of tensors with various shapes and tensor order.
 %
 The best-performing version attains a median performance of $1.37$ double precision Tflops/s on an Intel Xeon Gold 6248R processor using Intel's MKL.
-%. that is $116$\% of the \tf{GEMV}'s sustained performance.
 %
 We show that the performance is only slightly affected by the tensor layout and the median performance is between \tq and \tq Tflops/s for a range of linear tensor formats.
 %
 Our fastest version of the tensor-matrix multiplication is on average at least $14.05$\% and up to $3.79$ x faster than other state-of-the-art implementations, including Libtorch and Eigen.
+%todo: check if that is true.
 %\keywords{First keyword  \and Second keyword \and Another keyword.}
 \end{abstract}

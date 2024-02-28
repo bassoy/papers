@@ -124,10 +124,12 @@ Case \ & Order $p$ \ & Layout $\mbpi$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} &
 \caption%
 {%
 \footnotesize
-Parameter configuration of the \tf{gemv}- and \tf{gemm} routines with eight cases computing a tensor-matrix product in which $\mbB$ has the row-major format.
-The BLAS arguments \tf{T}, \tf{M}, \tf{N}, etc. are chosen with respect to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
+Eight \tf{gemv} and \tf{gemm} cases for the mode-$q$ tensor-matrix multiplication.
+%Argument for \tf{gemv} and \tf{gemm} with 
+Arguments \tf{T}, \tf{M}, \tf{N}, etc. of the BLAS are chosen with respect to the tensor order $p$, layout $\mbpi$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
 \tf{gemm*} denotes multiple \tf{gemm} calls with different tensor slices.
-The number of rows for case 6 and 7 is given by $\bar{n}_q = (n_1 \cdots n_p) / n_q$.
+Argument $\bar{n}_q$ for case 6 and 7 is given by $\bar{n}_q = 1/n_q \prod_r^p n_r$.
+Matrix $\mbB$ has the row-major format.
 \vspace{-0.5cm}
 }
 \label{tab:mapping}
@@ -193,9 +195,9 @@ The single indices of the subtensors $\mubA_{\mbpi_{1,\mhq}}'$ and $\mubC_{\mbpi
  
 \subsection{Parallel BLAS-based Algorithms}
 \label{subsec:parallel.multi-loops}
-Note that cases 1 to 7 only call a single \tf{gemm} and cannot be further parallelized.
-Hence, the following paragraphs discuss parallel methods for the eighth case.
-\vspace{-1em}
+The following paragraphs discuss three parallel approaches for the eighth case.
+Cases 1 to 7 already call a multi-threaded \tf{gemm} and cannot be further optimized.
+\vspace{-2em}
 
 \subsubsection{Sequential Loops and Multithreaded \tf{gemm}}
 One straight forward approach is to use algorithm \ref{alg:ttm.sequential.coalesced} as it is and to sequentially call a multi-threaded \tf{gemm} in the base case of the algorithm as described in subsection \ref{sec:design:blas.based.algorithm}.

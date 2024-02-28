@@ -31,18 +31,17 @@ In summary, the main findings of our work are:
 \begin{itemize}
 	\item 
 	%
-	A tensor-matrix multiplication is implementable by an in-place algorithm with $1$ \tf{gemv} and $7$ \tf{gemm} parameter configurations supporting all combinations of contraction mode, tensor order and dimensions for any linear tensor layout.
-	%TODO: integrate the recipe from  \cite{dinapoli:2014:towards.efficient.use}
-	% validating the second recipe in \cite{dinapoli:2014:towards.efficient.use} with a precise description.
+	A tensor-matrix multiplication can be implemented by an in-place algorithm with $1$ \tf{gemv} and $7$ \tf{gemm} calls supporting all combinations of contraction mode, tensor order and dimensions for any linear tensor layout.
 	\item 
-	Algorithms with variable loop fusion and parallel subtensor-matrix multiplications achieves the peak performance of a \tf{gemm} with large slice dimensions.
+	Our algorithm with variable loop fusion and parallel slice-matrix multiplications is on average $17$\% faster than a single batched \tf{gemm} call when the contraction and leading dimensions are greater than $256$.
 	%todo: quantify.
-	Moreover, all our proposed algorithms are layout oblivious and achieve at least a median throughput of \tq for any linear tensor layout.
+	\item 
+	All our proposed algorithms are layout oblivious and achieve at least a median throughput of \tq for any linear tensor layout.
 	%todo: do you want to tell what slicing method is usefull?
 	%todo: slicing method with subtensors enables the use of a single gemm\_batch
 	%The use of order-$2$ tensor slices helps to retain the performance at a peak level.
 	\item
-	A \tf{LOG}-based tensor-times-matrix implementation can be faster than \tf{TTGT}- and \tf{GETT}-based implementations that have been described in \cite{springer:2018:design, matthews:2018:high}.
+	Our \tf{LOG}-based tensor-times-matrix implementation are in general faster than \tf{TTGT}- and \tf{GETT}-based implementations that have been described in \cite{springer:2018:design, matthews:2018:high} including actively developed libraries such as Libtorch and Eigen.
 	%TODO: Put in the numbers.
 	Using symmetrically shaped tensors, an average speedup of \tq x to \tq x for single and double precision floating point computations can be achieved.
 	

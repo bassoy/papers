@@ -7,10 +7,9 @@
 \footnotesize %
 Performance maps in double-precision Tflops/s of the proposed tensor-times-matrix algorithms with varying tensor orders $p$  and contraction modes $q$. 
 Tensors are asymmetrically-shaped on the upper plots and symmetrically-shaped on the lower plots.
-The algorithm of 
-(a) and (e) executes \tf{gemm\_batch} with subtensors, %
-(b) and (e) parallel loops over single-threaded \tf{gemm} with tensor slices, %
-(c) and (f) parallel loop over single-threaded \tf{gemm} with subtensors.
+In (a) and (d) function \tf{<gemm\_batch>} is executed,
+in (b) and (e) \tf{<par-loops,seq-gemm>} with tensor slices, %
+in (c) and (f) \tf{<par-loops,seq-gemm>} with subtensors.
 \label{performance.tlib.contour}
 }
 \end{figure*}
@@ -22,12 +21,11 @@ The algorithm of
 \footnotesize%
 Box plots visualizing performance statics in double-precision Tflops/s of the proposed tensor-times-matrix algorithms for the 8-th case.
 Tensors are asymmetrically-shaped on the left plot and symmetrically-shaped on the right plot.
-The Algorithm of
-(a) executes \tf{gemm\_batch} with subtensors,
-(b) and (e) sequential loops over multi-threaded \tf{gemm}, %
-(c) and (f) parallel loops over single-threaded \tf{gemm}, %
-(d) and (g) parallel loops over multi-threaded \tf{gemm}.
-The algorithms (b,c,d) and (e,f,g) are executed with tensor slices or subtensors, respectively.
+In (a) function version \tf{<gemm\_batch>} is executed,
+in (b) and (e) \tf{<seq-loops,par-gemm>}, %
+in (c) and (f) \tf{<par-loops,seq-gemm>}, %
+in (d) and (g) \tf{<par-loops,par-gemm>}, %
+Functions (b,c,d) and (e,f,g) are executed with tensor slices or subtensors, respectively.
 %(a) \texttt{tlib<bgemm,subtensor,all>}, (b) \texttt{tlib<tgemm,slice>}, (c) \texttt{tlib<ompfor,slice,all>}, (d) \texttt{tlib<ompfor,tgemm,slice,all>}, (e) \texttt{tlib<tgemm,subtensor>}, (f) \texttt{tlib<ompfor,subtensor,all>}, (g) \texttt{tlib<ompfor,tgemm,subtensor,outer>}, Tensor elements are \textbf{64-Bit floating point} numbers.\\
 %The dashed horizontal line denotes the measured upper bound of the available throughput.
 %The horizontal lines with a dot are the median throughput of the \tf{libstdc++}.
@@ -79,43 +77,29 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 %The $8$-th case is implemented according to the description in Section \ref{subsec:parallel.multi-loops}.
 
 
+\subsubsection{Slicing Methods}
+We have first analyzed the two slicing methods by benchmarking function \tf{<par-loops,seq-gemm>} and \tf{<gemm-batch>} using asymmetrically (top) and symmetrically (bottom) shaped tensors.
+%Note that this analysis is equal to minimizing or maximizing the input parameter $M_C$.
+Fig. \ref{performance.tlib.contour} contains six filled contour plots (performance maps) in which \tf{<par-loops,seq-gemm>} either uses subtensors or tensor slices and \tf{<gemm-batch>} loops over subtensors only.
+Each point within the performance map represents a mean value that has been averaged over tensor sizes for a tensor order.
+
+For asymmetrically shaped tensors, function \tf{<par-loops,seq-gemm>} with tensor slices performs on average $18$\% better than with subtensors. % for most mode and order combinations.
+Surprisingly, \tf{<par-loops,seq-gemm>} with tensor slices is on average $11$\% faster than Intel's \tf{gemm\_batch} routine and reaches almost $1.1$ Tflops/s for non-edge cases with $q>2$ and $p > 6$.
+This suggests that the Intel's implementation might not divide subtensors into smaller blocks.
+
+With symmetrically shaped tensors, the performance maps of \tf{<par-loops,seq-gemm>} with tensor slices and \tf{<gemm-batch>} are almost identical with a median performance of $221.52$ and $236.21$ Gflops/s.
+Moreover, the slicing method does minimally affect the runtime behavior of \tf{<par-loops,seq-gemm>}.
+In contrast to the performance maps with asymmetrically shaped tensors, all functions almost reach the attainable peak performance of $1.7$ Tflops/s when $p=2$.
+This can by the fact that both dimensions are equal or larger than $4096$ which lets \tf{gemm} operate under optimal conditions.
+
+\begin{comment}
 \subsubsection{Slicing and Parallelism}
-Fig. \ref{performance.tlib.contour} shows mean performance values of the <omp-par,seq-gemm> version with subtensors or tensor slices and the <gemm-batch> version with subtensors.
-
-
-
-
-the four versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN} with asymmetrically-shaped tensors.
-
-
-Fig.~\ref{performance.tlib.sb.lb.order1.single.surf.nonsymmetric} shows average performance values of the four versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN} with asymmetrically-shaped tensors.
-In case $2$ (region $2$), the shape tuple of the two-order tensor is equal to $(n_2,n_1)$ where $n_2$ is set to $1024$ and $n_1$ is $c \cdot 2^{14}$ for $1 \leq c \leq 32$. % in the row"=major format 
-In case $6$ (region $6$), the $p$-order tensor is interpreted as a matrix with a shape tuple $(\bar{n}_1,n_1)$ where $n_1$ is $c \cdot 2^{15-r}$ for $1 \leq c \leq 32$ and $2 < r < 10$.
-The mean performance averaged over the matrix sizes is around $30$ Gflops/s in single-precision for both cases.
-When $p=2$ and $q>1$, all functions execute case $3$ with a single parallel \tf{GEMV} where the $2$-order tensor is interpreted as a matrix in column-major format with a shape tuple $(n_1,n_2)$.
-In this case, the performance is $16$ Gflops/s in region $3$ where the first dimension of the $2$-order tensor is equal to $1024$ for all tensor sizes.
-The performance of \tf{GEMV} increases in region $7$ with increasing tensor order and increasing number of rows $\bar{n}_q$ of the interpreted $p$-order tensor.
-In general, \tf{OpenBLAS}'s \tf{GEMV} provides a sustained performance around $31$ Gflops/s in single precision for column- and row-major matrices.
-However, the performance drops with decreasing number of rows and columns for the column-major and row-major format.
-The performance of case $8$ within region $8$ is analyzed in the next paragraph.
-
-
-%For case $7$ the shape is $(\bar{n}_q,n_q)$ with q=p and 2<q.
-%According to the test setup only n_1 (min=2^14,max=32*2^14) is incremented by 2^14 while n_2 is equal to 1024.
-%So n_2 stays the same at 1024.
-\subsubsection{Slicing and Parallelism}
-%For a reduced number of index computation when accessing tensor elements, we have additionally applied the optimization techniques using pointer arithmetic as it has been discussed in \cite{bassoy:2018:fast}.
 Functions with \tf{P1} run with $10$ Gflops/s in region $8$ when the contraction mode $q$ is chosen smaller than or equal to the tensor order $p$.
- % with $1 < q \leq p$
 The degree of parallelism diminishes for $n_p=2$ as only $2$ threads sequentially execute a \tf{GEMV}.
 The second method \tf{PN} fuses additional loops and is able to generate a higher degree of parallelism.
-%In case of the \tf{LB} slicing, the outer dimensions with indices $\pi_{k+1}, \dots, \pi_{p}$ are executed in parallel. % except $\pi_{k}=q$ 
 Using the first-order storage format, the outer dimensions $n_{q+1}, \dots, n_p$ are executed in parallel.
 The \tf{PN} version speeds up the computation by almost a factor of $4$x except for $q = p-1$.
-% with one dimension $n_p$.
 This explains the notch in the left-bottom plot when $q = p-1$ and $n_{p} = 2$.
-%Except this case, the degree of parallelism is given by $\prod_{r=q+1}^p n_{r}$.
-%$n_{\pi_{k+1}} \cdots n_{\pi_{p}}$.
 
 In contrast to the \tf{LB} slicing method, \tf{SB} is able to additionally fuse the inner dimensions with their respective indices $2,3, \dots, p-2$ for $q=p-1$.
 %TODO: durch das hinzufügen mehr parallelität.
@@ -129,8 +113,9 @@ In case of symmetrically-shaped tensors, both approaches achieve similar results
 
 %$90 - 36 = 54 measurements \geq 32 Gflops/s$
 %$90 - 25 = 65 measurements \geq 25 Gflops/s$
+\end{comment}
 
-\subsubsection{Tensor Layouts}
+\subsubsection{Parallelization Methods}
 Applying the first setup configuration with asymmetrically-shaped tensors, we have analyzed the effects of the blocking and parallelization strategy.
 The \tf{LB}-\tf{PN} version processes tensors with different storage formats, namely the $1$-, $2$-, $9$- and $10$-order layout.
 The performance behavior is almost the same for all storage formats except for the corner cases $q = \pi_1$ and $q = \pi_p$.
