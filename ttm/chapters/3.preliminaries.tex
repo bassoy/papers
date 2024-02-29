@@ -17,7 +17,7 @@ It is sufficient to only provide non-unit modes as the remaining single indices 
 %todo: what is the order? p' <? p where all non-unit dimensions are counted and what happens with the layout?
 A subtensor is called a slice $\mubA_{u,v}'$ if the full range selection of $\mubA$ occurs with only two modes.
 A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
-
+\vspace{-1.5em}
 
 \subsubsection{Linear Tensor Layouts}
 \label{sec:preliminaries:layout}
@@ -27,11 +27,10 @@ For instance, the first- and last-order storage formats are given by $\mbpi_F = 
 An inverse layout tuple $\mbpi^{-1}$ is defined by $\mbpi^{-1}(\mbpi(k)) = k$.
 Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple is given by $w_{\pi_r} = \prod_{k=1}^{r-1} n_{\pi_k}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
 Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
-
 The location of tensor elements is determined by the tensor layout and the layout function.
 For a given tensor layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$.
 With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
-
+\vspace{-1.5em}
 
 \subsubsection{Non-Modifying Flattening and Reshaping}
 \label{sec:preliminaries:flattening.reshaping}
@@ -47,43 +46,7 @@ The reshaping operation $\rho$ transforms an order-$p$ tensor $\mubA$ to another
 In this work, it permutes the shape and layout tuple simultaneously without changing the element ordering and without copying tensor elements.
 The operation $\rho$ uses a permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ to only modify shape and layout tuples.
 Elements of the resulting shape tuple $\mbm$ and the layout tuple $\mbtau$ are given by $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
-
-
-
-%TODO: use other frameworks to explain how those two index sets are connected.
-%The location of tensor elements within the allocated memory space is determined by the storage format of a tensor and the corresponding \tit{layout} \tit{function}.
-%For a given layout and stride tuple, a layout function $\lambda_{\mbw} : \mcI \rightarrow \mcJ$ maps a multi-index to a scalar index according to 
-%\begin{equation}
-%\label{equ:lambda}
-%\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)
-%\end{equation}
-%With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
-
-%
-%from \cite{bassoy:2018:fast,rogers:2016:efficient}
-%\end{equation}
-%the following mappings include any non-hierarchical layouts that can be specified by a layout tuple $\mbpi$.\todo{Fertigstellen.} 
-%The layout function $\lambda_{\mbw}$ with 
-%The inverse layout function $\lambda_{\mbw}^{-1}  : \mcJ \rightarrow \mcI$ of $\lambda_{\mbw}$ with $\mbi = \lambda_{\mbw}^{-1}(j)$ transforms scalar indices with\todo{This can go if the only shifting is sufficient.}
-%\begin{equation}
-%\label{equ:lambda_inv}
-%i_{r} = \left\lfloor \frac{k_{r}}{w_{r}} \right\rfloor+1 
-%\quad \text{with} \quad 
-%k_{\pi_r} = k_{\pi_{r+1}} - w_{\pi_{r+1}} \cdot i_{\pi_{r+1}} \ \text{for} \ r < p
-%\end{equation}
-%and $i_{\pi_p} =  \lfloor j/ w_{\pi_p} \rfloor+1$. 
-
-
-%Both layout functions are also valid for transforming multi-index and scalar indices for a subtensor.
-%With  $k_r \in K_r$ we will use round brackets again $\mubA'(k_1,\dots,k_p)$ or $\mubA'(\mbk)$ to identify subtensor elements.
-%The correspondence between tensor and subtensor elements for the $r$-th mode is given by the linear function $\gamma_r(k_r) = f_r + (k_r-1) \cdot t_r$ such that $\mubS(k_1,\dots,k_p) = \mubA(\gamma_1(k_1),\dots,\gamma_p(k_p))$.
-%Subtensor elements can be accessed with single indices by applying the function $\lambda_{\mbw} \circ \gamma \circ \gamma_{\mbv}$ where $\mbv$ and $\mbw$ are stride tuples of a subtensor and tensor. 
-
-%We can analogously define a scalar index set $\mcJ'$ for a subtensor with $\bar{n}'$ elements where $\bar{n}' = \prod_{r=1}^{p} n_r'$.
-%Note that $\lambda$ can only be applied if $1 = f_r$, $l_r = n_r$ and $1 = t_r$ such that $n_r' = n_r$. 
-%The layout function $\lambda$ however cannot be directly applied if any index triplet $(f_r,t_r,l_r)$ satisfies $1 < f_r$, $l_r < n_r$ or $1 < t_r$ such that $n_r' < n_r$. 
-%such that $j = \lambda_{\mbw} \left( \gamma \left ( \lambda_{\mbw'}^{-1} \left (j' \right ) \right ) \right )$ 
-
+\vspace{-1.5em}
 
 \subsubsection{Tensor-Matrix Multiplication (TTM)}
 Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = (n_1,\dots,n_q,\dots,n_p)$ and $\mbn_c =(n_1,\dots,n_{q-1},m,n_{q+1},\dots,n_p)$. 

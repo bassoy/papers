@@ -19,7 +19,7 @@ in (c) and (f) \tf{<par-loops,seq-gemm>} with subtensors.
 \input{figures/performance.tlib.case8-cdf} % boxplot
 \caption{ %
 \footnotesize%
-Cumulative performance distributions of the proposed algorithms for case 8.
+Cumulative performance distributions of the proposed algorithms for case eight.
 Each distribution line belongs to one algorithm:
 \tf{<gemm\_batch>} \ref{coord:gemm_batch} , %
 \tf{<seq-loops,par-gemm>} (\ref{coord:seq_loops_par_gemm_slice}) and
@@ -71,21 +71,42 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 The following paragraphs analyze the two proposed slicing methods by benchmarking the functions \tf{<par-loops,seq-gemm>} and \tf{<gemm-batch>} using asymmetrically (top) and symmetrically (bottom) shaped tensors.
 %Note that this analysis is equal to minimizing or maximizing the input parameter $M_C$.
 Fig. \ref{performance.tlib.contour} contains six contour plots (performance maps) in which \tf{<par-loops,seq-gemm>} either uses subtensors or tensor slices and \tf{<gemm-batch>} loops over subtensors only.
-Each point within the performance map represents a mean value that has been averaged over tensor sizes for a tensor order.
+Each point within the performance map represents a mean value that has been averaged over tensor sizes for a tensor order\footnote{Note that Fig. \ref{fig:performance.tlib.case8} suggests that the contraction mode $q$ can be greater than $p$ which is not possible.
+We have kept the illustration for convenience, yet our profiling program sets $q=p$ in such cases.}.
 
 For asymmetrically shaped tensors, function \tf{<par-loops,seq-gemm>} with tensor slices performs on average $18$\% better than with subtensors. % for most mode and order combinations.
-Surprisingly, \tf{<par-loops,seq-gemm>} with tensor slices is on average $11$\% faster than Intel's \tf{gemm\_batch} routine and reaches almost $1.1$ Tflops/s for non-edge cases with $q>2$ and $p > 6$.
+Our function \tf{<par-loops,seq-gemm>} with tensor slices is on average $11$\% faster than Intel's \tf{gemm\_batch} routine and reaches almost $1.1$ Tflops/s for non-edge cases with $q>2$ and $p > 6$.
 This suggests that the Intel's implementation might not divide subtensors into smaller blocks.
 
-With symmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs almost identical as \tf{<gemm-batch>} with their respective median performance of $221.52$ Gflops/s and $236.21$ Gflops/s.
+With symmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs almost identical as \tf{<gemm-batch>} with $221.52$ Gflops/s and $236.21$ Gflops/s, respectively.
 Moreover, the slicing method almost has no affect on the runtime behavior of \tf{<par-loops,seq-gemm>}.
 In contrast to the performance maps with asymmetrically shaped tensors, all functions almost reach the attainable peak performance of $1.7$ Tflops/s when $p=2$.
 This can by the fact that both dimensions are equal or larger than $4096$ enabling \tf{gemm} to operate under optimal conditions.
+\vspace{-1.5em}
 
 \subsubsection{Parallelization Methods}
+The presented contour plots in Fig. \ref{performance.tlib.contour} contain performance data of all cases except $4$ and $5$, see Table \ref{tab:mapping}.
+The effects of the presented slicing and parallelization methods can be better understood if performance data of only the eighth case is examined.
+Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions of all the proposed algorithms which are generated \tf{gemm} or \tf{gemm\_batch} calls of case 8.
+As the distribution is empirically generated, the probability $y$ of a point $(x,y)$ on a distribution function corresponds to the number of test cases of a particular algorithm that achieves $x$ Tflops/s or less.
+For instance, function \tf{<seq-loops,par-gemm>} with subtensors computes the tensor-matrix product with equal to or less than 0.6 Tflops/s for $50$\% percent of the test cases using asymmetrically shaped tensor.
+Consequently, distribution functions with an exponential growth is favorable while logarithmic behavior is less desirable.
+The test set cardinality for case 8 is $255$ for asymmetrically shaped tensors and $91$ for symmetrically ones.
+
+In case of asymmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs best and outperforms \tf{<gemm\_batch>} and \tf{<par-loops,seq-gemm>} with subtensors as previously stated.
+One unexpected finding is that function \tf{<seq-loops,par-gemm>} with any slicing performs better than \tf{<gemm\_batch>} for certain tensor order and contraction mode combinations.
+All functions executed with symmetrically shaped tensors within case 8 reach at most $743$ Tflops/s which is less than half of the attainable peak performance of $1.7$ Tflops/s.
+This is expected as cases $2$ and $3$ for $p=2$ with $q=1$ and $q=2$ are not considered.
+Functions \tf{<par-loops,seq-gemm>} and \tf{<gemm\_batch>} have almost the same performance distribution outperforming \tf{<seq-loops,par-gemm>} for almost every test case.
+We did not show the performance results of \tf{<par-loops,par-gemm>} as they are almost identical to the ones of \tf{<par-loops,seq-gemm>} independent of the slicing method and tensor shape.
 
 
+This observation might suggest that a multithreaded execution of \tf{gemm} 
 
+\vspace{-1.5em}
+
+
+\begin{comment}
 Applying the first setup configuration with asymmetrically-shaped tensors, we have analyzed the effects of the blocking and parallelization strategy.
 The \tf{LB}-\tf{PN} version processes tensors with different storage formats, namely the $1$-, $2$-, $9$- and $10$-order layout.
 The performance behavior is almost the same for all storage formats except for the corner cases $q = \pi_1$ and $q = \pi_p$.
@@ -97,7 +118,7 @@ The same holds true for the outer layout tuple.
 %\cem[inline]{One implementation is almost layout oblivious.}
 %\cem[inline]{What about double precision?}
 %\cem[inline]{What about TLib-SB-PN}
-
+\end{comment}
 
 
 \subsubsection{Comparison with other Approaches}
