@@ -9,32 +9,26 @@ Based on the \tf{LOG} approach, they define requirements for the use of \tf{GEMM
 The slicing recipe for the class 2 categorized tensor contractions contains a short description with a rule of thumb for maximizing performance.
 %Compared to class 3 operations, the tensor-vector multiplication receives less attention.
 Runtime measurements cover class 3 tensor contractions.
+%todo: weg und was anderes, zum Beispiel mein eigenes Paper
 
-%for the efficient use of GEMV
-%In \cite{rogers:2016:efficient} a code generator offering in-place routines for the tensor addition, transposition and contraction is presented.
-%The authors discuss an extension of the matrix multiplication for the tensor contraction.% and compare fast matrix-multiplication kernels with their routines.
-%The class 2 tensor contractions including the tensor-vector multiplication are not discussed.
-%\cem[noline]{Just mention shortly the publications which are related to the tensor-vector multiplication but do not have findings which are relevant for this work.}
-%
-The work in \cite{li:2015:input} presents a framework that generates in-place tensor-matrix multiplication according to the \tf{LOG} approach. 
-The authors present two strategies for efficiently computing the tensor contraction applying \tf{GEMM}s with tensors.
-%reinterpreting tensors as matrices and help to perform the tensor contraction by a series matrix-matrix multiplications.
-They report a speedup of up to $4$x over the \tf{TTGT}-based \tf{MATLAB} tensor toolbox library discussed in \cite{bader:2006:algorithm862}.
-Although many aspects are similar to our work, the authors emphasize the code generation of tensor-matrix multiplications using high-performance \tf{GEMM}'s.
-
-%They conclude based on the \tf{LOG} approach can be su
-%
 The authors of \cite{springer:2018:design} present a tensor-contraction generator \tf{TCCG} and the \tf{GETT} approach for dense tensor contractions that is inspired from the design of a high-performance \tf{GEMM}.
 Their unified code generator selects implementations from generated \tf{GETT}, \tf{LoG} and \tf{TTGT} candidates.
-Their findings show that among $48$ different contractions $15$\% of \tf{LoG} based implementations are the fastest.
-However, their tests do not include the tensor-vector multiplication where the contraction exhibits at least one free tensor index.
-%
+Their findings show that among $48$ different contractions $15$\% of \tf{LoG}-based implementations are the fastest.
 
-Using also the \tf{GETT} approach, the author presents in \cite{matthews:2018:high} a runtime flexible tensor contraction library.
+The author presents in \cite{matthews:2018:high} a runtime flexible tensor contraction library that uses \tf{GETT} approach as well.
 He describes block-scatter-matrix algorithm which uses a special layout for the tensor contraction.
 The proposed algorithm yields results that feature a similar runtime behavior to those presented in \cite{springer:2018:design}.
-%His benchmarks also neglect tensor-vector multiplications.
-%While \tf{TTGT}-based implementations do not yield optimal performance in the bandwidth-bound regime, \tf{GETT}-based ones can achieve better runtime results.
-%For about 70\% of the test cases in single precision, \tf{GETT} is the fastest approach. On about 30\% of the test cases, \tf{TTGT} is fastest; \tf{LoG} is the method of choice for about 15\% of the test cases.
-%\paragraph{Tcl}
-%In case \ttt{TBlis}, we were not able to establish the same numerical results.
+
+The work in \cite{li:2015:input} presents a framework that generates in-place tensor-matrix multiplication according to the \tf{LOG} approach. 
+The authors present two strategies for efficiently computing the tensor contraction applying \tf{GEMM}s with tensors.
+They report a speedup of up to $4$x over the \tf{TTGT}-based \tf{MATLAB} tensor toolbox library discussed in \cite{bader:2006:algorithm862}.
+%Although many aspects are similar to our work, the authors emphasize the code generation of tensor-matrix multiplications using high-performance \tf{GEMM}'s.
+%todo: hier besser sagen, welche Konzepte wir hierfür übernehmen.
+
+
+In \cite{bassoy:2019:ttv}, the author presents LoG-based algorithms that compute the tensor-vector product. 
+The presented algorithms are flexible and support dense tensors with linear tensor layouts.
+
+
+
+a runtime flexible library is presented tensor-
