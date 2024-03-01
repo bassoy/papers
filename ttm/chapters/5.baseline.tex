@@ -88,7 +88,7 @@ Optimized tiling for better temporal data locality has been discussed in \cite{g
 %The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
 
 \subsection{BLAS-based Algorithms with Tensor Slices}
-\label{sec:design:blas.based.algorithm}
+\label{sec:design:blas.based.algorithm.slices}
 %\vspace{-0.3em}
 Algorithm \ref{alg:ttm.sequential.coalesced} is the starting point for the BLAS-based algorithm which computes the tensor-matrix product with a \tf{gemm} routine.
 Besides the illustrated algorithm, we have identified seven other cases where a single \tf{gemm} call suffices to compute the tensor-matrix product even if the tensor order $p>2$.
@@ -168,7 +168,7 @@ The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting 
 %todo: note that the leading dimensions of A and C must be wq 
 
 \subsection{BLAS-Based Algorithms with Subtensors}
-\label{sec:design:blas.based.algorithm}
+\label{sec:design:blas.based.algorithm.subtensors}
 Case 8 can be optimized by utilizing larger subtensors instead of tensor slices.
 This can be done by adding mergeable modes to the slice-matrix multiplication in which the subtensor can be flattened into a matrix without reordering tensor elements.
 The flattening operation does not copy or reorder elements, see section \ref{sec:preliminaries:flattening.reshaping} and lemma 4.1 in \cite{li:2015:input}.
@@ -193,7 +193,7 @@ Cases 1 to 7 already call a multi-threaded \tf{gemm} and cannot be further optim
 \vspace{-2em}
 
 \subsubsection{Sequential Loops and Multithreaded Matrix Multiplication}
-One straight forward approach is to use algorithm \ref{alg:ttm.sequential.coalesced} as it is and to sequentially call a multi-threaded \tf{gemm} in the base case of the algorithm as described in subsection \ref{sec:design:blas.based.algorithm}.
+One straight forward approach is to use algorithm \ref{alg:ttm.sequential.coalesced} as it is and to sequentially call a multi-threaded \tf{gemm} in the base case of the algorithm as described in subsection \ref{sec:design:blas.based.algorithm.slices}.
 This is beneficial if $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{q}$ are large or the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
 However, if the above conditions are not met, the processor cores might not be fully utilized where each multi-threaded \tf{gemm} is executed with small subtensors.
 We will refer to this algorithm version as \tf{<seq-loops,par-gemm>} that is executable with subtensors or tensor slices.
