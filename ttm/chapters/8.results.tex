@@ -1,6 +1,5 @@
 \section{Results and Discussion}
 \label{sec:results}
-
 \begin{figure*}[t]
 \input{figures/performance.tlib.contour}
 \caption{%
@@ -19,7 +18,7 @@ in (c) and (f) \tf{<par-loops,seq-gemm>} with subtensors.
 \input{figures/performance.tlib.case8-cdf} % boxplot
 \caption{ %
 \footnotesize%
-Cumulative performance distributions of the proposed algorithms for case eight.
+Cumulative performance distributions of the proposed algorithms for the eighth case.
 Each distribution line belongs to one algorithm:
 \tf{<gemm\_batch>} \ref{coord:gemm_batch} , %
 \tf{<seq-loops,par-gemm>} (\ref{coord:seq_loops_par_gemm_slice}) and
@@ -36,9 +35,9 @@ Tensors are asymmetrically (left plot) and symmetrically shaped (right plot).
 \input{figures/performance.tlib.format}
 \caption{ %
 \footnotesize%
-Box plots visualizing performance statics in double-precision Tflops of a tensor-times-matrix algorithm for linear $k$-order tensor formats.
-The algorithm loops over single-threaded \tf{gemm} with tensor slices with asymmetrically-shaped tensors on the left plot and with subtensors with symmetrically-shaped tensors on the right plot.
-Box plot number $k$ denotes the utilized $k$-order storage.
+Box plots visualizing performance statics in double-precision Tflops of \tf{<gemm\_batch>} (left) and \tf{<par-loops,seq-gemm>} with subtensors (right).
+Box plot number $k$ denotes the $k$-order tensor layout of symmetrically shaped tensors with order $7$.
+% where the $1$-order and $7$-order layouts are the first- and last-order storage formats, respectively.
 }
 \label{fig:performance.tlib.format}
 \end{figure*}
@@ -58,13 +57,6 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 }
 \label{fig:performance.comparison}
 \end{figure*}
-
-%The following analysis considers four parallel versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN}.
-%\tf{SB} (small-block) and \tf{LB} (large-block) denote parallel slice-vector multiplications where each thread recursively calls a single-threaded \tf{GEMV} with mode-$2$ and mode-$\mhq$ slices, respectively.
-%\tf{P1} uses the outer-most dimension $n_{p}$ for parallel execution whereas \tf{PN} applies loop fusion and considers all fusible dimensions for parallel execution.
-%All of them use one multi-threaded \tf{GEMV} for the cases $2$ to $7$ according to the description provided in Section \ref{subsec:linear.algebra.routines} and Table \ref{tab:mapping}.
-%Their average performance values within the regions $2$, $3$, $6$ and $7$ are the same for all four versions, see Fig. \ref{fig:performance.map}.
-%The $8$-th case is implemented according to the description in Section \ref{subsec:parallel.multi-loops}.
 
 
 \subsubsection{Slicing Methods}
@@ -108,7 +100,21 @@ Subtensors should only be used if the leading dimension $n_{\pi_1}$ of $\mubA_{\
 This strategy is different to the one presented in \cite{li:2015:input} that maximizes the number of modes involved in the matrix multiply.
 We have also observed no performance improvement if \tf{par-gemm} was used with \tf{par-loops} which is why their distribution functions are not shown in Fig. \ref{fig:performance.tlib.case8}.
 Moreover, in most cases the \tf{seq-loops} implementations are independent of the tensor shape slower than \tf{par-loops}, even for smaller tensor slices.
-\vspace{-1.5em}
+\vspace{-1em}
+
+\subsubsection{Layout-Oblivious Algorithms}
+Fig. \ref{fig:performance.tlib.format} contains two subfigures visualizing performance statics in double-precision Tflops of \tf{<gemm\_batch>} (left subfigure) and \tf{<par-loops,seq-gemm>} with subtensors (right subfigure).
+Each box plot with the number $k$ has been computed from benchmark data with symmetrically shaped order-$7$ tensors with the $k$-order tensor layout.
+The $1$-order and $7$-order layout are the first- and last-order storage formats for the order-$7$ tensor with $\pi_F=(1,2,...,7)$ and $\pi_L= (7,6,...,1)$.
+The definition of $k$-order tensor layouts can be found in section \ref{sec:preliminaries:layout}.
+
+The low performance can be attributed to the fact that the contraction dimension of subtensors of tensor slices of symmetrically shaped order-7 tensors are $8$ while the leading dimension is $8$ or at most $48$ for subtensors.
+The relative standard deviation of \tf{<gemm\_batch>}'s and \tf{<par-loops,seq-gemm>}'s median values are $12.95$\% and $17.61$\%.
+Their respective interquartile range are similar with a relative standard deviation of $22.25$\% and $15.23$\%.
+
+The runtime results with different $k$-order tensor layouts show that the performance of our proposed algorithms is not designed for a specific tensor layout.
+Moreover, the performance stays within an acceptable range independent of the tensor layout.
+\vspace{-1em}
 
 \subsubsection{Comparison with other Approaches}
 We have compared our best implementation with four libraries that implement the tensor-matrix multiplication using different approaches.

@@ -24,6 +24,7 @@ A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 We use a layout tuple $\mbpi \in \bbN^p$ to encode all linear tensor layouts including the first-order or last-order layout.
 They contain permuted tensor modes whose priority is given by their index.
 For instance, the first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
+The general $k$-order tensor layout for an order-$p$ tensor is given by the layout tuple $\mbpi$ with $\pi_r = k-r+1$ for $1 < r \leq k$ and $r$ for $k < r \leq p$.
 An inverse layout tuple $\mbpi^{-1}$ is defined by $\mbpi^{-1}(\mbpi(k)) = k$.
 Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple is given by $w_{\pi_r} = \prod_{k=1}^{r-1} n_{\pi_k}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
 Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
@@ -58,7 +59,7 @@ A mode-$q$ TTM is denoted by $\mubC = \mubA \times_q \mbB$ where an element of $
 \end{equation}
 with $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$.
 %Similar to the tensor-vector multiplication, the multiplication consists of multiple inner productd of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
-The mode $q$ is the \tit{contraction} \tit{mode} of the TTM  with $1 \leq q \leq p$.
+Mode $q$ is the \tit{contraction} \tit{mode} of the TTM  with $1 \leq q \leq p$.
 The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
 Its arithmetic intensity is equal to that of a matrix-matrix multiplication and is not memory-bound.
 %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.

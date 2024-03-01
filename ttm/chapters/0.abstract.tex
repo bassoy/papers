@@ -4,7 +4,7 @@
 %
 The tensor-matrix multiplication is a basic tensor operation that is required by various tensor methods such as the ALS or the HOSVD.
 %
-This paper presents flexible high-performance algorithms that compute the tensor-matrix product according to the Loops-over-\tf{gemm}s (LOG) approach.
+This paper presents flexible high-performance algorithms that compute the tensor-matrix product according to the Loops-over-GEMM (LoG) approach.
 %
 Our algorithms can process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
 %
@@ -17,7 +17,7 @@ Our best performing version attains a median performance of $1.37$ double precis
 %
 We show that the performance is only slightly affected by the tensor layout and the median performance is between \tq and \tq Tflops for a range of linear tensor formats.
 %
-Our fastest implementation is on average at least by $14.05$\% and up to $3.79$ x faster than other state-of-the-art implementations, including Libtorch and Eigen.
+Our fastest implementation is on average at least by $14.05$\% and up to $3.79$ x faster than other state-of-the-art approaches and actively developed libraries like Libtorch and Eigen.
 %todo: check if that is true.
 %\keywords{First keyword  \and Second keyword \and Another keyword.}
 \end{abstract}

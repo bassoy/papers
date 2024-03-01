@@ -20,7 +20,6 @@
 \usepackage{tikz-3dplot}
 \usepackage{subfigure}
 
-
 \usetikzlibrary{matrix,arrows,positioning,calc,patterns} % shapes,
 \usepgfplotslibrary{statistics}
 %\theoremstyle{remark}
@@ -66,58 +65,11 @@
 	lime!80!black,   line width = 2, every mark/.append style={solid,fill=yellow!80!black}\\%,mark=square*\\	
 }
 
-
-
-
-
-
-%commented
-%\usepackage{fancyhdr} % for footer
-%\pagestyle{fancy}
-%\fancyhf{} % clear all header and footer fields
-%\setlength{\footskip}{3cm}
-
-%commented
-%\fancyfoot[C]
-%{
-%To cite this paper please use the final published version:\newline
-%{\color{black}\url{https://dx.doi.org/10.1007/978-3-030-22734-0_3}}
-%} % except the center
-%\renewcommand{\footrulewidth}{0.4pt} %untere Trennlinie
-
-
-
-%commented, needs fancyhdr package
-%\renewcommand{\headrulewidth}{0pt} %obere Trennlinie
-
-%\renewcommand{\headrulewidth}{0pt}
-%\renewcommand{\footrulewidth}{0pt}}
-
-%\usepackage[textsize=scriptsize]{todonotes}
 \usepackage[running]{lineno}
 \linenumbers
 
-%\usepackage{draftwatermark}
-%\SetWatermarkText{Draft}
-%\SetWatermarkScale{1}
-%\SetWatermarkColor[gray]{0.85}
-%\SetWatermarkAngle{30}
-
-%\SetAlgoCaptionLayout{centerline}
 \SetAlgoCaptionLayout{footnotesize}
-%\SetCustomAlgoRuledWidth{1cm}
-%\IncMargin{4em}
-%\setlength{\algomargin}{4em}
-%\SetAlgoCaptionLayout{textbf}
-%\SetCustomAlgoRuledWidth{10cm}
-%\SetAlgoLined
 \SetAlCapSkip{1ex}
-
-%\linenumbers
-
-%\newcommand{\volker}[2][]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
-%\newcommand{\cem}[2][]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
-%\newcommand{\cem}[2][]{}
 
 
 \usetikzlibrary{calc}
@@ -133,8 +85,6 @@
 
 \lstset{language=cplusplus}
 
-%\title{Flexible High-Performance Tensor-Vector Multiplication for Numerical Tensor Calculus}
-%\title{High-Performance Tensor-Vector Multiplication for Numerical Tensor Calculus} % and Flexible 
 \title{Fast Layout-Oblivious Tensor-Matrix Multiplication with BLAS} % and Flexible 
 
 \titlerunning{High-Performance Tensor-Matrix Multiplication}
@@ -143,18 +93,13 @@
 %\orcidID{0000-1111-2222-3333}\inst{1}
 \authorrunning{Ba\c{s}soy} % abbreviated author list (for running head)
 %
-%%%% list of authors for the TOC (use if author list has to be modified)
 \tocauthor{Cem Sava\c{s} Ba\c{s}soy}
 %
 \institute{Hamburg University of Technology, Schwarzenbergstrasse 95, Germany,\\
 \email{cem.bassoy@gmail.com}}
 
-
-% make the title area
 \maketitle
 
-% As a general rule, do not put math, special symbols or citations
-% in the abstract
 \input{chapters/0.abstract}
 
 \input{chapters/1.introduction}
@@ -163,18 +108,13 @@
 
 \input{chapters/3.preliminaries}
 
-%\input{chapters/7.setup}
-
 \input{chapters/5.baseline}
-
-%\input{chapters/6.optimization}
 
 \input{chapters/4.methodology}
 
 \input{chapters/8.results}
 
 \input{chapters/9.conclusion}
-
 
 \bibliographystyle{splncs04}
 \bibliography{bib}

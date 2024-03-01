@@ -1,7 +1,7 @@
 \begin{tikzpicture}
 \begin{axis}[
 boxplot/draw direction=y,
-width=0.37\textwidth,
+width=0.5\textwidth,
 height=0.3\textheight,
 style={font=\footnotesize},
 grid=major,
@@ -32,10 +32,11 @@ boxplot/every median/.style={draw=white,thin},
 \addplot+[boxplot prepared={lower whisker = 9.920391, lower quartile = 46.556304, median = 53.812431, upper quartile = 67.449759, upper whisker = 97.531103} ] coordinates{};
 \end{axis}
 \end{tikzpicture}
+\hfill
 \begin{tikzpicture}
 \begin{axis}[
 boxplot/draw direction=y,
-width=0.37\textwidth,
+width=0.5\textwidth,
 height=0.3\textheight,
 style={font=\footnotesize},
 grid=major,
@@ -43,8 +44,8 @@ grid style={dotted},
 align=center,
 xlabel={$k$-order layout},
 %xlabel={Function},
-%ylabel={GFlops},
-%ylabel near ticks,
+ylabel={TFlops},
+ylabel near ticks,
 %title={Performance (Tflops/s)},
 xtick={1,2,3,4,5,6,7},
 xticklabels={1,2,3,4,5,6,7},
@@ -67,6 +68,7 @@ boxplot/every median/.style={draw=white,thin},
 \addplot+[boxplot prepared={lower whisker = 8.748652, lower quartile = 51.209701, median = 67.054182, upper quartile = 87.504879, upper whisker = 115.340741} ] coordinates{};
 \end{axis}
 \end{tikzpicture}
+\begin{comment}
 \begin{tikzpicture}
 \begin{axis}[
 boxplot/draw direction=y,
@@ -102,3 +104,4 @@ boxplot/every median/.style={draw=white,thin},
 \addplot+[boxplot prepared={lower whisker = 7.307545, lower quartile = 16.797509, median = 31.145092, upper quartile = 47.293157, upper whisker = 95.475018} ] coordinates{};
 \end{axis}
 \end{tikzpicture}
+\end{comment}

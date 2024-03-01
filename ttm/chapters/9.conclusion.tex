@@ -1,7 +1,7 @@
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 We presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication which is essential for many tensor methods.
-Our approach is based on the loops-over-\tf{gemm} method and computes the tensor-matrix product in-place without transposing tensors.
+Our approach is based on the LOG-method and computes the tensor-matrix product in-place without transposing tensors.
 It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input}.
 The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
 %They consist of eight cases each of which calls a highly-optimized BLAS with different arguments.
