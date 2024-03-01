@@ -2,7 +2,7 @@
 \label{sec:conclusion}
 We presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication which is essential for many tensor methods.
 Our approach is based on the loops-over-\tf{gemm} method and computes the tensor-matrix product in-place without transposing tensors.
-It combined the flexible approach described in \cite{bassoy:2019:ttv} with the findings in \cite{li:2015:input}.
+It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input}.
 The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
 %They consist of eight cases each of which calls a highly-optimized BLAS with different arguments.
 %We have discussed two slicing options and parallelization techniques to improve their performance for the eighth case.
@@ -23,8 +23,7 @@ Hence, other actively developed libraries such as LibTorch and Eigen will benefi
 Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 
 In the future, we intend to generalize LOG-based approach for general tensor contractions with the same flexibility that we offered for the tensor-matrix multiplication. 
-We would like to further optimize the tensor-matrix multiplication based on  benchmarks of matrix-matrix products which might lead to even better runtime results for edge cases.
-
+We would like to further optimize the tensor-matrix multiplication based on benchmark results of matrix-matrix products which might lead to better runtime results for edge cases.
 
 \subsubsection{Source Code Availability}
 Project description and source code can be found at {\footnotesize \MYhref[red]{https://github.com/bassoy/ttm}{https://github.com/bassoy/ttm}}.
