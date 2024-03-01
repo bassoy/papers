@@ -17,7 +17,7 @@ It is sufficient to only provide non-unit modes as the remaining single indices 
 %todo: what is the order? p' <? p where all non-unit dimensions are counted and what happens with the layout?
 A subtensor is called a slice $\mubA_{u,v}'$ if the full range selection of $\mubA$ occurs with only two modes.
 A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
-\vspace{-1.5em}
+\vspace{-1em}
 
 \subsubsection{Linear Tensor Layouts}
 \label{sec:preliminaries:layout}
@@ -30,7 +30,7 @@ Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
 The location of tensor elements is determined by the tensor layout and the layout function.
 For a given tensor layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$.
 With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
-\vspace{-1.5em}
+\vspace{-1em}
 
 \subsubsection{Non-Modifying Flattening and Reshaping}
 \label{sec:preliminaries:flattening.reshaping}
@@ -46,7 +46,7 @@ The reshaping operation $\rho$ transforms an order-$p$ tensor $\mubA$ to another
 In this work, it permutes the shape and layout tuple simultaneously without changing the element ordering and without copying tensor elements.
 The operation $\rho$ uses a permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ to only modify shape and layout tuples.
 Elements of the resulting shape tuple $\mbm$ and the layout tuple $\mbtau$ are given by $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
-\vspace{-1.5em}
+\vspace{-1em}
 
 \subsubsection{Tensor-Matrix Multiplication (TTM)}
 Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = (n_1,\dots,n_q,\dots,n_p)$ and $\mbn_c =(n_1,\dots,n_{q-1},m,n_{q+1},\dots,n_p)$. 

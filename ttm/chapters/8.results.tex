@@ -5,7 +5,7 @@
 \input{figures/performance.tlib.contour}
 \caption{%
 \footnotesize %
-Performance maps in double-precision Tflops/s of the proposed tensor-times-matrix algorithms with varying tensor orders $p$  and contraction modes $q$. 
+Performance maps in double-precision Tflops of the proposed algorithms with varying tensor orders $p$  and contraction modes $q$. 
 Tensors are asymmetrically-shaped on the upper plots and symmetrically-shaped on the lower plots.
 In (a) and (d) function \tf{<gemm\_batch>} is executed,
 in (b) and (e) \tf{<par-loops,seq-gemm>} with tensor slices, %
@@ -36,7 +36,7 @@ Tensors are asymmetrically (left plot) and symmetrically shaped (right plot).
 \input{figures/performance.tlib.format}
 \caption{ %
 \footnotesize%
-Box plots visualizing performance statics in double-precision Tflops/s of a tensor-times-matrix algorithm for linear $k$-order tensor formats.
+Box plots visualizing performance statics in double-precision Tflops of a tensor-times-matrix algorithm for linear $k$-order tensor formats.
 The algorithm loops over single-threaded \tf{gemm} with tensor slices with asymmetrically-shaped tensors on the left plot and with subtensors with symmetrically-shaped tensors on the right plot.
 Box plot number $k$ denotes the utilized $k$-order storage.
 }
@@ -47,9 +47,9 @@ Box plot number $k$ denotes the utilized $k$-order storage.
 \input{figures/performance.comparison}
 \caption{ %
 \footnotesize%
-Cumulative performance distributions of tensor-times-matrix algorithms in double-precision Tflops/s.
+Cumulative performance distributions of tensor-times-matrix algorithms in double-precision Tflops.
 Each distribution line belongs to a library:
-\textbf{tlib} (\ref{coord:nonsymmetric.tlib.slice}), %
+\textbf{tlib}[ours] (\ref{coord:nonsymmetric.tlib.slice}), %
 \textbf{tcl} (\ref{coord:nonsymmetric.tcl}), %
 \textbf{tblis} (\ref{coord:nonsymmetric.tblis}), %
 \textbf{libtorch} (\ref{coord:nonsymmetric.libtorch}), %
@@ -72,208 +72,66 @@ The following paragraphs analyze the two proposed slicing methods by benchmarkin
 %Note that this analysis is equal to minimizing or maximizing the input parameter $M_C$.
 Fig. \ref{performance.tlib.contour} contains six contour plots (performance maps) in which \tf{<par-loops,seq-gemm>} either uses subtensors or tensor slices and \tf{<gemm-batch>} loops over subtensors only.
 Each point within the performance map represents a mean value that has been averaged over tensor sizes for a tensor order\footnote{Note that Fig. \ref{fig:performance.tlib.case8} suggests that the contraction mode $q$ can be greater than $p$ which is not possible.
-We have kept the illustration for convenience, yet our profiling program sets $q=p$ in such cases.}.
+Our profiling program sets $q=p$ in such cases.}.
 
 For asymmetrically shaped tensors, function \tf{<par-loops,seq-gemm>} with tensor slices performs on average $18$\% better than with subtensors. % for most mode and order combinations.
-Our function \tf{<par-loops,seq-gemm>} with tensor slices is on average $11$\% faster than Intel's \tf{gemm\_batch} routine and reaches almost $1.1$ Tflops/s for non-edge cases with $q>2$ and $p > 6$.
-This suggests that the Intel's implementation might not divide subtensors into smaller blocks.
+Our function \tf{<par-loops,seq-gemm>} with tensor slices is on average $11$\% faster than Intel's \tf{gemm\_batch} routine and reaches almost $1.1$ Tflops for non-edge cases with $q>2$ and $p > 6$.
+This suggests that the Intel's implementation does not divide subtensors into smaller blocks.
 
-With symmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs almost identical as \tf{<gemm-batch>} with $221.52$ Gflops/s and $236.21$ Gflops/s, respectively.
-Moreover, the slicing method almost has no affect on the runtime behavior of \tf{<par-loops,seq-gemm>}.
-In contrast to the performance maps with asymmetrically shaped tensors, all functions almost reach the attainable peak performance of $1.7$ Tflops/s when $p=2$.
+With symmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs almost identical as \tf{<gemm-batch>} with $221.52$ Gflops and $236.21$ Gflops, respectively.
+Moreover, the slicing method seems to have only little affect on the overall runtime behavior of \tf{<par-loops,seq-gemm>}.
+In contrast to the performance maps with asymmetrically shaped tensors, all functions almost reach the attainable peak performance of $1.7$ Tflops when $p=2$.
 This can by the fact that both dimensions are equal or larger than $4096$ enabling \tf{gemm} to operate under optimal conditions.
-\vspace{-1.5em}
+\vspace{-1em}
 
 \subsubsection{Parallelization Methods}
-The presented contour plots in Fig. \ref{performance.tlib.contour} contain performance data of all cases except $4$ and $5$, see Table \ref{tab:mapping}.
+The contour plots in Fig. \ref{performance.tlib.contour} contain performance data of all cases except for $4$ and $5$, see Table \ref{tab:mapping}.
 The effects of the presented slicing and parallelization methods can be better understood if performance data of only the eighth case is examined.
-Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions of all the proposed algorithms which are generated \tf{gemm} or \tf{gemm\_batch} calls of case 8.
-As the distribution is empirically generated, the probability $y$ of a point $(x,y)$ on a distribution function corresponds to the number of test cases of a particular algorithm that achieves $x$ Tflops/s or less.
-For instance, function \tf{<seq-loops,par-gemm>} with subtensors computes the tensor-matrix product with equal to or less than 0.6 Tflops/s for $50$\% percent of the test cases using asymmetrically shaped tensor.
+Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions of all the proposed algorithms which are generated \tf{gemm} or \tf{gemm\_batch} calls within case 8.
+As the distribution is empirically generated, the probability $y$ of a point $(x,y)$ on a distribution function corresponds to the number of test cases of a particular algorithm that achieves $x$ or less Tflops.
+For instance, function \tf{<seq-loops,par-gemm>} with subtensors computes the tensor-matrix product with equal to or less than 0.6 Tflops for $50$\% percent of the test cases using asymmetrically shaped tensor.
 Consequently, distribution functions with an exponential growth is favorable while logarithmic behavior is less desirable.
 The test set cardinality for case 8 is $255$ for asymmetrically shaped tensors and $91$ for symmetrically ones.
 
-In case of asymmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs best and outperforms \tf{<gemm\_batch>} and \tf{<par-loops,seq-gemm>} with subtensors as previously stated.
-One unexpected finding is that function \tf{<seq-loops,par-gemm>} with any slicing performs better than \tf{<gemm\_batch>} for certain tensor order and contraction mode combinations.
-All functions executed with symmetrically shaped tensors within case 8 reach at most $743$ Tflops/s which is less than half of the attainable peak performance of $1.7$ Tflops/s.
-This is expected as cases $2$ and $3$ for $p=2$ with $q=1$ and $q=2$ are not considered.
-Functions \tf{<par-loops,seq-gemm>} and \tf{<gemm\_batch>} have almost the same performance distribution outperforming \tf{<seq-loops,par-gemm>} for almost every test case.
-We did not show the performance results of \tf{<par-loops,par-gemm>} as they are almost identical to the ones of \tf{<par-loops,seq-gemm>} independent of the slicing method and tensor shape.
+In case of asymmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs best and outperforms \tf{<gemm\_batch>}.
+One unexpected finding is that function \tf{<seq-loops,par-gemm>} with any slicing strategy performs better than \tf{<gemm\_batch>} when the tensor order $p$ and contraction mode $q$ satisfy $4 \leq p \leq 7$ and $2 \leq q \leq 4$, respectively.
+Functions executed with symmetrically shaped tensors reach at most $743$ Gflops for the eighth case which is less than half of the attainable peak performance of $1.7$ Tflops.
+This is expected as cases $2$ and $3$ are not considered.
+%for $p=2$ with $q=1$ and $q=2$ 
+Functions \tf{<par-loops,seq-gemm>} with subtensors and \tf{<gemm\_batch>} have almost the same performance distribution outperforming \tf{<seq-loops,par-gemm>} for almost every test case.
+%We did not show the performance results of \tf{<par-loops,par-gemm>} as they are almost identical to the ones of \tf{<par-loops,seq-gemm>}, independent of the slicing method and tensor shape.
+Function \tf{<par-loops,seq-gemm>} with tensor slices is on average almost as fast as with subtensors.
+However, if the tensor order is greater than $3$ and the tensor dimensions are less than $64$, its running time increases by almost a factor of $2$.
 
-
-This observation might suggest that a multithreaded execution of \tf{gemm} 
-
+These observations suggest to use \tf{<par-loops,seq-gemm>} with tensor slices for common cases in which the leading and contraction dimensions are larger than $64$ elements.
+Subtensors should only be used if the leading dimension $n_{\pi_1}$ of $\mubA_{\pi_1,q}$ and $\mubC_{\pi_1,q}$ falls below $64$.
+This strategy is different to the one presented in \cite{li:2015:input} that maximizes the number of modes involved in the matrix multiply.
+We have also observed no performance improvement if \tf{par-gemm} was used with \tf{par-loops} which is why their distribution functions are not shown in Fig. \ref{fig:performance.tlib.case8}.
+Moreover, in most cases the \tf{seq-loops} implementations are independent of the tensor shape slower than \tf{par-loops}, even for smaller tensor slices.
 \vspace{-1.5em}
 
-
-\begin{comment}
-Applying the first setup configuration with asymmetrically-shaped tensors, we have analyzed the effects of the blocking and parallelization strategy.
-The \tf{LB}-\tf{PN} version processes tensors with different storage formats, namely the $1$-, $2$-, $9$- and $10$-order layout.
-The performance behavior is almost the same for all storage formats except for the corner cases $q = \pi_1$ and $q = \pi_p$.
-Even the performance drop for $q = p-1$ is almost unchanged.
-The standard deviation from the mean value is less than $10$\% for all storage formats.
-Given a contraction mode $q = \pi_k$ with $1 < k < p$, a permutation of the inner and outer tensor dimensions with their respective indices $\pi_1, \dots,  \pi_{k-1}$ and $\pi_{k+1}, \dots, \pi_{p}$ does influence the runtime where the \tf{LB}-\tf{PN} version calls \tf{GEMV} with the values $w_m$ and $n_m$.
-%With $w_m = n_{\pi_1} \cdot n_{\pi_2} \cdots n_{\pi_{k-1}}$ being the $q$-th stride, any change of the layout %tuple of its first $k-1$ elements yields the same stride $w_m$.
-The same holds true for the outer layout tuple.
-%\cem[inline]{One implementation is almost layout oblivious.}
-%\cem[inline]{What about double precision?}
-%\cem[inline]{What about TLib-SB-PN}
-\end{comment}
-
-
 \subsubsection{Comparison with other Approaches}
-%\paragraph{Eigen}
-The following comparison includes three state-of-the-art libraries that implement three different approaches.
-The library \tf{TCL} (\tf{v0.1.1}) implements the (\tf{TTGT}) approach with a high-perform tensor-transpose library \tf{HPTT} which is discussed in \cite{springer:2018:design}.
-%\paragraph{TBlis}
-\tf{TBLIS} (\tf{v1.0.0}) implements the \tf{GETT} approach that is akin to \tf{BLIS}'s algorithm design for matrix computations \cite{matthews:2018:high}.
-%It executes the tensor-vector multiplication in-place and uses its own thread control interface for parallel execution.
-The tensor extension of \tf{EIGEN} (\tf{v3.3.90}) is used by the Tensorflow framework and performs the tensor-vector multiplication in-place and in parallel with contiguous memory access \cite{abadi:2016:tensorflow}.
-\tf{TLIB} denotes our library that consists of sequential and parallel versions of the tensor-vector multiplication.
-Numerical results of \tf{TLIB} have been verified with the ones of \tf{TCL}, \tf{TBLIS} and \tf{EIGEN}.
+We have compared our best implementation with four libraries that implement the tensor-matrix multiplication using different approaches.
+Library \tbf{tcl} implements the TTGT approach with a high-perform tensor-transpose library \tbf{hptt} which is discussed in \cite{springer:2018:design}.
+\tbf{tblis} implements the GETT approach that is akin to Blis' algorithm design for the matrix multiplication \cite{matthews:2018:high}.
+The tensor extension of \tbf{eigen} (v3.3.7) is used by the Tensorflow framework.
+Library \tbf{libtorch} (v2.3.0) is the \tf{C++} distribution of PyTorch.
+\tbf{tlib} denotes our library using algorithm \tf{<par-loops,seq-gemm>} that have been presented in the previous paragraphs.
 
-Fig. \ref{fig:mean.performance.tlib.tcl.tblis.eigen.order1.single.surf.nonsymmetric} illustrates the average single-precision Gflops/s with asymmetrically- and symmetrically-shaped tensors in the first-order storage format.
-The runtime behavior of \tf{TBLIS} and \tf{EIGEN} with asymmetrically-shaped tensors is almost constant for varying tensor sizes with a standard deviation ranging between $2$\% and $13$\%.
-\tf{TCL} shows a different behavior with $2$ and $4$ Gflops/s for any order $p\geq 2$ peaking at $p = 10$ and $q=2$.
-The performance values however deviate from the mean value up to $60$\%.
-Computing the arithmetic mean over the set of contraction modes yields a standard deviation of less than $10$\% where the performance increases with increasing order peaking at $p = 10$.
-\tf{TBLIS} performs best for larger contraction dimensions achieving up to $7$ Gflops/s and slower runtimes with decreasing contraction dimensions.
-%Calculating the median and (minimum/maximum) values over all tensor order, tensor sizes and contraction modes, \tf{TLIB-SB-PN} attains $29.24$ ($6.13$/$35.81$), \tf{TBLIS} $31.33$ ($2.32$/$35.64$), \tf{TCL} $1.19$ ($0.54$/$32.11$) and \tf{EIGEN} $2.89$ ($0.04$/$7.41$) Gflops/s in single-precision.
-%For double precision, \tf{TLIB-SB-PN} achieves $13.91$ ($3.73$/$17.49$), \tf{TBLIS} $16.03$ ($1.85$/$17.93$), \tf{TCL} $0.87$ ($0.56$/$18.25$) and \tf{EIGEN} $1.44$ ($0.03$/$3.61$) Gflops/s.\\
-In case of symmetrically-shaped tensors, \tf{TBLIS} and \tf{TCL} achieve up to $12$ and $25$ Gflops/s in single precision with a standard deviation between $6$\% and $20$\%, respectively.
-\tf{TCL} and \tf{TBLIS} behave similarly and perform better with increasing contraction dimensions. 
-\tf{EIGEN} executes faster with decreasing order and increasing contraction mode with at most $8$ Gflops/s at $p=2$ and $q\geq 2$.
-%Having initialized the threadpool device with the same number of threads, we did not observe parallel execution of the tensor-vector multiplication. 
-%The performance of Eigen's implementation decreases almost linearly with increasing tensor order for symmetrically and asymmetrically shaped tensors.
+Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions for the complete test sets comparing the performance distribution of our implementation with the previously mentioned libraries.
+Note that we only have used tensor slices for asymmetrically shaped tensors (left plot) and subtensors for symmetrically shaped tensors (right plot).
+Our implementation with a median performance of $793.75$ Gflops outperforms others' for almost every asymmetrically shaped tensor in the test set.
+The median performances of \tbf{tcl}, \tbf{tblis}, \tbf{libtorch} and \tbf{eigen} are $503.61$, $415.33$, $496.22$ and $244.69$ Gflops reaching on average $74.11$\%, $61.14$\%, $76.68$\% and $39.34$\% of \tbf{tlib}'s throughputs.
 
-%Calculating the median and (minimum/maximum) values over all tensor order, tensor sizes and contraction modes, \tf{TLIB-SB-PN} attains $29.24$ ($6.13$/$35.81$), \tf{TBLIS} $31.33$ ($2.32$/$35.64$), \tf{TCL} $1.19$ ($0.54$/$32.11$) and \tf{EIGEN} $2.89$ ($0.04$/$7.41$) Gflops/s in single-precision.
-%For double precision, \tf{TLIB-SB-PN} achieves $13.91$ ($3.73$/$17.49$), \tf{TBLIS} $16.03$ ($1.85$/$17.93$), \tf{TCL} $0.87$ ($0.56$/$18.25$) and \tf{EIGEN} $1.44$ ($0.03$/$3.61$) Gflops/s.
+In case of symmetrically shaped tensors the performance distributions of all libraries on the right plot in Fig. \ref{fig:performance.tlib.case8} are much closer.
+The median performances of \tbf{tlib}, \tbf{tblis}, \tbf{libtorch} and \tbf{eigen} are $228.93$, $208.69$, $76.46$, $46.25$ Gflops reaching on average $73.06$\%, $38.89$\%, $19.79$\% of \tbf{tlib}'s throughputs\footnote{We were unable to run tcl with our test set containing symmetrically shaped tensors. We suspect a very high memory demand to be the reason.}.
+All libraries operate with $801.68$ or less Gflops for the cases 2 and 3 which is almost half of \tbf{tlib}'s performance with $1579$ Gflops.
+The median performance and the interquartile range of \tbf{tblis} and \tbf{tlib} for the cases 6 and 7 are almost the same.
+Their respective median Gflops are $255.23$ and $263.94$ for the sixth case and $121.17$ and $144.27$ for the seventh case.
+This explains the similar performance distributions when their performance is less than $400$ Gflops.
+\tbf{Libtorch} and \tbf{eigen} compute the tensor-matrix product, in median, with $17.11$ and $9.64$ Gfops/s, respectively.
+Our library \tbf{tlib} has a median performance of $102.11$ Gflops and outperforms \tbf{tblis} with $79.35$ Gflops for the eighth case.
 
 
-Fig. \ref{fig:performance.tlib.tcl.tblis.eigen.order1.single.surf.symmetric} illustrates relative performance maps of the same tensor-vector multiplication implementations.
-%For the comparisons we have taken \tf{TLib-SB-PN} for asymmetrically shaped tensors and \tf{TLIB-LB-PN} for symmetrically shaped tensors.
-%The performance ratios reveal that \tf{TLib-SB-PN} and \tf{TLib-LB-PN} provide faster executions than \tf{TCL} and \tf{TBLIS} resulting in speedups up to a factor of $11$ 
-%\tf{TLib-SB-PN} is able to speed yields faster execution times and achieves speedups up to $10$x.
-Comparing \tf{TCL} performance, \tf{TLIB-SB-PN} achieves an average speedup of $6$x and more than $8$x for $42$\% of the test cases with asymmetrically shaped tensors and executes on average $5$x faster with symmetrically shaped tensors.
-In comparison with \tf{TBLIS}, \tf{TLIB-SB-PN} computes the tensor-vector product on average $4$x and $3.5$x faster for asymmetrically and symmetrically shaped tensors, respectively.
-%achieves between $50$\% and $80$\% of \tf{TBLIS}'s performance in case of asymmetrically shaped tensors when $q = p$.
-%With \tf{TLIB-SB-PN} executing one \tf{GEMV} with parameters, 
-%In these cases \tf{TBLIS}'s tensor-vector multiplication is faster than the corresponding multi-threaded matrix-vector implementation of \tf{OpenBLAS}.
-%However \tf{TLib-SB-PN} avoids the performance losses of \tf{TBLIS} for $q=p-1$ and $q=p-2$ resulting in a speedup of more than $2$x for about $12$\% of the test cases.
-%For symmetrically shaped tensors, \tf{TLIB-LB-PN} performs for $95$\% of the test cases at least $4$x faster than \tf{TBLIS}.
-
-%It is able to execute tensor contractions in parallel using a threadpool devices \cite{abadi:2016:tensorflow}.
-
-% Overall measurement over order x size x modes
-%For asymmetrically shaped tensors:
-
-%Performance[Float] (TLib-SB-P3)  27.04 / 29.24 / 6.13 /  35.81 (mean/median/min/max)
-%Performance[Float] (TLib-LB-P3)  23.04 / 24.55 / 7.26 /  35.04 (mean/median/min/max)
-%Performance[Float] (Tcl)          2.35 /  1.19 / 0.54 /  32.11 (mean/median/min/max)
-%Performance[Float] (TBlis)        7.00 /  6.62 / 2.11 /  11.62 (mean/median/min/max)
-%Performance[Float] (Eigen)        3.53 /  2.89 / 0.04 /   7.41 (mean/median/min/max)
-
-%Speedup[Float] (Tcl)    6.1 /  5.9 / 0.2 /  12.6  (mean/median/min/max)
-%Speedup[Float] (TBlis)  4.0 /  4.0 / 0.9 /  10.4  (mean/median/min/max)
-%Speedup[Float] (Eigen) 54.2 / 10.1 / 1.1 / 932.2  (mean/median/min/max)
-
-
-%Performance[Double] (TLib-SB-P3)  12.34 / 13.91 / 3.73 /  17.49 (mean/median/min/max)
-%Performance[Double] (TLib-LB-P3)  12.26 / 13.90 / 0.73 /  16.40 (mean/median/min/max)
-%Performance[Double] (Tcl)          1.88 /  0.87 / 0.56 /  18.25 (mean/median/min/max)
-%Performance[Double] (TBlis)        3.61 /  3.31 / 2.00 /   7.91 (mean/median/min/max)
-%Performance[Double] (Eigen)        1.70 /  1.44 / 0.03 /   3.61 (mean/median/min/max)
-
-%Speedup[Double] (Tcl)    3.0 / 2.3 / 0.2 /   6.8  (mean/median/min/max)
-%Speedup[Double] (TBlis)  3.5 / 3.3 / 0.8 /   7.5  (mean/median/min/max)
-%Speedup[Double] (Eigen) 29.4 / 7.9 / 1.4 / 488.8  (mean/median/min/max)
-
-
-% Overall measurement over order x size x modes
-%For symmetrically shaped tensors:
-
-%Performance[Float] (TLib-SB-P3)  22.82 / 24.96 / 2.31 /  35.29 (mean/median/min/max)
-%Performance[Float] (TLib-LB-P3)  26.10 / 27.31 / 4.04 /  35.59 (mean/median/min/max)
-%Performance[Float] (Tcl)         11.16 / 11.72 / 0.73 /  31.23 (mean/median/min/max)
-%Performance[Float] (TBlis)        7.42 /  7.45 / 2.10 /  14.51 (mean/median/min/max)
-%Performance[Float] (Eigen)        3.34 /  3.34 / 0.07 /   7.50 (mean/median/min/max)
-
-%Speedup[Float] (Tcl)    4.8 / 2.3 / 0.4 /  34.0  (mean/median/min/max)
-%Speedup[Float] (TBlis)  3.7 / 3.5 / 1.0 /  16.9  (mean/median/min/max)
-%Speedup[Float] (Eigen) 39.8 / 8.1 / 2.9 / 318.7  (mean/median/min/max)
-
-
-%Performance[Double] (TLib-SB-P3)  12.80 / 13.67 / 0.73 /  16.96 (mean/median/min/max)
-%Performance[Double] (TLib-LB-P3)  13.40 / 14.08 / 0.73 /  16.46 (mean/median/min/max)
-%Performance[Double] (Tcl)          7.90 /  8.54 / 0.73 /  16.67 (mean/median/min/max)
-%Performance[Double] (TBlis)        4.40 /  4.13 / 2.03 /   8.65 (mean/median/min/max)
-%Performance[Double] (Eigen)        1.76 /  1.70 / 0.07 /   3.70 (mean/median/min/max)
-
-%Speedup[Double] (Tcl)    3.2 / 1.5 / 0.5 /  19.6  (mean/median/min/max)
-%Speedup[Double] (TBlis)  3.2 / 3.2 / 1.2 /   6.5  (mean/median/min/max)
-%Speedup[Double] (Eigen) 20.4 / 8.3 / 3.6 / 146.3  (mean/median/min/max)
-
-%TODO: Why does Eigen perform so bad in general. what is the conclusion <- that i cannot say
-%TODO: Why does TBlis perform so good with asymmetrically-shaped and so bad with symmetrically-shaped tensors
-%TODO: Why does Tcl sperform so bad with asymmetrically-shaped and so much better with symmetrically-shaped tensors
-%TODO: Why is there a different behavior between symmetric and asymmetric?
-%TODO: What about double precision?
-
-%In case of symmetrically shaped tensors, we can observe a constant performance decrease with increasing order and decreasing contraction modes.
-%This is observation can be explained by the fact, that \ttt{gemv} using a column-major format exhibits a lower throughput when the contraction dimension decreases.
-
-
-\begin{comment}
-For symmetrically shaped tensors
-
-Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 22.8216, Median: 24.9619, Err: 33.1349, Min: 2.31063, Max: 35.2933
-Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 26.1065, Median: 27.3168, Err: 20.8065, Min: 4.04763, Max: 35.5989
-Library: TCL, Metric: Durchsatz [GFlops], Mean: 11.1673, Median: 11.7269, Err: 62.6903, Min: 0.730161, Max: 31.232
-Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 5.14274, Median: 5.13439, Err: 20.5751, Min: 2.0764, Max: 7.08505
-Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 3.34621, Median: 3.34808, Err: 68.0423, Min: 0.0696001, Max: 7.57743
-
-Library: TLib-SB-P3, Metric: Verhältnis, Mean: 1.32094, Median: 1.00252, Err: 58.3911, Min: 0.658816, Max: 9.2561
-Library: TCL, Metric: Verhältnis, Mean: 4.8441, Median: 2.29375, Err: 118.434, Min: 0.394262, Max: 34.045
-Library: TBLIS, Metric: Verhältnis, Mean: 5.29438, Median: 5.22745, Err: 31.3928, Min: 0.89494, Max: 17.1445
-Library: EIGEN, Metric: Verhältnis, Mean: 39.8732, Median: 8.10803, Err: 177.189, Min: 2.98625, Max: 318.705
-
-Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 12.801, Median: 13.647, Err: 21.6625, Min: 3.04772, Max: 16.9634
-Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 13.4008, Median: 14.0823, Err: 18.428, Min: 3.17677, Max: 16.466
-Library: TCL, Metric: Durchsatz [GFlops], Mean: 7.90581, Median: 8.54108, Err: 57.0887, Min: 0.735993, Max: 16.6725
-Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 2.79088, Median: 2.79605, Err: 14.6806, Min: 1.85941, Max: 3.48239
-Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 1.7621, Median: 1.70748, Err: 60.8023, Min: 0.0785265, Max: 3.70968
-
-Library: TLib-SB-P3, Metric: Verhältnis, Mean: 1.0662, Median: 1.00156, Err: 15.0763, Min: 0.489739, Max: 1.84845
-Library: TCL, Metric: Verhältnis, Mean: 3.25808, Median: 1.57523, Err: 113.979, Min: 0.499374, Max: 19.5649
-Library: TBLIS, Metric: Verhältnis, Mean: 4.86979, Median: 4.77341, Err: 21.6733, Min: 1.25961, Max: 7.13199
-Library: EIGEN, Metric: Verhältnis, Mean: 20.467, Median: 8.31226, Err: 152.739, Min: 3.6743, Max: 146.345
-\end{comment}
-
-
-
-\begin{comment}
-%For asymmetrically shaped tensors
-
-Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 27.0423, Median: 29.2409, Err: 23.4531, Min: 6.13397, Max: 35.8119
-Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 23.0486, Median: 24.5508, Err: 30.8481, Min: 7.26238, Max: 34.0461
-Library: TCL, Metric: Durchsatz [GFlops], Mean: 2.35291, Median: 1.19859, Err: 158.571, Min: 0.546151, Max: 32.1105
-Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 27.6481, Median: 31.3302, Err: 27.2441, Min: 2.32361, Max: 35.6441
-Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 3.53203, Median: 2.89545, Err: 58.5541, Min: 0.0352698, Max: 7.41757
-
-Library: TLib-LB-P3, Metric: Verhältnis, Mean: 1.27989, Median: 1.06763, Err: 44.5219, Min: 0.579426, Max: 4.67212
-Library: TCL, Metric: Verhältnis, Mean: 6.1586, Median: 5.93457, Err: 61.3256, Min: 0.236183, Max: 12.6793
-Library: TBLIS, Metric: Verhältnis, Mean: 1.13472, Median: 0.939283, Err: 64.1752, Min: 0.486509, Max: 9.54629
-Library: EIGEN, Metric: Verhältnis, Mean: 54.2246, Median: 10.1984, Err: 273.677, Min: 1.13043, Max: 932.292
-
-Library: TLib-SB-P3, Metric: Durchsatz [GFlops], Mean: 12.3436, Median: 13.9135, Err: 30.5003, Min: 3.73841, Max: 17.4949
-Library: TLib-LB-P3, Metric: Durchsatz [GFlops], Mean: 12.2615, Median: 13.9074, Err: 29.2714, Min: 3.67566, Max: 16.4004
-Library: TCL, Metric: Durchsatz [GFlops], Mean: 1.8821, Median: 0.875671, Err: 140.447, Min: 0.560876, Max: 18.2588
-Library: TBLIS, Metric: Durchsatz [GFlops], Mean: 15.3524, Median: 16.0365, Err: 15.4604, Min: 5.03959, Max: 17.9311
-Library: EIGEN, Metric: Durchsatz [GFlops], Mean: 1.70814, Median: 1.44493, Err: 56.4276, Min: 0.0322254, Max: 3.6154
-
-Library: TLib-LB-P3, Metric: Verhältnis, Mean: 1.00174, Median: 1.00157, Err: 4.75513, Min: 0.712074, Max: 1.3795
-Library: TCL, Metric: Verhältnis, Mean: 3.09321, Median: 2.36365, Err: 64.6174, Min: 0.213133, Max: 6.83632
-Library: TBLIS, Metric: Verhältnis, Mean: 0.813319, Median: 0.869508, Err: 37.1465, Min: 0.35507, Max: 2.78573
-Library: EIGEN, Metric: Verhältnis, Mean: 29.292, Median: 7.90342, Err: 236.317, Min: 1.43805, Max: 488.886
-\end{comment}
-
+%Comparing \tf{TCL} performance, \tf{TLIB-SB-PN} achieves an average speedup of $6$x and more than $8$x for $42$\% of the test cases with asymmetrically shaped tensors and executes on average $5$x faster with symmetrically shaped tensors.
+%In comparison with \tf{TBLIS}, \tf{TLIB-SB-PN} computes the tensor-vector product on average $4$x and $3.5$x faster for asymmetrically and symmetrically shaped tensors, respectively.

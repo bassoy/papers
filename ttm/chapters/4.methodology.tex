@@ -3,8 +3,8 @@
 \subsubsection{Computing System} 
 The experiments have been carried out on an Intel Xeon Gold 6248R processor with a Cascade micro-architecture. The processor consists of $24$ cores operating at a base frequency of $3$ GHz for non-AVX512 instructions.
 %Supporting AVX-512 instruction sets, the processor can perform two fused multiply-add instructions with 8 double-precision floating-point numbers every clock cycle.
-With $24$ cores and a peak AVX-512 boost frequency of $2.5$ GHz, the processor achieves a theoretical data throughput of ca. $1.92$ double precision TFlops/s
-We measured a peak performance of $1.78$ double precision Tflops/s using the likwid performance tool.
+With $24$ cores and a peak AVX-512 boost frequency of $2.5$ GHz, the processor achieves a theoretical data throughput of ca. $1.92$ double precision Tflops.
+We measured a peak performance of $1.78$ double precision Tflops using the likwid performance tool.
 
 The source code has been compiled with \tf{GCC} \tf{v10.2} using the highest optimization level \tf{-O3} and \tf{-march=native}, \tf{-pthread} and \tf{-fopenmp}. 
 Loops within for the eighth case have been parallelized using \tf{GCC}'s \tf{OpenMP} \tf{v4.5} implementation.
@@ -13,7 +13,7 @@ We have used the \tf{GEMV} and \tf{GEMM} implementation of the 2024.0 Intel MKL 
 
 If not otherwise mentioned, both tensors $\mubA$ and $\mubC$ are stored according to the first-order linear tensor layout with $\mbpi = (1,\dots,p)$ whereas matrix $\mbB$ has the row-major storage format.
 The benchmark results of each function are the average of 10 runs.
-
+\vspace{-1em}
 
 \subsubsection{Tensor Shapes} 
 We have used asymmetrically-shaped and symmetrically-shaped tensors in order to cover many possible use cases. 
