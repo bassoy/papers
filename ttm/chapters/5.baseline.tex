@@ -2,7 +2,7 @@
 \label{sec:design}
 \subsection{Sequential Algorithm}
 \label{sec:design:sequential.baseline.algorithm}
-The sequential baseline algorithm for Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single C++ function that supports tensors with arbitrary order, dimensions and any linear tensor layout.
+The sequential baseline algorithm for Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single C++ function.
 It consists of nested recursion with a control flow that is akin to algorithm 1 in \cite{bassoy:2018:fast} consisting of two \ttt{if} statements with an \ttt{else} branch.
 The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_{q}$ when $r = \mhq$ with $\pi_r = q$ and $\mhq = \mbpi^{-1}_q$ where $\mbpi^{-1}$ is the inverse layout tuple.
 The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \neq \mhq \leq p$ with different multi-indices.
@@ -83,7 +83,6 @@ The algorithm needs to be initially called with $r=p$ where $\mbn$ is the shape 
 While spatial data locality is improved by adjusting the loop ordering, the temporal data locality of tensors $\mubA$ and $\mubC$ differ.
 Note that slice $\mubA_{\pi_1,q}'$ is accessed $m$ times, fiber $\mubC_{\pi_1}$ is accessed $\mbn(q)$ times and element $\mubB(j,i_q)$ is accessed $\mbn(\pi_1)$ times.
 While the specified fiber of $\mubC$ can fit into first or second level cache, slice elements of $\mubA$ are unlikely to fit in the local caches if the slice size $n_{\pi_1} \times n_q$ is large leading to higher cache misses and suboptimal performance.
-%todo: hier mehr paper, die BLAS Implementierung referenzieren?
 Optimized tiling for better temporal data locality has been discussed in \cite{goto:2008:gemm} which suggests to use existing high-performance BLAS implementations for the base case.
 %The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
 
@@ -165,7 +164,6 @@ Note that in all cases no copy operation is performed in order to compute the de
 If the tensor order is greater than $2$ with $\pi_1\neq q$ and $\pi_p \neq q$, the modified baseline algorithm \ref{alg:ttm.sequential.coalesced} is used to successively call $\bar{n} / (n_q \cdot n_{\pi_1})$ times \tf{gemm} with different tensor slices of $\mubC$ and $\mubA$ in the base case.
 Each \tf{gemm} computes one slice $\mubC_{\pi_1,q}'$ of the tensor-matrix product $\mubC$ using the corresponding tensor slices $\mubA_{\pi_1,q}'$ and the matrix $\mbB$.
 The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting both tensor slices as row-major matrices $\mbA$ and $\mbC$ which have the dimensions $(n_q,n_{\pi_1})$ and $(m,n_{\pi_1})$, respectively.
-%todo: note that the leading dimensions of A and C must be wq 
 
 \subsection{BLAS-Based Algorithms with Subtensors}
 \label{sec:design:blas.based.algorithm.subtensors}

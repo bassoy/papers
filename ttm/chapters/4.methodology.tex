@@ -1,12 +1,11 @@
 \section{Experimental Setup}
 \label{sec:experimental.setup}
 \subsubsection{Computing System} 
-The experiments have been carried out on an Intel Xeon Gold 6248R processor with a Cascade micro-architecture. The processor consists of $24$ cores operating at a base frequency of $3$ GHz for non-AVX512 instructions.
-%Supporting AVX-512 instruction sets, the processor can perform two fused multiply-add instructions with 8 double-precision floating-point numbers every clock cycle.
+The experiments have been carried out on an Intel Xeon Gold 6248R processor with a Cascade micro-architecture. The processor consists of $24$ cores operating at a base frequency of $3$ GHz.
 With $24$ cores and a peak AVX-512 boost frequency of $2.5$ GHz, the processor achieves a theoretical data throughput of ca. $1.92$ double precision Tflops.
 We measured a peak performance of $1.78$ double precision Tflops using the likwid performance tool.
 
-The source code has been compiled with \tf{GCC} \tf{v10.2} using the highest optimization level \tf{-O3} and \tf{-march=native}, \tf{-pthread} and \tf{-fopenmp}. 
+We have used \tf{GCC} \tf{v10.2} with the highest optimization level \tf{-O3} and \tf{-march=native}, \tf{-pthread} and \tf{-fopenmp}. 
 Loops within for the eighth case have been parallelized using \tf{GCC}'s \tf{OpenMP} \tf{v4.5} implementation.
 We have used the \tf{gemv} and \tf{gemm} implementation of the 2024.0 Intel MKL and its own threading library \tf{mkl\_intel\_thread} together with the threading runtime library \tf{libiomp5}.
 %todo: tell the number of threads set in openmp and for intel mkl.
@@ -16,77 +15,11 @@ If not otherwise mentioned, both tensors $\mubA$ and $\mubC$ are stored accordin
 \vspace{-1em}
 
 \subsubsection{Tensor Shapes} 
-We have used asymmetrically-shaped and symmetrically-shaped tensors in order to cover many possible use cases. 
+We have used asymmetrically-shaped and symmetrically-shaped tensors in order to cover many use cases. 
 The dimension tuples of both shape types are organized within two three-dimensional arrays with which tensors are initialized.
 The dimension array for the first shape type contains $720 = 9\times 8 \times 10$ dimension tuples where the row number is the tensor order ranging from $2$ to $10$. 
-For each tensor order $8$ tensor instances with increasing tensor size is generated.
-%todo: explain specialities of the first set: first dimension is ??, one dimension is greater than ?? and other dimensions are equal to 2.
+For each tensor order, $8$ tensor instances with increasing tensor size is generated.
+A special feature of this test set is that the contraction dimension and the leading dimension are disproportionately large. 
 The second set consists of $336 = 6\times8\times 7$ dimensions tuples where the tensor order ranges from $2$ to $7$ and has $8$ dimension tuples for each order.
 Each tensor dimension within the second set is $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$.
 A detailed explanation of the tensor shape setup is given in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
-
-%todo: explain why you chose certain visiualization.
-%todo: do I need contour plots or can I take 
-\begin{comment}
-The number of runtime values equals to the number of elements of the tensor sets.
-Instead of providing all runtime data points, the arithmetic mean over the set of tensor sizes is given.
-Hence, the performance values are provided in three dimensional performance plot
-that vary with the tensor order and contraction mode resulting in a three dimensional performance plot.
-Hence, countour view (performance maps) are provided.
-\end{comment}
-
-%\tit{Setup 1} performs runtime measurements with \tit{asymmetrically}-\tit{shaped} tensors while \tit{Setup 2} performs runtime measurements with \tit{symmetrically}-\tit{shaped} tensors.
-
-\begin{comment}
-Their dimension tuples are organized in $10$ two-dimensional arrays $\mbN_q$ with $9$ rows and $32$ columns where the dimension tuple $\mbn_{r,c}$ of length $r+1$ denotes an element $\mbN_q(r,c)$ of $\mbN_q$ with $1 \leq q \leq 10$.
-The dimension $\mbn_{r,c}(i)$ of $\mbN_q$ is $1024$ if $i = 1$, $c \cdot 2^{15-r}$ if $i = \min(r+1,q)$ and $2$ for any other index $i$ with $1 < q \leq 10$.
-The dimension $\mbn_{r,c}(i)$ of $\mbN_1$ is given by $c \cdot 2^{15-r}$ if $i=1$, $1024$ if $i=2$ and $2$ for any other index $i$.
-Dimension tuples of the same array column have the same number of tensor elements.
-Please note that with increasing tensor order (and row-number), the contraction mode is halved and with increasing tensor size, the contraction mode is multiplied by the column number.
-Such a setup enables an orthogonal test-set in terms of tensor elements ranging from $2^{25}$ to $2^{29}$ and tensor order ranging from $2$ to $10$.
-\tit{Setup 2} performs runtime measurements with \tit{symmetrically}-\tit{shaped} tensors.
-Their dimension tuples are organized in one two-dimensional array $\mbM$ with $6$ rows and $8$ columns where the dimension tuple $\mbm_{r,c}$ of length $r+1$ denotes an element $\mbM(r,c)$ of $\mbM$.
-For $c=1$, the dimensions of $\mbm_{r,c}$ are given by $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$ with descending row number $r$ from $6$ to $1$.
-For $c>1$, the remaining dimensions are given by $\mbm_{r,c} = \mbm_{r,c} + k \cdot (c-1)$ where $k$ is $2^9$, $2^5$, $2^3$, $2^2$, $2$, $1$ with descending row number $r$ from $6$ to $1$.
-In this setup, shape tuples of a column do not yield the same number of subtensor elements.
-\end{comment}
-
-
-\begin{comment}
-\subsubsection{Performance Maps} 
-%In this setup, a mode-$q$ tensor-vector multiplication is executed with the shape array $\mbN_q$.
-% where the contraction dimension is equal to the largest dimension.
-Measuring a single tensor-vector multiplication with the first setup produces $2880 = 9\times32\times 10$ runtime data points where the tensor order ranges from $2$ to $10$, with $32$ shapes for each order and $10$ contraction modes.
-The second setup produces $336 = 6\times8\times 7$ data points with $6$ tensor orders ranging from $2$ to $7$, $8$ shapes for each order and $7$ contraction modes.
-Similar to the findings in \cite{bassoy:2018:fast}, we have observed a performance loss for small dimensions of the mode with the highest priority.
-% is small with a standard deviation where the performance values deviate from the mean between $5$\% and $20$\%.
-The presented performance values are the arithmetic mean over the set of tensor sizes that vary with the tensor order and contraction mode resulting in a three dimensional performance plot.
-A schematic countour view of the plots is given in Fig. \ref{fig:performance.map} which is divided into $5$ regions.
-The cases $2$, $3$, $6$ and $7$ generate performance values within the regions $2$, $3$, $6$ and $7$ where only a single parallel \tf{GEMV} is executed, see Table \ref{tab:mapping}.
-Please note that the contraction mode $q$ is set to the tensor order $p$ if $q>p$.
-Performance values within region $8$ result from case $8$ which executes \tf{GEMV}'s with tensor slices in parallel.
-
-%The contraction mode $q$ is set equal to the tensor order $p$ for all measurements if $q>p$.
-%There are a lot of data runtime measurement data.
-%A function is measured with 2880 and 480 different shape tuples for one data type.
-\begin{figure*}[t]
-	\centering
-	\includegraphics[width=0.5\textwidth]{figures/performance_map_color}
-	\caption{
-		\footnotesize %
-		Schematic contour view of the following average performance maps for the tensor-vector multiplication with tensors that are stored according to the first-order storage format.
-		Each case $x$ in Table \ref{tab:mapping} affects a different region $x$ within the performance map.
-		Performance values are the arithmetic mean over the set of tensor sizes with $32$ and $8$ elements in case of the first and second test setup, respectively.
-		Contraction mode $q=p$ for $q>p$ where $p$ is the tensor order.
-		\label{fig:performance.map}
-	}
-\end{figure*}
-The following analysis considers four parallel versions \tf{SB-P1}, \tf{LB-P1}, \tf{SB-PN} and \tf{LB-PN}.
-\tf{SB} (small-block) and \tf{LB} (large-block) denote parallel slice-vector multiplications where each thread recursively calls a single-threaded \tf{GEMV} with mode-$2$ and mode-$\mhq$ slices, respectively.
-\tf{P1} uses the outer-most dimension $n_{p}$ for parallel execution whereas \tf{PN} applies loop fusion and considers all fusible dimensions for parallel execution.
-%Figure Schematic contour view of the following average performance maps
-%\subsubsection{Variations of Case $8$} 
-%According to Table \ref{tab:mapping}
-%executing \tf{GEMV}s with tensor slices in parallel is given by the upper triangular covering the $8$-th case. 
-%Average performance values of the cases $2$, $3$, $6$ and $7$ are covered by the remaining parts of the map.
-\end{comment}

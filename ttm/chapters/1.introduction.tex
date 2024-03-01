@@ -24,7 +24,7 @@ Despite their high performance, all algorithms are layout-oblivious and provide 
 %The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processor's compute units.
 Moreover, every proposed algorithm can be implemented with less than 150 lines of \tf{C++} code where the algorithmic complexity is reduced by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
 We have provided an open and free reference \tf{C++} implementation of all algorithms and a python interface for convenience.
-While we have used Intel's MKL for our benchmarks, the user is free to choose any other library that provides the BLAS interface.
+While Intel's MKL is used for our benchmarks, the user is free to select any other library that provides the BLAS interface.
 
 The following analysis quantifies the impact of the tensor layout, the tensor slicing method and parallel execution of slice-matrix multiplications with varying contraction modes.
 The runtime measurements of our implementations are compared with state-of-the-art approaches discussed in \cite{springer:2018:design, matthews:2018:high} and actively developed libraries including Libtorch and Eigen. In summary, the main findings of our work are:

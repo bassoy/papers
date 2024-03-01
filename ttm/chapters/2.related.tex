@@ -23,8 +23,6 @@ The proposed algorithm yields results that feature a similar runtime behavior to
 The work in \cite{li:2015:input} introduces InTensLi, a framework that generates in-place tensor-matrix multiplication according to the LOG approach. 
 The authors discusses optimization and tuning techniques for slicing and parallelizing the operation.
 With optimized tuning parameters, they report a speedup of up to $4$x over the TTGT-based MATLAB tensor toolbox library discussed in \cite{bader:2006:algorithm862}.
-%Although many aspects are similar to our work, the authors emphasize the code generation of tensor-matrix multiplications using high-performance \tf{GEMM}'s.
-%todo: hier besser sagen, welche Konzepte wir hierfür übernehmen.
 
 In \cite{bassoy:2019:ttv}, the author presents LoG-based algorithms that compute the tensor-vector product. 
 They support dense tensors with linear tensor layouts, arbitrary dimensions and tensor order.
