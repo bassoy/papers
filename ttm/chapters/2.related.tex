@@ -12,7 +12,7 @@ Runtime measurements cover class 3 tensor contractions.
 %todo: weg und was anderes, zum Beispiel mein eigenes Paper
 \end{comment}
 
-The authors of \cite{springer:2018:design} present a tensor-contraction generator TCCG and the GETT approach for dense tensor contractions that is inspired from the design of a high-performance \tf{gemm}.
+The authors of \cite{springer:2018:design} present a tensor-contraction generator TCCG and the GETT approach for dense tensor contractions that is inspired from the design of a high-performance GEMM.
 Their unified code generator selects implementations from generated GETT, LoG and TTGT candidates.
 Their findings show that among $48$ different contractions $15$\% of LoG-based implementations are the fastest.
 
@@ -28,9 +28,9 @@ With optimized tuning parameters, they report a speedup of up to $4$x over the T
 
 In \cite{bassoy:2019:ttv}, the author presents LoG-based algorithms that compute the tensor-vector product. 
 They support dense tensors with linear tensor layouts, arbitrary dimensions and tensor order.
-The presented approach is to divide into eight cases calling \tf{gemv} and \tf{dot} routines.
+The presented approach is to divide into eight cases calling GEMV and DOT.
 He reports average speedups of 6.1x and 4.0x compared to implementations that use the TTGT and GETT approach, respectively.
 
 Our work is inspired by \cite{li:2015:input} and \cite{bassoy:2019:ttv}.
-We use the lemmas in \cite{li:2015:input} and generalize them for tensors with any linear tensor layouts. 
-Based on our slicing technique
+We use lemmas for tensor slicing in \cite{li:2015:input} and generalize them for tensors with any linear tensor layouts. 
+We have adapted the eight cases in \cite{bassoy:2019:ttv} for tensor-matrix multiplication and combined it with the slicing method.

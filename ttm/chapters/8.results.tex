@@ -108,7 +108,7 @@ Each box plot with the number $k$ has been computed from benchmark data with sym
 The $1$-order and $7$-order layout are the first- and last-order storage formats for the order-$7$ tensor with $\pi_F=(1,2,...,7)$ and $\pi_L= (7,6,...,1)$.
 The definition of $k$-order tensor layouts can be found in section \ref{sec:preliminaries:layout}.
 
-The low performance can be attributed to the fact that the contraction dimension of subtensors of tensor slices of symmetrically shaped order-7 tensors are $8$ while the leading dimension is $8$ or at most $48$ for subtensors.
+The low performance of around $70$ Gflops can be attributed to the fact that the contraction dimension of subtensors of tensor slices of symmetrically shaped order-7 tensors are $8$ while the leading dimension is $8$ or at most $48$ for subtensors.
 The relative standard deviation of \tf{<gemm\_batch>}'s and \tf{<par-loops,seq-gemm>}'s median values are $12.95$\% and $17.61$\%.
 Their respective interquartile range are similar with a relative standard deviation of $22.25$\% and $15.23$\%.
 
