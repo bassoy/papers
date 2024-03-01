@@ -22,14 +22,15 @@ A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 \label{sec:preliminaries:layout}
 We use a layout tuple $\mbpi \in \bbN^p$ to encode all linear tensor layouts including the first-order or last-order layout.
 They contain permuted tensor modes whose priority is given by their index.
-For instance, the first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
 The general $k$-order tensor layout for an order-$p$ tensor is given by the layout tuple $\mbpi$ with $\pi_r = k-r+1$ for $1 < r \leq k$ and $r$ for $k < r \leq p$.
+For instance, the first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
 An inverse layout tuple $\mbpi^{-1}$ is defined by $\mbpi^{-1}(\mbpi(k)) = k$.
 Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple is given by $w_{\pi_r} = \prod_{k=1}^{r-1} n_{\pi_k}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
 Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
 The location of tensor elements is determined by the tensor layout and the layout function.
 For a given tensor layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$.
-With $j = \lambda_{\mbw} (\mbi)$ being the relative memory position of an element with a multi-index $\mbi$, reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
+%Index $j = \lambda_{\mbw} (\mbi)$ is called the relative memory position of an element.
+%Reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 \vspace{-1em}
 
 \subsubsection{Non-Modifying Flattening and Reshaping}
@@ -40,28 +41,28 @@ Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{r,q}
 Let $j = 0$ if $k \leq r$ and $j = q-r$ otherwise for $1 \leq k \leq p'$.
 %Let also $s_k = 0$ if $\pi_k < \max(\mbpi_{r,q})$ and $s_k = q-r$ if $\pi_{k+j} > \max(\mbpi_{r,q})$.
 Then the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is given by $\tau_r = \min(\mbpi_{r,q})$ and $\tau_{k} = \pi_{k+j} + s_k$ if $k \neq r$ where $s_k = \left| \{ \pi_i \mid \pi_{k+j} > \pi_i \wedge \pi_i \neq \min(\mbhpi) \wedge r \leq i \leq p \} \right|$.
-Elements of the corresponding shape tuple $\mbm$ are given by $m_{\tau_r} = \prod_{k=r}^q n_{\pi_k}$ and $m_{\tau_k} = n_{\pi_{k+j}}$ if $k \neq r$.
-
-The reshaping operation $\rho$ transforms an order-$p$ tensor $\mubA$ to another order-$p$ tensor $\mubB$ with different shape $\mbm$ and layout $\mbtau$ tuples of length $p$.
+Elements of the shape tuple $\mbm$ are defined by $m_{\tau_r} = \prod_{k=r}^q n_{\pi_k}$ and $m_{\tau_k} = n_{\pi_{k+j}}$ if $k \neq r$.
+Reshaping $\rho$ transforms an order-$p$ tensor $\mubA$ to another order-$p$ tensor $\mubB$ with the shape tuple $\mbm$ and layout tuple $\mbtau$ tuples, both of length $p$.
 In this work, it permutes the shape and layout tuple simultaneously without changing the element ordering and without copying tensor elements.
-The operation $\rho$ uses a permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ to only modify shape and layout tuples.
-Elements of the resulting shape tuple $\mbm$ and the layout tuple $\mbtau$ are given by $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
+The operation $\rho$ is defined by a permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ that defines elements of $\mbm$ and $\mbtau$ with $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
 \vspace{-1em}
 
-\subsubsection{Tensor-Matrix Multiplication (TTM)}
+\subsubsection{Tensor-Matrix Multiplication}
 Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = (n_1,\dots,n_q,\dots,n_p)$ and $\mbn_c =(n_1,\dots,n_{q-1},m,n_{q+1},\dots,n_p)$. 
 Let $\mbB$ be a matrix of shape $\mbn_b = (m,n_q)$.
-A mode-$q$ TTM is denoted by $\mubC = \mubA \times_q \mbB$ where an element of $\mubC$ is given by
+A mode-$q$ tensor-matrix product is denoted by $\mubC = \mubA \times_q \mbB$. 
+An element of $\mubC$ is defined by
 \begin{equation}
 \label{equ:tensor.matrix.multplication}
 \mubC(i_1, \dots, i_{q-1}, j, i_{q+1}, \dots, i_p) = \sum_{i_q=1}^{n_q} \mubA(i_1, \dots, i_q, \dots, i_p) \cdot \mbB(j,i_q)
 \end{equation}
-with $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$.
+with $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$, see \cite{li:2015:input, kolda:2009:decompositions}.
 %Similar to the tensor-vector multiplication, the multiplication consists of multiple inner productd of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
-Mode $q$ is the \tit{contraction} \tit{mode} of the TTM  with $1 \leq q \leq p$.
+Mode $q$ is called the \tit{contraction} \tit{mode} with $1 \leq q \leq p$.
 The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
 Its arithmetic intensity is equal to that of a matrix-matrix multiplication and is not memory-bound.
 %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
 In the following, we assume that the tensors $\mubA$ and $\mubC$ have the same tensor layout $\mbpi$. 
 Elements of matrix $\mubB$ can be stored either in the column-major or row-major format.
 Without loss of generality, we assume $\mubB$ to have the row-major storage format in this work.
+Also note that all of the following analysis is valid, if the matrix indices $j$ and $i_q$ are swapped.

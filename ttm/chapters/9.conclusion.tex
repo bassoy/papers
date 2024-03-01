@@ -2,18 +2,18 @@
 \label{sec:conclusion}
 We presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication which is essential for many tensor methods.
 Our approach is based on the LOG-method and computes the tensor-matrix product in-place without transposing tensors.
-It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input}.
+It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input} for linear tensor layouts.
 The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
 
-Our benchmarks show that dividing the base algorithm into eight different \tf{gemm} cases improves the overall performance.
-We have demonstrated that algorithms with parallel loops over single-threaded \tf{gemm} calls with tensor slices and subtensors perform best.
-Interestingly, they outperform a single \tf{gemm\_batch} call with subtensors, on average, by $14$\% in case of asymmetrically shaped tensors and if tensor slices are used.
+Our benchmarks show that dividing the base algorithm into eight different GEMM cases improves the overall performance.
+We have demonstrated that algorithms with parallel loops over single-threaded GEMM calls with tensor slices and subtensors perform best.
+Interestingly, they outperform a single batched GEMM with subtensors, on average, by $14$\% in case of asymmetrically shaped tensors and if tensor slices are used.
 Both version computes the tensor-matrix product on average faster than other state-of-the-art implementations.
 We have shown that our algorithms are layout-oblivious and do not need further refinement if the tensor layout is changed. 
 We measured a relative standard deviation of $12.95$\% and $17.61$\% with symmetrically-shaped tensors for different $k$-order tensor layouts.
 
-Summarizing our findings, LOG-based tensor-times-matrix algorithms are able to outperform TTGT-based and GETT-based implementations without loosing their flexibility.
-Hence, other actively developed libraries such as LibTorch and Eigen will benefit from implementing the proposed algorithms.
+One can conclude that LOG-based tensor-times-matrix algorithms are on par or can even outperform TTGT-based and GETT-based implementations without loosing their flexibility.
+Hence, other actively developed libraries such as LibTorch and Eigen might benefit from implementing the proposed algorithms.
 Our header-only library provides \tf{C++} interfaces and a python module which allows frameworks to easily integrate our library.
 
 In the future, we intend to generalize LOG-based approach for general tensor contractions with the same flexibility that we offered for the tensor-matrix multiplication. 
