@@ -1,13 +1,13 @@
 \section{Introduction}
 \label{sec:introduction}
 Tensor computations are found in many scientific fields such as computational neuroscience, pattern recognition, signal processing and data mining \cite{karahan:2015:tensor, papalexakis:2017:tensors}.
-These computations use basic tensor operations as building blocks for decomposing and analyzing large amount of multidimensional data which are represented by tensors \cite{lee:2018:fundamental, kolda:2009:decompositions}. 
+These computations use basic tensor operations as building blocks for decomposing and analyzing multidimensional data which are represented by tensors \cite{lee:2018:fundamental, kolda:2009:decompositions}. 
 Tensor contractions are an important subset of basic operations that need to be fast for efficiently solving tensor methods.
 
-There has been three main approaches for implementing tensor contractions.
+There are three main approaches for implementing tensor contractions.
 The Transpose-Transpose-GEMM-Transpose (TGGT) approach reorganizes (flattens) tensors in order to perform a tensor contraction with an optimized matrix-matrix multiplication implementation (\tf{gemm}) \cite{bader:2006:algorithm862, solomonik:2013:cyclops}.
-Implementations of the GEMM-like Tensor-Tensor multiplication (GETT) methods have macro-kernels that are similar to the ones used in fast GEMM implementations \cite{springer:2018:design, matthews:2018:high}.
-A different method is the Loops-over-GEMM (LoG) approach in which BLAS are utilized with multiple tensor slices or subtensors if possible \cite{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction, bassoy:2019:ttv}.
+Implementations of the GEMM-like Tensor-Tensor multiplication (GETT) method have macro-kernels that are similar to the ones used in fast GEMM implementations \cite{springer:2018:design, matthews:2018:high}.
+The third method is the Loops-over-GEMM (LoG) approach in which BLAS are utilized with multiple tensor slices or subtensors if possible \cite{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction, bassoy:2019:ttv}.
 Implementations of the LoG and TTGT approaches are in general easier to maintain and faster to port than GETT implementations which might need to adapt vector instructions or blocking parameters according to a processor's microarchitecture.
 %todo: Compiler-based approaches like as described in \cite{gareev:2018:high} 
 
@@ -37,7 +37,7 @@ In summary, the main findings of our work are:
 	\item 
 	Our algorithm with variable loop fusion and parallel slice-matrix multiplications is on average $17$\% faster than Intel's \tf{gemm\_batch} when the contraction and leading dimensions of the tensors are greater than $256$.
 	\item 
-	Our algorithms are layout oblivious.
+	Our algorithms are layout-oblivious.
 	The fastest implementations achieve at least a median throughput of \tq for any linear tensor layout.
 	\item
 	Our fastest algorithm computes the tensor-matrix multiplication on average, by at least $14.05$\% and up to a factor of $3.79$ faster than other state-of-the art library implementations, including LibTorch and Eigen.
