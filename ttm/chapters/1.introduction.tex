@@ -4,6 +4,7 @@ Tensor computations are found in many scientific fields such as computational ne
 Tensors representing large amount of multidimensional data are decomposed and analyzed with the help of basic tensor operations \cite{lee:2018:fundamental, kolda:2009:decompositions}. 
 %While tensor contraction with arithmetic intensity has been discussed, class 2 tensor operations 
 The decomposition and analysis led to the development and analysis of high-performance kernels for tensor contractions.
+%todo: check above sentence.
 In this work, we present and analyze a high-performance algorithm for the tensor-matrix multiplication that is used in many numerical algorithms such as the alternating least squares method \cite{lee:2018:fundamental, kolda:2009:decompositions}.
 It is a compute-bound tensor operation and has the same arithmetic intensity as a matrix-matrix multiplication which can almost reach the practical peak performance of a computing machine.
 %%with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
@@ -17,11 +18,12 @@ Implementations of the LOG and TTGT approaches are in general easier to maintain
 
 %Our work is motivated by the fact that LOG-based implementations of the tensor-matrix and tensor-vector multiplication are similar. 
 To our best knowledge, we are the first to combine the approach described in \cite{bassoy:2019:ttv} with the findings on tensor slicing in \cite{li:2015:input} and to propose fast in-place algorithms that are layout-oblivious.
-Our algorithms compute the tensor-matrix product in parallel together with highly efficient \tf{gemm} or \tf{gemm\_batch} implementations.
+%todo: explain layout-oblivious
+Our algorithms compute the tensor-matrix product in parallel with highly efficient \tf{gemm} or \tf{gemm\_batch} implementations.
 They support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
 Input and output tensors do not need to be transposed or flattened into two-dimensional matrices.
-The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processors compute units.
-Despite, the generality of our approach, every proposed algorithm can be implemented with less than 100 lines of \tf{C++} code where the complexity is hidden by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
+The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processor's compute units.
+Despite the generality of our approach, every proposed algorithm can be implemented with less than 100 lines of \tf{C++} code where the algorithmic complexity is reduced by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
 We have provided an open and free reference \tf{C++} implementation of all algorithms and a python interface for convenience.
 While we have used Intel's MKL for our benchmarks, the user is free to choose any other library that provides the BLAS interface.
 
@@ -31,14 +33,14 @@ In summary, the main findings of our work are:
 \begin{itemize}
 	\item 
 	%
-	A tensor-matrix multiplication can be implemented by an in-place algorithm with $1$ \tf{gemv} and $7$ \tf{gemm} calls supporting all combinations of contraction mode, tensor order and dimensions for any linear tensor layout.
+	A tensor-matrix multiplication can be implemented by an in-place algorithm with $1$ \tf{gemv} and $7$ \tf{gemm} calls, supporting all combinations of contraction mode, tensor order and dimensions for any linear tensor layout.
 	\item 
 	Our algorithm with variable loop fusion and parallel slice-matrix multiplications is on average $17$\% faster than Intel's \tf{gemm\_batch} when the contraction and leading dimensions of the tensors are greater than $256$.
 	\item 
 	Our algorithms are layout oblivious.
 	The fastest implementations achieve at least a median throughput of \tq for any linear tensor layout.
 	\item
-	Our fastest algorithm computes the tensor-matrix multiplication on average, by at least by $14.05$\% and up to a factor of $3.79$ faster than other state-of-the art library implementations, including LibTorch and Eigen.
+	Our fastest algorithm computes the tensor-matrix multiplication on average, by at least $14.05$\% and up to a factor of $3.79$ faster than other state-of-the art library implementations, including LibTorch and Eigen.
 \end{itemize}
 
 The remainder of the paper is organized as follows. 

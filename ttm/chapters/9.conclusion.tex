@@ -7,7 +7,7 @@ The resulting algorithms are able to process dense tensors with arbitrary tensor
 %They consist of eight cases each of which calls a highly-optimized BLAS with different arguments.
 %We have discussed two slicing options and parallelization techniques to improve their performance for the eighth case.
 
-Our benchmarks show that tiling the base algorithm into eight different \tf{gemm} cases improves the overall performance.
+Our benchmarks show that dividing the base algorithm into eight different \tf{gemm} cases improves the overall performance.
 %, outperforming other state-of-the-art implementations, on average, by $50$\% or more for seven of the eight cases.
 %todo: zahlen überprüfen.
 %For the last general case, 
@@ -18,7 +18,8 @@ Both version computes the tensor-matrix product on average at least by $14.05$\%
 
 %todo: We have demonstrated that the tensor layout does not negatively affect the performance of our algorithms.
 
-Summarizing our findings, LOG-based tensor-times-matrix algorithms are able to outperform TTGT-based and GETT-based implementations without sacrificing on flexibility or maintainability.
+Summarizing our findings, LOG-based tensor-times-matrix algorithms are able to outperform TTGT-based and GETT-based implementations without sacrificing flexibility or maintainability.
+%todo check terms and check sacrifice
 Hence, other actively developed libraries such as LibTorch and Eigen will benefit from implementing the proposed algorithms.
 Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 

@@ -8,9 +8,10 @@ This paper presents flexible high-performance algorithms that compute the tensor
 %
 Our algorithms can process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
 %
-We discuss different tensor slicing methods with parallelization strategies and propose six versions which call \tf{gemv}, \tf{gemm} and/or \tf{gemm\_batch} with subtensors or tensor slices.
+We discuss different tensor slicing methods with parallelization strategies and propose six algorithm versions which call \tf{gemv}, \tf{gemm} and/or \tf{gemm\_batch} with subtensors or tensor slices.
 %
-Their performance is quantified for a set of tensors with various shapes and tensor order.
+Their performance is quantified for a set of tensors with various shapes and tensor orders.
+%todo check sentence
 %
 Our best performing version attains a median performance of $1.37$ double precision Tflops on an Intel Xeon Gold 6248R processor using Intel's MKL.
 %
