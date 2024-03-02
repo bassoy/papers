@@ -17,16 +17,16 @@ It is a compute-bound tensor operation and has the same arithmetic intensity as 
 
 %%with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
 To our best knowledge, we are the first to combine the LoG approach described in \cite{bassoy:2019:ttv, pawlowski:2019:morton.tensor.computations} for tensor-vector multiplications with the findings on tensor slicing for the tensor-matrix multiplication in \cite{li:2015:input}.
-Our proposed algorithms support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
+Our algorithms support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
 They compute the tensor-matrix product in parallel using efficient GEMM or batched GEMM without transposing or flattening tensors.
-Despite their high performance, all algorithms are layout-oblivious and provide without tuning a sustained performance independent of the tensor layout.
+Despite their high performance, all algorithms are layout-oblivious and provide a sustained performance independent of the tensor layout and without tuning.
 
 %The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processor's compute units.
 Moreover, every proposed algorithm can be implemented with less than 150 lines of \tf{C++} code where the algorithmic complexity is reduced by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
-We have provided an open and free reference \tf{C++} implementation of all algorithms and a python interface for convenience.
-While Intel's MKL is used for our benchmarks, the user is free to select any other library that provides the BLAS interface.
+We have provided an open-source \tf{C++} implementation of all algorithms and a python interface for convenience.
+While Intel's MKL is used for our benchmarks, the user is free to select any other library that provides the BLAS interface and even integrate it's own implementation to be library independent.
 
-The following analysis quantifies the impact of the tensor layout, the tensor slicing method and parallel execution of slice-matrix multiplications with varying contraction modes.
+The analysis in this work quantifies the impact of the tensor layout, the tensor slicing method and parallel execution of slice-matrix multiplications with varying contraction modes.
 The runtime measurements of our implementations are compared with state-of-the-art approaches discussed in \cite{springer:2018:design, matthews:2018:high, paszke:2019:pytorch} including Libtorch and Eigen. In summary, the main findings of our work are:
 \begin{itemize}
 	\item 

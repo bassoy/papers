@@ -12,9 +12,9 @@
 
 \subsection{Baseline Algorithm with Contiguous Memory Access}
 \label{sec:design:modified.baseline.algorithm}
-The sequential algorithm for Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single \tf{C++} function.
-It consists of nested recursion with a control flow that is akin to algorithm 1 in \cite{bassoy:2018:fast} consisting of two \ttt{if} statements with an \ttt{else} branch.
-The latter consists of two loops that compute a fiber-matrix product.
+Eq. \ref{equ:tensor.matrix.multplication} can be implemented with one sequential \tf{C++} function.
+Such a function consists of nested recursion with a control flow that is akin to algorithm 1 in \cite{bassoy:2018:fast}, consisting of two \ttt{if} statements with an \ttt{else} branch.
+The latter has two loops that compute a fiber-matrix product.
 The outer loop iterates with $j$ over the dimension $m$ of $\mubC$ and $\mbB$.
 The inner loop iterates with $i_q$ over the dimension $n_q$ of $\mubA$ and $\mbB$ computing an inner product. 
 Thhis version accesses elements of $\mubA$ and $\mubC$ non-contiguously whenever $\pi_1 \neq q$.
@@ -79,8 +79,8 @@ The third loop increments $j$ and could be placed as the second loop if $\mbB$ i
 \caption{
 \footnotesize %
 Modified baseline algorithm with contiguous memory access for the tensor-matrix multiplication.
-The tensor order must be greater than one and for the contraction mode $1 \leq q \leq p$ and $\pi_1 \neq q$ must hold.
-The algorithm needs to be initially called with $r=p$ where $\mbn$ is the shape tuple of $\mubA$ and $m$ is the $q$-th dimension of $\mubC$. 
+The tensor order $p$ must be greater than $1$ and the contraction mode $q$ must satisfy $1 \leq q \leq p$ and $\pi_1 \neq q$.
+The initial call must happen with $r=p$ where $\mbn$ is the shape tuple of $\mubA$ and $m$ is the $q$-th dimension of $\mubC$. 
 %Iteration along mode $q$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
 \label{alg:ttm.sequential.coalesced}
 }

@@ -127,16 +127,16 @@ Library \tbf{libtorch} (v2.3.0) is the \tf{C++} distribution of PyTorch.
 Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions for the complete test sets comparing the performance distribution of our implementation with the previously mentioned libraries.
 Note that we only have used tensor slices for asymmetrically shaped tensors (left plot) and subtensors for symmetrically shaped tensors (right plot).
 Our implementation with a median performance of $793.75$ Gflops outperforms others' for almost every asymmetrically shaped tensor in the test set.
-The median performances of \tbf{tcl}, \tbf{tblis}, \tbf{libtorch} and \tbf{eigen} are $503.61$, $415.33$, $496.22$ and $244.69$ Gflops reaching on average $74.11$\%, $61.14$\%, $76.68$\% and $39.34$\% of \tbf{tlib}'s throughputs.
+The median performances of tcl, tblis, libtorch and eigen are $503.61$, $415.33$, $496.22$ and $244.69$ Gflops reaching on average $74.11$\%, $61.14$\%, $76.68$\% and $39.34$\% of tlib's throughputs.
 
 In case of symmetrically shaped tensors the performance distributions of all libraries on the right plot in Fig. \ref{fig:performance.tlib.case8} are much closer.
-The median performances of \tbf{tlib}, \tbf{tblis}, \tbf{libtorch} and \tbf{eigen} are $228.93$, $208.69$, $76.46$, $46.25$ Gflops reaching on average $73.06$\%, $38.89$\%, $19.79$\% of \tbf{tlib}'s throughputs\footnote{We were unable to run tcl with our test set containing symmetrically shaped tensors. We suspect a very high memory demand to be the reason.}.
-All libraries operate with $801.68$ or less Gflops for the cases 2 and 3 which is almost half of \tbf{tlib}'s performance with $1579$ Gflops.
-The median performance and the interquartile range of \tbf{tblis} and \tbf{tlib} for the cases 6 and 7 are almost the same.
+The median performances of tlib, tblis, libtorch and eigen are $228.93$, $208.69$, $76.46$, $46.25$ Gflops reaching on average $73.06$\%, $38.89$\%, $19.79$\% of tlib's throughputs\footnote{We were unable to run tcl with our test set containing symmetrically shaped tensors. We suspect a very high memory demand to be the reason.}.
+All libraries operate with $801.68$ or less Gflops for the cases 2 and 3 which is almost half of tlib's performance with $1579$ Gflops.
+The median performance and the interquartile range of tblis and tlib for the cases 6 and 7 are almost the same.
 Their respective median Gflops are $255.23$ and $263.94$ for the sixth case and $121.17$ and $144.27$ for the seventh case.
 This explains the similar performance distributions when their performance is less than $400$ Gflops.
-\tbf{Libtorch} and \tbf{eigen} compute the tensor-matrix product, in median, with $17.11$ and $9.64$ Gfops/s, respectively.
-Our library \tbf{tlib} has a median performance of $102.11$ Gflops and outperforms \tbf{tblis} with $79.35$ Gflops for the eighth case.
+Libtorch and eigen compute the tensor-matrix product, in median, with $17.11$ and $9.64$ Gfops/s, respectively.
+Our library tlib has a median performance of $102.11$ Gflops and outperforms tblis with $79.35$ Gflops for the eighth case.
 
 
 %Comparing \tf{TCL} performance, \tf{TLIB-SB-PN} achieves an average speedup of $6$x and more than $8$x for $42$\% of the test cases with asymmetrically shaped tensors and executes on average $5$x faster with symmetrically shaped tensors.
