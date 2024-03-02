@@ -27,7 +27,12 @@ With optimized tuning parameters, they report a speedup of up to $4$x over the T
 In \cite{bassoy:2019:ttv}, the author presents LoG-based algorithms that compute the tensor-vector product. 
 They support dense tensors with linear tensor layouts, arbitrary dimensions and tensor order.
 The presented approach is to divide into eight cases calling GEMV and DOT.
-He reports average speedups of 6.1x and 4.0x compared to implementations that use the TTGT and GETT approach, respectively.
+He reports average speedups of $6.1$x and $4.0$x compared to implementations that use the TTGT and GETT approach, respectively.
+
+The authors in \cite{pawlowski:2019:morton.tensor.computations} propose morton-ordered blocked layout for a mode-oblivious performance of the tensor-vector multiplication.
+Their algorithm iterate over blocked tensors and perform tensor-vector multiplications on blocked tensors.
+They are able to achieve high performance and mode-oblivious computations.
+
 
 %Our work is inspired by \cite{li:2015:input} and \cite{bassoy:2019:ttv}.
 %We use lemmas for tensor slicing in \cite{li:2015:input} and generalize them for tensors with any linear tensor layouts. 

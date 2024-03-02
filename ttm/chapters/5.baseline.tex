@@ -1,35 +1,40 @@
 \section{Algorithm Design}
 \label{sec:design}
-\subsection{Sequential Algorithm}
-\label{sec:design:sequential.baseline.algorithm}
-The sequential baseline algorithm for Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single \tf{C++} function.
-It consists of nested recursion with a control flow that is akin to algorithm 1 in \cite{bassoy:2018:fast} consisting of two \ttt{if} statements with an \ttt{else} branch.
-The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_{q}$ when $r = \mhq$ with $\pi_r = q$ and $\mhq = \mbpi^{-1}_q$.
-% where $\mbpi^{-1}$ is the inverse layout tuple.
-The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \neq \mhq \leq p$ with different multi-indices.
-%Note that the second \ttt{if} statement is skipped for $q = \pi_1$ as the condition of the first one is evaluated to true.
-The \ttt{else} branch is the base case and consists of two loops that compute a fiber-matrix product.
-The outer loop iterates with $j$ over the dimension $m$ of $\mubC$ and $\mbB$.
-The inner loop iterates with $i_q$ over the dimension $n_q$ of $\mubA$ and $\mbB$ computing an inner product. 
+%\subsection{Sequential Algorithm}
+%\label{sec:design:sequential.baseline.algorithm}
+
+
+%The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_{q}$ when $r = \mhq$ with $\pi_r = q$ and $\mhq = \mbpi^{-1}_q$.
+%The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \neq \mhq \leq p$ with different multi-indices.
+
+
 
 
 \subsection{Baseline Algorithm with Contiguous Memory Access}
 \label{sec:design:modified.baseline.algorithm}
-The baseline algorithm improves the sequential version and accesses elements of $\mubA$ and $\mubC$ non-contiguously whenever $\pi_1 \neq q$. % so that indices $i_q$ and $j$ are incremented with steps greater than one.
+The sequential algorithm for Eq. \ref{equ:tensor.matrix.multplication} can be implemented with a single \tf{C++} function.
+It consists of nested recursion with a control flow that is akin to algorithm 1 in \cite{bassoy:2018:fast} consisting of two \ttt{if} statements with an \ttt{else} branch.
+The latter consists of two loops that compute a fiber-matrix product.
+The outer loop iterates with $j$ over the dimension $m$ of $\mubC$ and $\mbB$.
+The inner loop iterates with $i_q$ over the dimension $n_q$ of $\mubA$ and $\mbB$ computing an inner product. 
+Thhis version accesses elements of $\mubA$ and $\mubC$ non-contiguously whenever $\pi_1 \neq q$.
 Matrix $\mbB$ is contiguously accessed if $i_q$ or $j$ is incremented with unit-strides depending on the storage format of $\mubB$.
-The access pattern can be improved by reordering tensor elements according to the storage format.
-However, copy operations reduce the overall throughput of the operation \cite{shi:2016:tensor.contraction}.
 
-A better way is to access tensor elements according to the tensor layout with the help of the tensor layout tuple $\mbpi$ as proposed in \cite{bassoy:2018:fast}.
-The modified Algorithm \ref{alg:ttm.sequential.coalesced} contiguously accesses memory for $\pi_1 \neq q$ and $p > 1$.
+%The access pattern can be improved by reordering tensor elements according to the storage format.
+%However, copy operations reduce the overall throughput of the operation, see \cite{shi:2016:tensor.contraction}.
+
+A more efficient solution is to access tensor elements according to the tensor layout.
+Our baseline algorithm is given in Algorithm \ref{alg:ttm.sequential.coalesced} which contiguously accesses memory for $\pi_1 \neq q$ and $p > 1$.
 Each recursion level adjusts only one multi-index element $i_{\pi_r}$ with a stride $w_{\pi_r}$ in line 5.
 With increasing recursion level and decreasing $r$, indices are incremented with smaller strides as $w_{\pi_r} \leq w_{\pi_{r+1}}$. 
-The condition of the second \ttt{if} statement in line 4 is changed from $r \geq 1$ to $r > 1$.
-In this way, the mode-$\pi_1$ loop with index $i_{\pi_1}$ and the minimum stride $w_{\pi_1}$ are included in the base case which contains three loops performing a slice-matrix multiplication. 
-The loop ordering are adjusted according to the tensor and matrix layout.
+%The condition of the second \ttt{if} statement in line 4 is changed from $r \geq 1$ to $r > 1$.
+The second \tf{if} statement in line4 allows the mode-$\pi_1$ loop with index $i_{\pi_1}$ and the minimum stride $w_{\pi_1}$ to be included in the base case.
+The latter now contains three loops performing a slice-matrix multiplication. 
+%The loop ordering are adjusted according to the tensor and matrix layout.
 The inner-most loop increments $i_{\pi_1}$ and contiguously accesses tensor elements of $\mubA$ and $\mubC$.
 The second loop increments $i_q$ with which elements of $\mbB$ are contiguously accessed if $\mbB$ is stored in the row-major format.
 The third loop increments $j$ and could be placed as the second loop if $\mbB$ is stored in the column-major format.
+%The loop ordering are adjusted according to the tensor and matrix layout.
 %The simple ordering of the three loops is discussed in \cite{golub:2013:matrix.computations}.
 
 \begin{algorithm}[t]

@@ -5,15 +5,15 @@
 \label{sec:preliminaries:notation}
 An order-$p$ tensor is a $p$-dimensional array \cite{lim:2017:hypermatrices} where tensor elements are contiguously stored in memory. % \cite{lee:2018:fundamental}
 We write $a$, $\mba$, $\mbA$ and $\mubA$ in order to denote scalars, vectors, matrices and tensors. 
-If not otherwise mentioned, we assume $\mubA$ to have a tensor order that is greater than $2$.
+If not otherwise mentioned, we assume $\mubA$ to have a tensor order $p$  with $p>2$.
 The $p$-tuple $\mbn$ with $\mbn = (n_1,n_2,\dots,n_p)$ will be referred to as a dimension tuple with $n_r>1$.
 We will use round brackets $\mubA(i_1,i_2,\dots,i_p)$ or $\mubA(\mbi)$ to denote a tensor element where $\mbi = (i_1,i_2,\dots,i_p)$ is a multi-index.
 A subtensor is denoted by $\mubA'$ and references elements of a tensor $\mubA$.
-They are specified with $p$ index ranges and form a selection grid.
-In this work, the index range shall either address all indices of a given mode or a single element that are given by single indices $i_r$ with $1 \leq r \leq p$. % denoted by $\colon$ 
-Elements $n_r'$ of a subtensor's dimension tuple $\mbn'$ are therefore $n_r$ if all indices of mode $r$ are selected and $1$ otherwise.
+They are specified by a selection grid consisting of $p$ index ranges.
+The index range in this work shall either address all indices of a given mode or a by a single index $i_r$ with $1 \leq r \leq p$. % denoted by $\colon$ 
+Elements $n_r'$ of a subtensor's dimension tuple $\mbn'$ are $n_r' = n_r$ if all indices of mode $r$ are selected or $n_r'=1$.
 We will annotate subtensors using only their non-unit modes such as $\mubA_{u,v,w}'$ where $n_u > 1$,$n_v > 1$ and $n_w >1$ and $1 \leq u \neq v \neq w \leq p$.
-It is sufficient to only provide non-unit modes as the remaining single indices correspond to the loop induction variables of the following algorithms.
+The remaining single indices of a selection grid correspond to the loop induction variables of the following algorithms.
 A subtensor is called a slice $\mubA_{u,v}'$ if the full range selection of $\mubA$ occurs with only two modes.
 A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 \vspace{-1em}
@@ -28,7 +28,7 @@ An inverse layout tuple $\mbpi^{-1}$ is defined by $\mbpi^{-1}(\mbpi(k)) = k$.
 Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple is given by $w_{\pi_r} = \prod_{k=1}^{r-1} n_{\pi_k}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
 Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
 The location of tensor elements is determined by the tensor layout and the layout function.
-For a given tensor layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$.
+For a given tensor layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$, see \cite{bassoy:2018:fast,pawlowski:2019:morton.tensor.computations}.
 %Index $j = \lambda_{\mbw} (\mbi)$ is called the relative memory position of an element.
 %Reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 \vspace{-1em}
