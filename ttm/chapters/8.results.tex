@@ -64,15 +64,15 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 The next paragraphs analyze the two proposed slicing methods and  discuss runtime results of \tf{<par-loops,seq-gemm>} and \tf{<gemm-batch>} using asymmetrically and symmetrically shaped tensors.
 %Note that this analysis is equal to minimizing or maximizing the input parameter $M_C$.
 Fig. \ref{performance.tlib.contour} contains six contour plots (performance maps) in which \tf{<par-loops,seq-gemm>} either uses subtensors or tensor slices and \tf{<gemm-batch>} loops over subtensors only.
-Each point within the performance map represents a mean value that has been averaged over tensor sizes for a tensor order\footnote{Note that Fig. \ref{fig:performance.tlib.case8} suggests that the contraction mode $q$ can be greater than $p$ which is not possible.
+Every performance value within the maps represent a mean value that has been averaged over tensor sizes for a tensor order\footnote{Note that Fig. \ref{fig:performance.tlib.case8} suggests that the contraction mode $q$ can be greater than $p$ which is not possible.
 Our profiling program sets $q=p$ in such cases.}.
 
 For asymmetrically shaped tensors, function \tf{<par-loops,seq-gemm>} with tensor slices performs on average $18$\% better than with subtensors and is on average $11$\% faster than Intel's \tf{gemm\_batch} routine.
 It reaches almost $1.1$ Tflops for non-edge cases with $q>2$ and $p > 6$.
 This suggests that the Intel's implementation does not divide subtensors into smaller blocks.
 
-With symmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices and \tf{<gemm-batch>} perform almost equally well and reach $221.52$ Gflops and $236.21$ Gflops, respectively.
-Moreover, the slicing method seems to have only little affect on the overall runtime behavior of \tf{<par-loops,seq-gemm>}.
+With symmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices and \tf{<gemm-batch>} almost show the same runtime behavior, reaching $221.52$ Gflops and $236.21$ Gflops, respectively.
+Moreover, the slicing method seems to have only little affect on the performance of \tf{<par-loops,seq-gemm>}.
 In contrast to the performance maps with asymmetrically shaped tensors, all functions almost reach the attainable peak performance of $1.7$ Tflops when $p=2$.
 This can by the fact that both dimensions are equal or larger than $4096$ enabling \tf{gemm} to operate under optimal conditions.
 \vspace{-1em}
@@ -118,7 +118,8 @@ Moreover, the performance stays within an acceptable range independent of the te
 \vspace{-1em}
 
 \subsubsection{Comparison with other Approaches}
-We have compared our best implementation with four libraries that implement the tensor-matrix multiplication using different approaches.
+We have compared the best performing algorithm with four libraries that implement the tensor-matrix multiplication.
+
 Library \tbf{tcl} implements the TTGT approach with a high-perform tensor-transpose library \tbf{hptt} which is discussed in \cite{springer:2018:design}.
 \tbf{tblis} implements the GETT approach that is akin to Blis' algorithm design for the matrix multiplication \cite{matthews:2018:high}.
 The tensor extension of \tbf{eigen} (v3.3.7) is used by the Tensorflow framework.

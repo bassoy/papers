@@ -10,16 +10,17 @@ Loops within for the eighth case have been parallelized using GCC's OpenMP v4.5 
 We have used the \tf{gemv} and \tf{gemm} implementation of the 2024.0 Intel MKL and its own threading library \tf{mkl\_intel\_thread} together with the threading runtime library \tf{libiomp5}.
 %todo: tell the number of threads set in openmp and for intel mkl.
 
-If not otherwise mentioned, both tensors $\mubA$ and $\mubC$ are stored according to the first-order linear tensor layout with $\mbpi = (1,\dots,p)$ whereas matrix $\mbB$ has the row-major storage format.
+If not otherwise mentioned, both tensors $\mubA$ and $\mubC$ are stored according to the first-order tensor layout.
+Matrix $\mbB$ has the row-major storage format.
 %The benchmark results of each function are the average of 10 runs.
-\vspace{-1em}
+%\vspace{-1em}
 
 \subsubsection{Tensor Shapes} 
 We have used asymmetrically and symmetrically shaped tensors in order to cover many use cases. 
 The dimension tuples of both shape types are organized within two three-dimensional arrays with which tensors are initialized.
 The dimension array for the first shape type contains $720 = 9\times 8 \times 10$ dimension tuples where the row number is the tensor order ranging from $2$ to $10$. 
 For each tensor order, $8$ tensor instances with increasing tensor size is generated.
-A special feature of this test set is that the contraction dimension and the leading dimension are disproportionately large. 
+A special feature of this test set is that the contraction dimension and the leading dimension are disproportionately large.
 The second set consists of $336 = 6\times8\times 7$ dimensions tuples where the tensor order ranges from $2$ to $7$ and has $8$ dimension tuples for each order.
 Each tensor dimension within the second set is $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$.
 A detailed explanation of the tensor shape setup is given in \cite{bassoy:2019:ttv, bassoy:2018:fast}.

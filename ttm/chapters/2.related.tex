@@ -12,24 +12,24 @@ Runtime measurements cover class 3 tensor contractions.
 %todo: weg und was anderes, zum Beispiel mein eigenes Paper
 \end{comment}
 
-The authors of \cite{springer:2018:design} present a tensor-contraction generator TCCG and the GETT approach for dense tensor contractions that is inspired from the design of a high-performance GEMM.
+Springer et al. \cite{springer:2018:design} present a tensor-contraction generator TCCG and the GETT approach for dense tensor contractions that is inspired from the design of a high-performance GEMM.
 Their unified code generator selects implementations from generated GETT, LoG and TTGT candidates.
 Their findings show that among $48$ different contractions $15$\% of LoG-based implementations are the fastest.
 
-The author presents in \cite{matthews:2018:high} a runtime flexible tensor contraction library that uses GETT approach as well.
+Matthews \cite{matthews:2018:high} presents a runtime flexible tensor contraction library that uses GETT approach as well.
 He describes block-scatter-matrix algorithm which uses a special layout for the tensor contraction.
 The proposed algorithm yields results that feature a similar runtime behavior to those presented in \cite{springer:2018:design}.
 
-The work in \cite{li:2015:input} introduces InTensLi, a framework that generates in-place tensor-matrix multiplication according to the LOG approach. 
+Li et al. \cite{li:2015:input} introduce InTensLi, a framework that generates in-place tensor-matrix multiplication according to the LOG approach. 
 The authors discusses optimization and tuning techniques for slicing and parallelizing the operation.
 With optimized tuning parameters, they report a speedup of up to $4$x over the TTGT-based MATLAB tensor toolbox library discussed in \cite{bader:2006:algorithm862}.
 
-In \cite{bassoy:2019:ttv}, the author presents LoG-based algorithms that compute the tensor-vector product. 
+Ba\c{s}soy \cite{bassoy:2019:ttv} presents LoG-based algorithms that compute the tensor-vector product. 
 They support dense tensors with linear tensor layouts, arbitrary dimensions and tensor order.
 The presented approach is to divide into eight cases calling GEMV and DOT.
 He reports average speedups of $6.1$x and $4.0$x compared to implementations that use the TTGT and GETT approach, respectively.
 
-The authors in \cite{pawlowski:2019:morton.tensor.computations} propose morton-ordered blocked layout for a mode-oblivious performance of the tensor-vector multiplication.
+Pawlowski et al. \cite{pawlowski:2019:morton.tensor.computations} propose morton-ordered blocked layout for a mode-oblivious performance of the tensor-vector multiplication.
 Their algorithm iterate over blocked tensors and perform tensor-vector multiplications on blocked tensors.
 They are able to achieve high performance and mode-oblivious computations.
 

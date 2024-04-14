@@ -16,9 +16,11 @@ One can conclude that LOG-based tensor-times-matrix algorithms are on par or can
 Hence, other actively developed libraries such as LibTorch and Eigen might benefit from implementing the proposed algorithms.
 Our header-only library provides \tf{C++} interfaces and a python module which allows frameworks to easily integrate our library.
 
-In the future, we intend to generalize LOG-based approach for general tensor contractions with the same flexibility that we offered for the tensor-matrix multiplication. 
-We would like to further optimize the tensor-matrix multiplication based on benchmark results of matrix-matrix products which might lead to better runtime results for edge cases.
+In the near future, we intend to incorporate our implementations in TensorLy, a widely-used framework for tensor computations \cite{cohen:2022:tensor.computations, kossaifi:2019:tensorly}.
+Currently, we lack a heuristic for selecting subtensor sizes and choosing the corresponding algorithm. 
+Using the insights provided in \cite{li:2015:input} could help to further increase the performance.
+Additionally, we want to explore to what extend our approach can be applied for the general tensor contractions.
 
 \subsubsection{Source Code Availability}
-Project description and source code can be found at {\footnotesize \MYhref[red]{https://github.com/bassoy/ttm}{https://github.com/bassoy/ttm}}.
+Project description and source code can be found at \tf{\url{https://github.com/bassoy/ttm}}.
 The sequential tensor-matrix multiplication of TLIB is part of uBLAS and in the official release of \tf{Boost} \tf{v1.70.0} and later.

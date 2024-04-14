@@ -1,7 +1,6 @@
-\documentclass[runningheads]{llncs}
+\documentclass{llncs} % [runningheads]
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[colorlinks=true,urlcolor=black,pdftex,bookmarks,citecolor=blue]{hyperref}
 \usepackage{lmodern}    %Schriftbild in Adobe PDf sonst unleserlich
 \usepackage[english]{babel}
 \usepackage{amsmath}
@@ -11,7 +10,6 @@
 \usepackage[usenames,dvipsnames]{xcolor} % 
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage{hyperref}
 \usepackage{cite}
 \usepackage[english,linesnumbered,vlined]{algorithm2e} % ,vlined
 \usepackage{pgfplots}
@@ -22,7 +20,8 @@
 
 \usetikzlibrary{matrix,arrows,positioning,calc,patterns} % shapes,
 \usepgfplotslibrary{statistics}
-%\theoremstyle{remark}
+
+\pgfplotsset{compat=1.18}
 
 
 \pgfplotscreateplotcyclelist{white black cycle list 1}{%
@@ -65,8 +64,8 @@
 	lime!80!black,   line width = 2, every mark/.append style={solid,fill=yellow!80!black}\\%,mark=square*\\	
 }
 
-\usepackage[running]{lineno}
-\linenumbers
+%\usepackage[running]{lineno}
+%\linenumbers
 
 \SetAlgoCaptionLayout{footnotesize}
 \SetAlCapSkip{1ex}
@@ -85,20 +84,25 @@
 
 \lstset{language=cplusplus}
 
-\title{Fast Layout-Oblivious Tensor-Matrix Multiplication with BLAS} % and Flexible 
+\title{Fast and Layout-Oblivious \\ Tensor-Matrix Multiplication with BLAS} % and Flexible 
 
 \titlerunning{High-Performance Tensor-Matrix Multiplication}
 
 \author{Cem Sava\c{s} Ba\c{s}soy}
 %\orcidID{0000-1111-2222-3333}\inst{1}
-\authorrunning{Ba\c{s}soy} % abbreviated author list (for running head)
+%\authorrunning{Ba\c{s}soy} % abbreviated author list (for running head)
 %
+
+%
+
 \tocauthor{Cem Sava\c{s} Ba\c{s}soy}
 %
 \institute{Hamburg University of Technology, Schwarzenbergstrasse 95, Germany,\\
 \email{cem.bassoy@gmail.com}}
 
 \maketitle
+
+%\keywords{First keyword  \and Second keyword \and Another keyword.}
 
 \input{chapters/0.abstract}
 
