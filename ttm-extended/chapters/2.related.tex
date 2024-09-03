@@ -1,0 +1,39 @@
+\section{Related Work}
+\label{sec:related}
+
+\begin{comment}
+The authors in \cite{dinapoli:2014:towards.efficient.use} discuss the efficient tensor contractions with highly optimized BLAS. 
+%They describe a slicing technique of tensors for using BLAS. 
+%With a set of requirements they define three contraction categories.
+Based on the LoG approach, they define requirements for the use of \tf{gemm} for class 3 tensor contractions and provide slicing techniques for tensors. %  when both arguments exhibit free indices
+The slicing recipe for the class 2 categorized tensor contractions contains a short description with a rule of thumb for maximizing performance.
+%Compared to class 3 operations, the tensor-vector multiplication receives less attention.
+Runtime measurements cover class 3 tensor contractions.
+%todo: weg und was anderes, zum Beispiel mein eigenes Paper
+\end{comment}
+
+Springer et al. \cite{springer:2018:design} present a tensor-contraction generator TCCG and the GETT approach for dense tensor contractions that is inspired from the design of a high-performance GEMM.
+Their unified code generator selects implementations from generated GETT, LoG and TTGT candidates.
+Their findings show that among $48$ different contractions $15$\% of LoG-based implementations are the fastest.
+
+Matthews \cite{matthews:2018:high} presents a runtime flexible tensor contraction library that uses GETT approach as well.
+He describes block-scatter-matrix algorithm which uses a special layout for the tensor contraction.
+The proposed algorithm yields results that feature a similar runtime behavior to those presented in \cite{springer:2018:design}.
+
+Li et al. \cite{li:2015:input} introduce InTensLi, a framework that generates in-place tensor-matrix multiplication according to the LOG approach. 
+The authors discusses optimization and tuning techniques for slicing and parallelizing the operation.
+With optimized tuning parameters, they report a speedup of up to $4$x over the TTGT-based MATLAB tensor toolbox library discussed in \cite{bader:2006:algorithm862}.
+
+Ba\c{s}soy \cite{bassoy:2019:ttv} presents LoG-based algorithms that compute the tensor-vector product. 
+They support dense tensors with linear tensor layouts, arbitrary dimensions and tensor order.
+The presented approach is to divide into eight cases calling GEMV and DOT.
+He reports average speedups of $6.1$x and $4.0$x compared to implementations that use the TTGT and GETT approach, respectively.
+
+Pawlowski et al. \cite{pawlowski:2019:morton.tensor.computations} propose morton-ordered blocked layout for a mode-oblivious performance of the tensor-vector multiplication.
+Their algorithm iterate over blocked tensors and perform tensor-vector multiplications on blocked tensors.
+They are able to achieve high performance and mode-oblivious computations.
+
+
+%Our work is inspired by \cite{li:2015:input} and \cite{bassoy:2019:ttv}.
+%We use lemmas for tensor slicing in \cite{li:2015:input} and generalize them for tensors with any linear tensor layouts. 
+%We have adapted the eight cases in \cite{bassoy:2019:ttv} for tensor-matrix multiplication and derived the slicing and parallezation method.

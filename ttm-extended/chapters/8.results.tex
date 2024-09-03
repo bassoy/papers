@@ -1,0 +1,145 @@
+\section{Results and Discussion}
+\label{sec:results}
+\begin{figure*}[t]
+%\input{figures/performance.tlib.contour}
+\includegraphics[scale=0.2]{figures/contour.pdf}
+\caption{%
+\footnotesize %
+Performance maps in double-precision Tflops of the proposed algorithms with varying tensor orders $p$  and contraction modes $q$. 
+Tensors are asymmetrically shaped on the top plots and symmetrically shaped on the bottom plots.
+In (a) and (d) function \tf{<gemm\_batch>} is executed,
+in (b) and (e) \tf{<par-loops,seq-gemm>} with tensor slices, %
+in (c) and (f) \tf{<par-loops,seq-gemm>} with subtensors.
+\label{performance.tlib.contour}
+}
+\end{figure*}
+
+
+\begin{figure*}[t]
+\input{figures/performance.tlib.case8-cdf} % boxplot
+\caption{ %
+\footnotesize%
+Cumulative performance distributions of the proposed algorithms for the eighth case.
+Each distribution line belongs to one algorithm:
+\tf{<gemm\_batch>} \ref{coord:gemm_batch} , %
+\tf{<seq-loops,par-gemm>} (\ref{coord:seq_loops_par_gemm_slice}) and
+\tf{<par-loops,seq-gemm>} (\ref{coord:par_loops_seq_gemm_slice}) using tensor slices,
+\tf{<seq-loops,par-gemm>} (\ref{coord:seq_loops_par_gemm_subtensor}) and
+\tf{<par-loops,seq-gemm>} (\ref{coord:par_loops_seq_gemm_subtensor}) using subtensors.
+Tensors are asymmetrically (left plot) and symmetrically shaped (right plot).
+}
+\label{fig:performance.tlib.case8}
+\end{figure*}
+
+
+\begin{figure*}[t]
+\input{figures/performance.tlib.format}
+\caption{ %
+\footnotesize%
+Box plots visualizing performance statics in double-precision Tflops of \tf{<gemm\_batch>} (left) and \tf{<par-loops,seq-gemm>} with subtensors (right).
+Box plot number $k$ denotes the $k$-order tensor layout of symmetrically shaped tensors with order $7$.
+% where the $1$-order and $7$-order layouts are the first- and last-order storage formats, respectively.
+}
+\label{fig:performance.tlib.format}
+\end{figure*}
+
+\begin{figure*}[t]
+\input{figures/performance.comparison}
+\caption{ %
+\footnotesize%
+Cumulative performance distributions of tensor-times-matrix algorithms in double-precision Tflops.
+Each distribution line belongs to a library:
+\textbf{tlib}[ours] (\ref{coord:nonsymmetric.tlib.slice}), %
+\textbf{tcl} (\ref{coord:nonsymmetric.tcl}), %
+\textbf{tblis} (\ref{coord:nonsymmetric.tblis}), %
+\textbf{libtorch} (\ref{coord:nonsymmetric.libtorch}), %
+\textbf{eigen} (\ref{coord:nonsymmetric.eigen}).
+Libraries have been tested with asymmetrically-shaped (left plot) and symmetrically-shaped tensors (right plot).
+}
+\label{fig:performance.comparison}
+\end{figure*}
+
+
+\subsubsection{Slicing Methods}
+The next paragraphs analyze the two proposed slicing methods and  discuss runtime results of \tf{<par-loops,seq-gemm>} and \tf{<gemm-batch>} using asymmetrically and symmetrically shaped tensors.
+%Note that this analysis is equal to minimizing or maximizing the input parameter $M_C$.
+Fig. \ref{performance.tlib.contour} contains six contour plots (performance maps) in which \tf{<par-loops,seq-gemm>} either uses subtensors or tensor slices and \tf{<gemm-batch>} loops over subtensors only.
+Every performance value within the maps represent a mean value that has been averaged over tensor sizes for a tensor order\footnote{Note that Fig. \ref{fig:performance.tlib.case8} suggests that the contraction mode $q$ can be greater than $p$ which is not possible.
+Our profiling program sets $q=p$ in such cases.}.
+
+For asymmetrically shaped tensors, function \tf{<par-loops,seq-gemm>} with tensor slices performs on average $18$\% better than with subtensors and is on average $11$\% faster than Intel's \tf{gemm\_batch} routine.
+It reaches almost $1.1$ Tflops for non-edge cases with $q>2$ and $p > 6$.
+This suggests that the Intel's implementation does not divide subtensors into smaller blocks.
+
+With symmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices and \tf{<gemm-batch>} almost show the same runtime behavior, reaching $221.52$ Gflops and $236.21$ Gflops, respectively.
+Moreover, the slicing method seems to have only little affect on the performance of \tf{<par-loops,seq-gemm>}.
+In contrast to the performance maps with asymmetrically shaped tensors, all functions almost reach the attainable peak performance of $1.7$ Tflops when $p=2$.
+This can by the fact that both dimensions are equal or larger than $4096$ enabling \tf{gemm} to operate under optimal conditions.
+\vspace{-1em}
+
+\subsubsection{Parallelization Methods}
+The contour plots in Fig. \ref{performance.tlib.contour} contain performance data of all cases except for $4$ and $5$, see Table \ref{tab:mapping}.
+The effects of the presented slicing and parallelization methods can be better understood if performance data of only the eighth case is examined.
+Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions of all the proposed algorithms which are generated \tf{gemm} or \tf{gemm\_batch} calls within case 8.
+As the distribution is empirically computed, the probability $y$ of a point $(x,y)$ on a distribution function corresponds to the number of test cases of a particular algorithm that achieves $x$ or less Tflops.
+For instance, function \tf{<seq-loops,par-gemm>} with subtensors computes the tensor-matrix product for $50$\% percent of the test cases with equal to or less than 0.6 Tflops in case of asymmetrically shaped tensor.
+Consequently, distribution functions with an exponential growth are favorable while logarithmic behavior is less desirable.
+The test set cardinality for case 8 is $255$ for asymmetrically shaped tensors and $91$ for symmetrically ones.
+
+In case of asymmetrically shaped tensors, \tf{<par-loops,seq-gemm>} with tensor slices performs best and outperforms \tf{<gemm\_batch>}.
+One unexpected finding is that function \tf{<seq-loops,par-gemm>} with any slicing strategy performs better than \tf{<gemm\_batch>} when the tensor order $p$ and contraction mode $q$ satisfy $4 \leq p \leq 7$ and $2 \leq q \leq 4$, respectively.
+Functions executed with symmetrically shaped tensors reach at most $743$ Gflops for the eighth case which is less than half of the attainable peak performance of $1.7$ Tflops.
+This is expected as cases $2$ and $3$ are not considered.
+%for $p=2$ with $q=1$ and $q=2$ 
+Functions \tf{<par-loops,seq-gemm>} with subtensors and \tf{<gemm\_batch>} have almost the same performance distribution outperforming \tf{<seq-loops,par-gemm>} for almost every test case.
+%We did not show the performance results of \tf{<par-loops,par-gemm>} as they are almost identical to the ones of \tf{<par-loops,seq-gemm>}, independent of the slicing method and tensor shape.
+Function \tf{<par-loops,seq-gemm>} with tensor slices is on average almost as fast as with subtensors.
+However, if the tensor order is greater than $3$ and the tensor dimensions are less than $64$, its running time increases by almost a factor of $2$.
+
+These observations suggest to use \tf{<par-loops,seq-gemm>} with tensor slices for common cases in which the leading and contraction dimensions are larger than $64$ elements.
+Subtensors should only be used if the leading dimension $n_{\pi_1}$ of $\mubA_{\pi_1,q}$ and $\mubC_{\pi_1,q}$ falls below $64$.
+This strategy is different to the one presented in \cite{li:2015:input} that maximizes the number of modes involved in the matrix multiply.
+We have also observed no performance improvement if \tf{par-gemm} was used with \tf{par-loops} which is why their distribution functions are not shown in Fig. \ref{fig:performance.tlib.case8}.
+Moreover, in most cases the \tf{seq-loops} implementations are independent of the tensor shape slower than \tf{par-loops}, even for smaller tensor slices.
+\vspace{-1em}
+
+\subsubsection{Layout-Oblivious Algorithms}
+Fig. \ref{fig:performance.tlib.format} contains two subfigures visualizing performance statics in double-precision Tflops of \tf{<gemm\_batch>} (left subfigure) and \tf{<par-loops,seq-gemm>} with subtensors (right subfigure).
+Each box plot with the number $k$ has been computed from benchmark data with symmetrically shaped order-$7$ tensors with the $k$-order tensor layout.
+The $1$-order and $7$-order layout, for instance, are the first- and last-order storage formats for the order-$7$ tensor with $\pi_F=(1,2,...,7)$ and $\pi_L= (7,6,...,1)$.
+The definition of $k$-order tensor layouts can be found in section \ref{sec:preliminaries:layout}.
+
+The low performance of around $70$ Gflops can be attributed to the fact that the contraction dimension of subtensors of tensor slices of symmetrically shaped order-7 tensors are $8$ while the leading dimension is $8$ or at most $48$ for subtensors.
+The relative standard deviation of \tf{<gemm\_batch>}'s and \tf{<par-loops,seq-gemm>}'s median values are $12.95$\% and $17.61$\%.
+Their respective interquartile range are similar with a relative standard deviation of $22.25$\% and $15.23$\%.
+
+The runtime results with different $k$-order tensor layouts show that the performance of our proposed algorithms is not designed for a specific tensor layout.
+Moreover, the performance stays within an acceptable range independent of the tensor layout.
+\vspace{-1em}
+
+\subsubsection{Comparison with other Approaches}
+We have compared the best performing algorithm with four libraries that implement the tensor-matrix multiplication.
+
+Library \tbf{tcl} implements the TTGT approach with a high-perform tensor-transpose library \tbf{hptt} which is discussed in \cite{springer:2018:design}.
+\tbf{tblis} implements the GETT approach that is akin to Blis' algorithm design for the matrix multiplication \cite{matthews:2018:high}.
+The tensor extension of \tbf{eigen} (v3.3.7) is used by the Tensorflow framework.
+Library \tbf{libtorch} (v2.3.0) is the \tf{C++} distribution of PyTorch.
+\tbf{tlib} denotes our library using algorithm \tf{<par-loops,seq-gemm>} that have been presented in the previous paragraphs.
+
+Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions for the complete test sets comparing the performance distribution of our implementation with the previously mentioned libraries.
+Note that we only have used tensor slices for asymmetrically shaped tensors (left plot) and subtensors for symmetrically shaped tensors (right plot).
+Our implementation with a median performance of $793.75$ Gflops outperforms others' for almost every asymmetrically shaped tensor in the test set.
+The median performances of tcl, tblis, libtorch and eigen are $503.61$, $415.33$, $496.22$ and $244.69$ Gflops reaching on average $74.11$\%, $61.14$\%, $76.68$\% and $39.34$\% of tlib's throughputs.
+
+In case of symmetrically shaped tensors the performance distributions of all libraries on the right plot in Fig. \ref{fig:performance.tlib.case8} are much closer.
+The median performances of tlib, tblis, libtorch and eigen are $228.93$, $208.69$, $76.46$, $46.25$ Gflops reaching on average $73.06$\%, $38.89$\%, $19.79$\% of tlib's throughputs\footnote{We were unable to run tcl with our test set containing symmetrically shaped tensors. We suspect a very high memory demand to be the reason.}.
+All libraries operate with $801.68$ or less Gflops for the cases 2 and 3 which is almost half of tlib's performance with $1579$ Gflops.
+The median performance and the interquartile range of tblis and tlib for the cases 6 and 7 are almost the same.
+Their respective median Gflops are $255.23$ and $263.94$ for the sixth case and $121.17$ and $144.27$ for the seventh case.
+This explains the similar performance distributions when their performance is less than $400$ Gflops.
+Libtorch and eigen compute the tensor-matrix product, in median, with $17.11$ and $9.64$ Gfops/s, respectively.
+Our library tlib has a median performance of $102.11$ Gflops and outperforms tblis with $79.35$ Gflops for the eighth case.
+
+
+%Comparing \tf{TCL} performance, \tf{TLIB-SB-PN} achieves an average speedup of $6$x and more than $8$x for $42$\% of the test cases with asymmetrically shaped tensors and executes on average $5$x faster with symmetrically shaped tensors.
+%In comparison with \tf{TBLIS}, \tf{TLIB-SB-PN} computes the tensor-vector product on average $4$x and $3.5$x faster for asymmetrically and symmetrically shaped tensors, respectively.

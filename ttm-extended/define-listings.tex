@@ -1,0 +1,174 @@
+\lstdefinelanguage{cplusplusSmall}
+{ % \small, \scriptsize \footnotesize 
+	language=C++,
+	basicstyle=\small\ttfamily\singlespacing,% 
+	%backgroundcolor=\color{lightgray}, % , % Seashell1
+	%showstringspaces=false,
+	stringstyle=\color{white}\small\ttfamily,
+	numbersep=5pt,
+	frame=single,
+	frameround={tttt},
+	keepspaces=true,
+	tabsize=2,
+	breaklines=false,
+	breakatwhitespace=false,
+	title=\lstname,
+	numberstyle=\tiny\color{black},
+	commentstyle=\small\ttfamily\itshape\color{gray},
+	stringstyle=\small\ttfamily\color{mauve},
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morecomment=[n]{(*}{*)},
+	alsoletter={.}
+	sensitive=true,
+	classoffset=0,
+	morekeywords={constexpr,decltype},
+	keywordstyle=\small\color{Yellow4},
+	classoffset=1,
+	morekeywords={}, 	
+	keywordstyle=\small\color{Magenta4},
+	classoffset=0,
+	showtabs=false,
+	showspaces=false,
+	showstringspaces=false,  
+	escapeinside={\%*}{*)},
+	aboveskip=0pt,
+	belowskip=-5pt, 
+	abovecaptionskip=-4pt, 
+	belowcaptionskip=5pt,
+	columns=fullflexible,
+	captionpos=b,
+}
+
+
+\lstdefinelanguage{cplusplusScriptsize}
+{ % \small, \scriptsize \footnotesize 
+	language=C++,
+	basicstyle=\scriptsize\ttfamily\singlespacing,% 
+	%backgroundcolor=\color{lightgray}, % , % Seashell1
+	%showstringspaces=false,
+	stringstyle=\color{white}\small\ttfamily,
+	numbersep=5pt,
+	frame=single,
+	frameround={tttt},
+	keepspaces=true,
+	tabsize=2,
+	breaklines=false,
+	breakatwhitespace=false,
+	title=\lstname,
+	numberstyle=\tiny\color{black},
+	commentstyle=\scriptsize\ttfamily\itshape\color{gray},
+	stringstyle=\scriptsize\ttfamily\color{mauve},
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morecomment=[n]{(*}{*)},
+	alsoletter={.}
+	sensitive=true,
+	classoffset=0,
+	morekeywords={constexpr,decltype},
+	keywordstyle=\scriptsize\color{Yellow4},
+	classoffset=1,
+	morekeywords={}, 	
+	keywordstyle=\scriptsize\color{Magenta4},
+	classoffset=0,
+	showtabs=false,
+	showspaces=false,
+	showstringspaces=false,  
+	escapeinside={\%*}{*)},
+	aboveskip=7pt,
+	belowskip=-5pt, 
+	abovecaptionskip=0pt, 
+	belowcaptionskip=5pt,
+	columns=fullflexible,
+	captionpos=b,
+}
+
+
+\lstdefinelanguage{cplusplusFootnotesize}
+{ % \small, \scriptsize \footnotesize 
+	language=C++,
+	basicstyle=\footnotesize\ttfamily\singlespacing,% 
+	%backgroundcolor=\color{lightgray}, % , % Seashell1
+	%showstringspaces=false,
+	stringstyle=\color{white}\footnotesize\ttfamily,
+	numbersep=5pt,
+	frame=none,
+	%frameround={tttt},
+	frame=top,
+	frame=bottom,
+	keepspaces=true,
+	tabsize=2,
+	breaklines=true,
+	breakatwhitespace=false,
+	title=\lstname,
+	numberstyle=\tiny\color{black},
+	commentstyle=\footnotesize\ttfamily\color{gray},
+	stringstyle=\footnotesize\ttfamily\color{mauve},
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morecomment=[n]{(*}{*)},
+	%morekeywords={size_t},
+	alsoletter={.}
+	sensitive=true,
+	classoffset=0,
+	morekeywords={constexpr,decltype,concept,requires},
+	keywordstyle=\bfseries\color{black}, %\color{Yellow4}, %\bfseries%\color{Yellow4}, \color{black}\footnotesize
+	classoffset=1,
+	keywordstyle=\bfseries\color{black}, %\color{Blue4}, %\color{Magenta4},\bfseries
+	morekeywords={}, % ,std,
+	classoffset=0,
+	showtabs=false,
+	showspaces=false,
+	showstringspaces=false,  
+	escapeinside={\%*}{*)},
+	aboveskip=0pt,
+	belowskip=0pt, 
+	abovecaptionskip=0pt, 
+	belowcaptionskip=0pt,
+	columns=fullflexible,
+	captionpos=b,
+}
+
+
+\lstdefinelanguage{cplusplus}
+{ % \Small, \scriptsize \footnotesize 
+	language=C++, %
+	basicstyle=\small\ttfamily,% \singlespacing
+	%backgroundcolor=\color{lightgray}, % , % Seashell1
+	%showstringspaces=false,
+	stringstyle=\color{white}\normalsize\ttfamily,
+	numbersep=5pt,
+	%frame=single,
+	%frameround={tttt},
+	keepspaces=true,
+	tabsize=2,
+	breaklines=false,
+	breakatwhitespace=false,
+	title=\lstname,
+	numberstyle=\small\color{black},
+	commentstyle=\small\ttfamily, % \color{Snow4}
+	stringstyle=\small\ttfamily, % \color{Purple4}
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morecomment=[n]{(*}{*)},
+	%morekeywords={size_t},
+	alsoletter={.}
+	true=sensitive,
+	classoffset=0,
+	morekeywords={constexpr,decltype},
+	keywordstyle=\small\bfseries, %\color{Yellow4}, %\bfseries%\color{Yellow4}, \color{black}\footnotesize \color{Blue4}
+	classoffset=1,
+	keywordstyle=\small\bfseries, %\color{Blue4}, %\color{Magenta4},\bfseries \color{Green4}
+	morekeywords={T,F,I,Fn,Simd}, % ,std,
+	classoffset=0,
+	showtabs=false,
+	showspaces=false,
+	showstringspaces=false,  
+	escapeinside={\%*}{*)},
+	%aboveskip=0pt,
+	belowskip=-5pt, 
+	abovecaptionskip=0pt, 
+	belowcaptionskip=0pt,
+	columns=fullflexible,
+	captionpos=b
+}

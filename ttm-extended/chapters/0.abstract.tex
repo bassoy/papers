@@ -1,0 +1,18 @@
+\begin{abstract}
+%
+The tensor-matrix multiplication is a basic tensor operation required by various tensor methods such as the ALS and the HOSVD.
+%
+This paper presents flexible high-performance algorithms that compute the tensor-matrix product according to the Loops-over-GEMM (LoG) approach.
+%
+Our algorithms can process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
+%
+We discuss different tensor slicing methods with parallelization strategies and propose six algorithm versions that call BLAS with subtensors or tensor slices.
+%
+Their performance is quantified on a set of tensors with various shapes and tensor orders.
+%
+Our best performing version attains a median performance of $1.37$ double precision Tflops on an Intel Xeon Gold 6248R processor using Intel's MKL.
+%
+We show that the tensor layout does not affect the performance significantly.
+%
+Our fastest implementation is on average at least $14.05$\% and up to $3.79$x faster than other state-of-the-art approaches and actively developed libraries like Libtorch and Eigen.
+\end{abstract}

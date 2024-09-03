@@ -1,0 +1,26 @@
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+We presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication which is essential for many tensor methods.
+Our approach is based on the LOG-method and computes the tensor-matrix product in-place without transposing tensors.
+It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input} for linear tensor layouts.
+The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
+
+Our benchmarks show that dividing the base algorithm into eight different GEMM cases improves the overall performance.
+We have demonstrated that algorithms with parallel loops over single-threaded GEMM calls with tensor slices and subtensors perform best.
+Interestingly, they outperform a single batched GEMM with subtensors, on average, by $14$\% in case of asymmetrically shaped tensors and if tensor slices are used.
+Both version computes the tensor-matrix product on average faster than other state-of-the-art implementations.
+We have shown that our algorithms are layout-oblivious and do not need further refinement if the tensor layout is changed. 
+We measured a relative standard deviation of $12.95$\% and $17.61$\% with symmetrically-shaped tensors for different $k$-order tensor layouts.
+
+One can conclude that LOG-based tensor-times-matrix algorithms are on par or can even outperform TTGT-based and GETT-based implementations without loosing their flexibility.
+Hence, other actively developed libraries such as LibTorch and Eigen might benefit from implementing the proposed algorithms.
+Our header-only library provides \tf{C++} interfaces and a python module which allows frameworks to easily integrate our library.
+
+In the near future, we intend to incorporate our implementations in TensorLy, a widely-used framework for tensor computations \cite{cohen:2022:tensor.computations, kossaifi:2019:tensorly}.
+Currently, we lack a heuristic for selecting subtensor sizes and choosing the corresponding algorithm. 
+Using the insights provided in \cite{li:2015:input} could help to further increase the performance.
+Additionally, we want to explore to what extend our approach can be applied for the general tensor contractions.
+
+\subsubsection{Source Code Availability}
+Project description and source code can be found at \tf{\url{https://github.com/bassoy/ttm}}.
+The sequential tensor-matrix multiplication of TLIB is part of uBLAS and in the official release of \tf{Boost} \tf{v1.70.0} and later.

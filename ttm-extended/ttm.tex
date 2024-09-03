@@ -1,0 +1,126 @@
+\documentclass[preprint,5p]{elsarticle} % [runningheads]
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}    %Schriftbild in Adobe PDf sonst unleserlich
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage[usenames,dvipsnames]{xcolor} % 
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xurl}
+%\usepackage{cite}
+\usepackage[english,linesnumbered,vlined]{algorithm2e} % ,vlined
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{subfigure}
+
+\usetikzlibrary{matrix,arrows,positioning,calc,patterns} % shapes,
+\usepgfplotslibrary{statistics}
+
+\pgfplotsset{compat=1.18}
+
+
+\pgfplotscreateplotcyclelist{white black cycle list 1}{%
+	every mark/.append style={fill=black},mark=*\\%
+	every mark/.append style={fill=white!80!black},mark=square*\\%
+	every mark/.append style={fill=white!60!black},mark=otimes*\\%
+	every mark/.append style={fill=white!40!black},mark=triangle*\\%
+	every mark/.append style={fill=white!20!black},mark=pentagon*\\%
+}
+
+\pgfplotscreateplotcyclelist{white black cycle list 2}{%
+	every mark/.append style={fill=black},mark=*\\%
+%	every mark/.append style={fill=white!80!black},mark=square*\\%
+	every mark/.append style={fill=white!60!black},mark=otimes*\\%
+	every mark/.append style={fill=white!40!black},mark=triangle*\\%
+	every mark/.append style={fill=white!20!black},mark=pentagon*\\%
+}
+
+\pgfplotscreateplotcyclelist{my exotic compare 1}{
+	black,   dashed, line width = 2, every mark/.append style={fill=teal!80!black}\\%,mark=*\\
+	orange,          line width = 2, every mark/.append style={fill=orange!80!black}\\%,mark=square*\\
+	cyan!90!black,   line width = 2, every mark/.append style={fill=cyan!80!black}\\%,mark=otimes*\\
+	purple!80!white, line width = 2, every mark/.append style={solid,fill=gray}\\%,mark=otimes*\\
+	lime!80!black,   line width = 2, every mark/.append style={solid,fill=yellow!80!black}\\%,mark=square*\\	
+}
+
+\pgfplotscreateplotcyclelist{my exotic compare 2}{
+	black,   dashed, line width = 2, every mark/.append style={fill=teal!80!black}\\%,mark=*\\
+	%orange,          line width = 2, every mark/.append style={fill=orange!80!black}\\%,mark=square*\\
+	cyan!90!black,   line width = 2, every mark/.append style={fill=cyan!80!black}\\%,mark=otimes*\\
+	purple!80!white, line width = 2, every mark/.append style={solid,fill=gray}\\%,mark=otimes*\\
+	lime!80!black,   line width = 2, every mark/.append style={solid,fill=yellow!80!black}\\%,mark=square*\\	
+}
+
+\pgfplotscreateplotcyclelist{my exotic tlib case8}{
+	black,           line width = 2, every mark/.append style={fill=teal!80!black}\\%,mark=*\\	
+	orange,          line width = 2, every mark/.append style={fill=orange!80!black}\\%,mark=square*\\
+	cyan!90!black,   line width = 2, every mark/.append style={fill=cyan!80!black}\\%,mark=otimes*\\
+	purple!80!white, line width = 2, every mark/.append style={solid,fill=gray}\\%,mark=otimes*\\
+	lime!80!black,   line width = 2, every mark/.append style={solid,fill=yellow!80!black}\\%,mark=square*\\	
+}
+
+%\usepackage[running]{lineno}
+%\linenumbers
+
+\SetAlgoCaptionLayout{footnotesize}
+\SetAlCapSkip{1ex}
+
+
+\usetikzlibrary{calc}
+\usetikzlibrary{patterns}
+\usepgfplotslibrary{patchplots}
+
+\input{new-commands.tex}
+\input{define-listings.tex}
+
+
+\begin{document}
+
+
+\lstset{language=cplusplus}
+
+
+\title{Fast and Layout-Oblivious \\ Tensor-Matrix Multiplication with BLAS}%\tnoteref{t1,t2}
+%\tnotetext[t1]{This document is the results of the research project funded by the National Science Foundation.}
+%\tnotetext[t2]{The second title footnote which is a longer text matter to fill through the whole text width and overflow into another line in the footnotes area of the first page.}
+
+\author[1]{Cem Sava\c{s} Ba\c{s}soy\corref{cor1}} %\fnref{fn1} 
+\ead{cem.bassoy@gmail.com}
+\cortext[cor1]{Corresponding author}
+
+\affiliation[1]{organization={Hamburg University of Technology},addressline={Schwarzenbergstrasse 95}, postcode={21071}, city={Hamburg}, country={Germany}}
+
+\input{chapters/0.abstract}
+
+\maketitle
+
+%\keywords{First keyword  \and Second keyword \and Another keyword.}
+
+
+
+\input{chapters/1.introduction}
+
+\input{chapters/2.related}
+
+\input{chapters/3.preliminaries}
+
+\input{chapters/5.baseline}
+
+\input{chapters/4.methodology}
+
+\input{chapters/8.results}
+
+\input{chapters/9.conclusion}
+
+\bibliographystyle{elsarticle-num}
+\bibliography{bib}
+
+\end{document}
+
+
