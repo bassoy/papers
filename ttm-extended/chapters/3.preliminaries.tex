@@ -51,9 +51,9 @@ The operation $\rho$ is defined by a permutation tuple $\mbrho = (\rho_1,\dots,\
 %\vspace{-1em}
 
 \subsection{Tensor-Matrix Multiplication}
-Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = (n_1,\dots,n_q,\dots,n_p)$ and $\mbn_c =(n_1,\dots,n_{q-1},m,n_{q+1},\dots,n_p)$. 
+Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = ([\mbn_1,n_q,\mbn_2])$ and $\mbn_c =([\mbn_1,m,\mbn_2])$ where $\mbn_1 = (n_1,n_2,\allowbreak\dots,n_{q-1})$ and $\mbn_2 = (n_{q+1},n_{q+2},\allowbreak\dots,n_p)$.
 Let $\mbB$ be a matrix of shape $\mbn_b = (m,n_q)$.
-A mode-$q$ tensor-matrix product is denoted by $\mubC = \mubA \times_q \mbB$. 
+A $q$-mode tensor-matrix product is denoted by $\mubC = \mubA \times_q \mbB$. 
 An element of $\mubC$ is defined by
 \begin{equation}
 \label{equ:tensor.matrix.multplication}
@@ -64,8 +64,9 @@ with $\mbi_1 = (i_1,\dots,i_{q-1})$, $\mbi_2 = (i_{q+1},\dots,i_p)$ where $1 \le
 Mode $q$ is called the contraction mode with $1 \leq q \leq p$.
 The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
 Its arithmetic intensity is equal to that of a matrix-matrix multiplication and is not memory-bound.
-%Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
+%TODO: %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
+
 In the following, we assume that the tensors $\mubA$ and $\mubC$ have the same tensor layout $\mbpi$. 
 Elements of matrix $\mubB$ can be stored either in the column-major or row-major format.
-Without loss of generality, we assume $\mubB$ to have the row-major storage format.
-Also note that the following approach can be applied, if indices $j$ and $i_q$ of matrix $\mbB$ are swapped.
+The tensor-matrix multiplication with $i_q$ iterating over the second mode of $\mbB$ is also referred to as the $q$-mode product which is a building block for tensor methods such as the higher-order orthogonal iteration or the higher-order singular value decomposition \cite{kolda:2009:decompositions}.
+Please note that the following method can be applied, if indices $j$ and $i_q$ of matrix $\mbB$ are swapped.

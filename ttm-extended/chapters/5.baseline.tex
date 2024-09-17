@@ -1,37 +1,25 @@
 \section{Algorithm Design}
 \label{sec:design}
-%\subsection{Sequential Algorithm}
-%\label{sec:design:sequential.baseline.algorithm}
-
-
-%The body of the first \ttt{if} statement contains a recursive call that skips the iteration over the dimension $n_{q}$ when $r = \mhq$ with $\pi_r = q$ and $\mhq = \mbpi^{-1}_q$.
-%The second \ttt{if} statement contains multiple recursive calls for the modes $1 \leq r \neq \mhq \leq p$ with different multi-indices.
-
-
-
-
 \subsection{Baseline Algorithm with Contiguous Memory Access}
 \label{sec:design:modified.baseline.algorithm}
-Eq. \ref{equ:tensor.matrix.multplication} can be implemented with one sequential \tf{C++} function which  consists of a nested recursion which is described in \cite{bassoy:2018:fast}.
-The algorithm consists of two \ttt{if} statements with an \ttt{else} branch that computes a fiber-matrix product with two loops.
-The outer loop iterates with $j$ over dimension $m$ of $\mubC$ and $\mbB$.
-The inner loop iterates with $i_q$ over dimension $n_q$ of $\mubA$ and $\mbB$, computing an inner product. 
-However, elements of $\mubA$ and $\mubC$ are accessed non-contiguously if $\pi_1 \neq q$.
-Matrix $\mbB$ is contiguously accessed if $i_q$ or $j$ is incremented with unit-strides depending on the storage format of $\mubB$.
+The tensor-times-matrix multiplication in equation \ref{equ:tensor.matrix.multplication} can be implemented with one sequential algorithm using a nested recursion \cite{bassoy:2018:fast}.
+It consists of two \ttt{if} statements with an \ttt{else} branch that computes a fiber-matrix product with two loops.
+The outer loop iterates over the dimension $m$ of $\mubC$ and $\mbB$, while the inner iterates over dimension $n_q$ of $\mubA$ and $\mbB$ computing an inner product with fibers of $\mubA$ and $\mbB$. 
+While matrix $\mbB$ can be accessed contiguously depending on its storage format, elements of $\mubA$ and $\mubC$ are accessed non-contiguously if $\pi_1 \neq q$.
 
 %The access pattern can be improved by reordering tensor elements according to the storage format.
 %However, copy operations reduce the overall throughput of the operation, see \cite{shi:2016:tensor.contraction}.
 
-The above algorithm can be modified such that tensor elements are accessed according to the tensor layout that is specified by layout tuple $\mbpi$.
-The resulting baseline algorithm is given in Algorithm \ref{alg:ttm.sequential.coalesced} which contiguously accesses memory for $\pi_1 \neq q$ and $p > 1$.
-In line number 5, one multi-index element $i_{\pi_r}$ is incremented with a stride $w_{\pi_r}$. % in line 5
-With increasing recursion level and decreasing $r$, indices are incremented with smaller strides as $w_{\pi_r} \leq w_{\pi_{r+1}}$. 
+
+A better approach is illustrated in algorithm \ref{alg:ttm.sequential.coalesced} where the loop order is adjust to the tensor layout tuple $\mbpi$ and memory is accessed contiguously for $\pi_1 \neq q$ and $p > 1$.
+The adjustment of the loop order is accomplished in line 5 which uses the layout tuple $\mbpi$ to select a multi-index element $i_{\pi_r}$ and to increment it with the corresponding stride $w_{\pi_r}$.
+Hence, with increasing recursion level and decreasing $r$, indices are incremented with smaller strides as $w_{\pi_r} \leq w_{\pi_{r+1}}$.
 %The condition of the second \ttt{if} statement in line 4 is changed from $r \geq 1$ to $r > 1$.
-The second \tf{if} statement in line number 4 allows the loop over dimension $\pi_1$ to be placed into the base case which contains three loops performing a slice-matrix multiplication.
+The second \tf{if} statement in line number 4 allows the loop over mode $\pi_1$ to be placed into the base case which contains three loops performing a slice-matrix multiplication.
 %the minimum stride $w_{\pi_1}$ to be included in the base case.
 %The latter now contains three loops performing a slice-matrix multiplication. 
 %The loop ordering are adjusted according to the tensor and matrix layout.
-The inner-most loop increments $i_{\pi_1}$ and contiguously accesses tensor elements of $\mubA$ and $\mubC$.
+In this way, the inner-most loop is able to increment $i_{\pi_1}$ with a unit stride and contiguously accesses tensor elements of $\mubA$ and $\mubC$.
 The second loop increments $i_q$ with which elements of $\mbB$ are contiguously accessed if $\mbB$ is stored in the row-major format.
 The third loop increments $j$ and could be placed as the second loop if $\mbB$ is stored in the column-major format.
 %The loop ordering are adjusted according to the tensor and matrix layout.
@@ -41,7 +29,7 @@ The third loop increments $j$ and could be placed as the second loop if $\mbB$ i
 %\SetAlgoNoLine
 \DontPrintSemicolon
 \SetKwProg{Fn}{}{}{end}
-\SetKwFunction{function}{tensor\_times\_matrix}%
+\SetKwFunction{function}{ttm}%
 %\SetAlgoNoEnd
 \footnotesize 
 \SetAlgoVlined
@@ -68,7 +56,7 @@ The third loop increments $j$ and could be placed as the second loop if $\mbB$ i
 			{			
 				\For{$i_{\pi_1} \leftarrow 1$ \KwTo $n_{\pi_1}$}
 				{
-					$\mubC(i_1,...,i_{q-1},j,i_{q+1},...,i_{p})$ \ttt{+=} $\mubA(i_1,...,i_q,...,i_p) \cdot \mbB(j,i_q)$\;
+					$\mubC([\mbi_1,j,\mbi_2])$ \ttt{+=} $\mubA([\mbi_1,i_q,\mbi_2]) \cdot \mbB(j,i_q)$\;
 				}
 			}
 		}
@@ -87,13 +75,9 @@ The initial call must happen with $r=p$ where $\mbn$ is the shape tuple of $\mub
 \end{algorithm}
 
 While spatial data locality is improved by adjusting the loop ordering, slices $\mubA_{\pi_1,q}'$, fibers $\mubC_{\pi_1}'$ and elements $\mubB(j,i_q)$ are accessed $m$, $n_q$ and $n_{\pi_1}$ times, respectively.
-While the specified fiber of $\mubC$ can fit into first or second level cache, slice elements of $\mubA$ are unlikely to fit in the local caches if the slice size $n_{\pi_1} \times n_q$ is large leading to higher cache misses and suboptimal performance.
+The specified fiber of $\mubC$ might fit into first or second level cache, slice elements of $\mubA$ are unlikely to fit in the local caches if the slice size $n_{\pi_1} \times n_q$ is large, leading to higher cache misses and suboptimal performance.
 Instead of optimizing for better temporal data locality, we use existing high-performance BLAS implementations for the base case.
-%Optimized tiling for better temporal data locality has been discussed in \cite{goto:2008:gemm} which suggests to use existing high-performance BLAS implementations for the base case.
-%The proposed algorithm therefore constitutes the starting point for \tf{BLAS} utilization within the base case.
-
-
-%Besides the illustrated algorithm, we have identified 
+The following subsection explains this approach.
 
 \subsection{BLAS-based Algorithms with Tensor Slices}
 \label{sec:design:blas.based.algorithm.slices}
