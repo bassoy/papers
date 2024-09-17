@@ -102,35 +102,88 @@ Algorithm \ref{alg:ttm.sequential.coalesced} is the starting point for BLAS-base
 It computes the mode-$q$ tensor-matrix product by recursively multiplying tensor slices with the matrix for $q \neq \pi_1$.
 Instead of optimizing the multiplication, it is possible to insert a \tf{gemm} routine in the base case and to compute slice-matrix products.
 Additionally, there are seven other (corner) cases where a single \tf{gemv} or \tf{gemm} call suffices.
-All eight cases are listed in table \ref{tab:mapping}.
+All eight cases are listed in table \ref{tab:mapping_rm}.
 The arguments of \tf{gemv} or \tf{gemm} are chosen depending on the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$ except for parameter \tf{CBLAS\_ORDER} which is set to \tf{CblasRowMajor}.
 The \tf{CblasColMajor} format can be used as well if the following case descriptions are changed accordingly.
 The parameter arguments are given in our \tf{C++} library.
-Note that with table \ref{tab:mapping} all linear tensor layout are supported with no limitations on tensor order and contraction mode.
+Note that with table \ref{tab:mapping_rm} all linear tensor layout are supported with no limitations on tensor order and contraction mode.
 
 %Note , all linear tensor layouts can be supported by setting the remaining parameters of \tf{gemm}.
 
-\begin{table}[t]
+%TODO: previously explain how CBLAS is called and what options one has, i.e. explain the design space
+%TODO: explain the table for B format (already explained for RM) and CBLAS multiplication (already explained for RM) as on subsubsection and include two other subsection explaining what changes if we take B.format CM and another subsection explaining how the parameters change if it is CM.
+\begin{table*}[t]
+%\captionsetup{width=0.7\textheight}
+\centering
+\footnotesize
+%\scriptsize
+\begin{tabular}{ c c c c c c c c c c c c c c c } % 
+\toprule
+Case & Order $p$ & Layout $\mbpi_{\mubA,\mubC}$ & Layout $\mbpi_{\mbB}$ & Mode $q$ & Routine & \tf{T} & \tf{M} & \tf{N} & \tf{K} & \tf{A} & \tf{LDA} & \tf{B} & \tf{LDB} & \tf{LDC} \\
+\midrule
+1 & $1$ & -       & \tf{rm/cm} & $1$      & \tf{gemv} & -       & $m$   & $n_1$ & -     & $\mbB$  & $n_1$ & $\mubA$  & - & - \\
+\midrule
+2 & $2$ & \tf{cm} & \tf{rm} & $1$      & \tf{gemm} & $\mbB$  & $n_2$ & $m$   & $n_1$ & $\mubA$ & $n_1$ & $\mbB$   & $n_1$ & $m$   \\
+  & $2$ & \tf{cm} & \tf{cm} & $1$      & \tf{gemm} & -       & $m$   & $n_2$ & $n_1$ & $\mbB$  & $m$   & $\mubA$  & $n_1$ & $m$   \\
+3 & $2$ & \tf{cm} & \tf{rm} & $2$      & \tf{gemm} & -       & $m$   & $n_1$ & $n_2$ & $\mbB$  & $n_2$ & $\mubA$  & $n_1$ & $n_1$ \\
+  & $2$ & \tf{cm} & \tf{cm} & $2$      & \tf{gemm} & $\mbB$  & $n_1$ & $m$   & $n_2$ & $\mubA$ & $n_1$ & $\mbB$   & $m$   & $n_1$ \\  
+4 & $2$ & \tf{rm} & \tf{rm} & $1$      & \tf{gemm} & -       & $m$   & $n_2$ & $n_1$ & $\mbB$  & $n_1$ & $\mubA$  & $n_2$ & $n_2$ \\
+  & $2$ & \tf{rm} & \tf{cm} & $1$      & \tf{gemm} & $\mbB$  & $n_2$ & $m$   & $n_1$ & $\mubA$ & $n_2$ & $\mbB$   & $m$   & $n_2$ \\
+5 & $2$ & \tf{rm} & \tf{rm} & $2$      & \tf{gemm} & $\mbB$  & $n_1$ & $m$   & $n_2$ & $\mubA$ & $n_2$ & $\mbB$   & $n_2$ & $m$   \\
+  & $2$ & \tf{rm} & \tf{cm} & $2$      & \tf{gemm} &         & $m$   & $n_1$ & $n_2$ & $\mbB$  & $m$   & $\mubA$  & $n_2$ & $m$   \\
+\midrule
+6 & $>2$ & any    & \tf{rm} & $\pi_1$  & \tf{gemm} & $\mbB$  & $\mbnq$ & $m$     & $n_q$ & $\mubA$ & $n_q$   & $\mbB$  & $n_q$   & $m$\\
+  & $>2$ & any    & \tf{cm} & $\pi_1$  & \tf{gemm} & -       & $m$     & $\mbnq$ & $n_q$ & $\mbB$  & $m$     & $\mubA$ & $n_q$   & $m$\\
+7 & $>2$ & any    & \tf{rm} & $\pi_p$  & \tf{gemm} & -       & $m$     & $\mbnq$ & $n_q$ & $\mbB$  & $n_q$   & $\mubA$ & $\mbnq$ & $\mbnq$ \\
+  & $>2$ & any    & \tf{cm} & $\pi_p$  & \tf{gemm} & $\mbB$  & $\mbnq$ & $m$     & $n_q$ & $\mubA$ & $\mbnq$ & $\mbB$  & $m$     & $\mbnq$ \\
+\midrule
+8 & $>2$ & any    & \tf{rm} & $\pi_2,..,\pi_{p-1}$ & \tf{gemm*} & -      & $m$ & $n_{\pi_1}$ & $n_q$ & $\mbB$  & $n_q$ & $\mubA$ & $w_q$ & $w_q$ \\
+  & $>2$ & any    & \tf{cm} & $\pi_2,..,\pi_{p-1}$ & \tf{gemm*} & $\mbB$ & $n_{\pi_1}$ & $m$ & $n_q$ & $\mubA$ & $w_q$ & $\mbB$  & $m$   & $w_q$ \\
+\bottomrule
+\end{tabular}
+%\vspace{0.2cm}
+\caption%
+{%
+\footnotesize
+Eight cases with \tf{gemv} and \tf{gemm} for the mode-$q$ tensor-matrix multiplication.
+%Argument for \tf{gemv} and \tf{gemm} with 
+Arguments \tf{T}, \tf{M}, \tf{N}, etc. of the BLAS are chosen with respect to the tensor order $p$, layout $\mbpi$ of $\mubA$, $\mbB$, $\mubC$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
+\tf{gemm*} denotes multiple \tf{gemm} calls with different tensor slices.
+Argument $\bar{n}_q$ for case 6 and 7 is given by $\bar{n}_q = (\prod_r^p n_r)/n_q$.
+%\vspace{-0.5cm}
+}
+\label{tab:mapping_rm_cm}
+\end{table*}
+
+
+\begin{comment}
+\begin{table*}[t]
 %\captionsetup{width=0.7\textheight}
 \centering
 \footnotesize
 %\scriptsize
 \begin{tabular}{ c c c c c c c c c c c c c c } % 
 \toprule
-Case \ & Order $p$ \ & Layout $\mbpi$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} & \tf{N} & \tf{K} & \tf{A} & \tf{LDA} & \tf{B} & \tf{LDB} & \tf{LDC} \\
+Case \ & Order $p$ \ & Layout $\mbpi_{\mubA,\mubC}$ \ & Mode $q$ & Routine & \tf{T} & \tf{M} & \tf{N} & \tf{K} & \tf{A} & \tf{LDA} & \tf{B} & \tf{LDB} & \tf{LDC} \\
 \midrule
 1 & $1$ & -       & $1$      & \tf{gemv} & -       & $m$   & $n_1$ & -     & $\mbB$  & $n_1$ & $\mubA$  & - & - \\
 \midrule
-2 & $2$ & $(1,2)$ & $1$      & \tf{gemm} & $\mbB$  & $n_2$ & $m$   & $n_1$ & $\mubA$ & $n_1$ & $\mbB$   & $n_1$ & $m$   \\
-3 & $2$ & $(1,2)$ & $2$      & \tf{gemm} & -       & $m$   & $n_1$ & $n_2$ & $\mbB$  & $n_2$ & $\mubA$  & $n_1$ & $n_1$ \\
-4 & $2$ & $(2,1)$ & $1$      & \tf{gemm} & -       & $m$   & $n_2$ & $n_1$ & $\mbB$  & $n_1$ & $\mubA$  & $n_2$ & $n_2$ \\
-5 & $2$ & $(2,1)$ & $2$      & \tf{gemm} & $\mbB$  & $n_1$ & $m$   & $n_2$ & $\mubA$ & $n_2$ & $\mbB$   & $n_2$ & $m$   \\
+2 & $2$ & $(1,2)$ & $1$      & \tf{gemm(rm)} & $\mbB$  & $n_2$ & $m$   & $n_1$ & $\mubA$ & $n_1$ & $\mbB$   & $n_1$ & $m$   \\
+  & $2$ & $(1,2)$ & $1$      & \tf{gemm(cm)} & $\mbB$  & $m$   & $n_2$ & $n_1$ & $\mbB$  & $n_1$ & $\mubA$  & $n_1$ & $m$   \\
+3 & $2$ & $(1,2)$ & $2$      & \tf{gemm(rm)} & -       & $m$   & $n_1$ & $n_2$ & $\mbB$  & $n_2$ & $\mubA$  & $n_1$ & $n_1$ \\
+  & $2$ & $(1,2)$ & $2$      & \tf{gemm(cm)} & -       & $n_1$ & $m$   & $n_2$ & $\mubA$ & $n_1$ & $\mbB$   & $n_2$ & $n_1$ \\  
+4 & $2$ & $(2,1)$ & $1$      & \tf{gemm(rm)} & -       & $m$   & $n_2$ & $n_1$ & $\mbB$  & $n_1$ & $\mubA$  & $n_2$ & $n_2$ \\
+  & $2$ & $(2,1)$ & $1$      & \tf{gemm(cm)} & -       & $n_2$ & $m$   & $n_1$ & $\mubA$ & $n_2$ & $\mbB$   & $n_1$ & $n_2$ \\
+5 & $2$ & $(2,1)$ & $2$      & \tf{gemm(rm)} & $\mbB$  & $n_1$ & $m$   & $n_2$ & $\mubA$ & $n_2$ & $\mbB$   & $n_2$ & $m$   \\
+  & $2$ & $(2,1)$ & $2$      & \tf{gemm(cm)} & $\mbB$  & $m$   & $n_1$ & $n_2$ & $\mbB$  & $n_2$ & $\mubA$  & $n_2$ & $m$   \\
 \midrule
-6 & $>2$ & any    & $\pi_1$  & \tf{gemm} & $\mbB$  & $\mbnq$ & $m$     & $n_q$ & $\mubA$ & $n_q$ & $\mbB$  & $n_q$ & $m$\\
-7 & $>2$ & any    & $\pi_p$  & \tf{gemm} & -       & $m$     & $\mbnq$ & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $\mbnq$ & $\mbnq$ \\
+6 & $>2$ & any    & $\pi_1$  & \tf{gemm(rm)} & $\mbB$  & $\mbnq$ & $m$     & $n_q$ & $\mubA$ & $n_q$ & $\mbB$  & $n_q$ & $m$\\
+  & $>2$ & any    & $\pi_1$  & \tf{gemm(cm)} & $\mbB$  & $m$     & $\mbnq$ & $n_q$ & $\mbB$  & $n_q$ & $\mubA$ & $n_q$ & $m$\\
+7 & $>2$ & any    & $\pi_p$  & \tf{gemm(rm)} & -       & $m$     & $\mbnq$ & $n_q$ & $\mbB$  & $n_q$ & $\mubA$  & $\mbnq$ & $\mbnq$ \\
+  & $>2$ & any    & $\pi_p$  & \tf{gemm(cm)} & -       & $\mbnq$ & $m$     & $n_q$ & $\mubA$  & $\mbnq$ & $\mbB$  & $n_q$ & $\mbnq$ \\
 \midrule
-%8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{gemm*} & - & $m$ & $w_q$  & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $w_q$  & $w_q$ \\
-8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{gemm*} & - & $m$ & $n_{\pi_1}$  & $n_q$ & $\mbB$ & $n_q$ & $\mubA$  & $w_{q}$  & $w_{q}$ \\
+8 & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{gemm(rm)*} & - & $m$ & $n_{\pi_1}$ & $n_q$ & $\mbB$ & $n_q$ & $\mubA$ & $w_{q}$  & $w_{q}$ \\
+  & $>2$ & any & \ $\pi_2,..,\pi_{p-1}$ \ & \tf{gemm(cm)*} & - & $n_{\pi_1}$ & $m$ & $n_q$ & $\mubA$ & $w_{q}$ & $\mbB$ & $n_q$ & $w_{q}$ \\
 \bottomrule \\
 \end{tabular}
 %\vspace{0.2cm}
@@ -143,10 +196,11 @@ Arguments \tf{T}, \tf{M}, \tf{N}, etc. of the BLAS are chosen with respect to th
 \tf{gemm*} denotes multiple \tf{gemm} calls with different tensor slices.
 Argument $\bar{n}_q$ for case 6 and 7 is given by $\bar{n}_q = 1/n_q \prod_r^p n_r$.
 Matrix $\mbB$ has the row-major format.
-\vspace{-0.5cm}
+%\vspace{-0.5cm}
 }
-\label{tab:mapping}
-\end{table}%\textbf{}
+\label{tab:mapping_rm}
+\end{table*}
+\end{comment}
 
 %We apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input, shi:2016:tensor.contraction}.
 %The function and parameter configurations for the tensor multiplication can be divided into eight cases.
@@ -159,7 +213,7 @@ If $p=1$, The tensor-vector product $\mubA \times_1 \mbB$ can be computed with a
 
 \tit{Case 2-5:}
 If $p=2$, $\mubA$ and $\mubC$ are order-$2$ tensors with dimensions $n_1$ and $n_2$.
-In this case the tensor-matrix product can be computed with a single \tf{gemm}.
+In this case the tensor-matrix product can be computed with a single \ttt{gemm}.
 If $\mbA$ and $\mbC$ have the column-major format with $\mbpi=(1,2)$, \tf{gemm} either executes $\mbC = \mbA \cdot \mbB^T$ for $q =1$ or $\mbC = \mbB \cdot \mbA$ for $q=2$.
 Reshaping both matrices using $\rho$ with $\mbrho = (2,1)$, \tf{gemm} interprets $\mbC$ and $\mbA$ as matrices in row-major format although both are stored column-wise.
 If $\mbA$ and $\mbC$ have the row-major format with $\mbpi=(2,1)$, \tf{gemm} either executes $\mbC = \mbB \cdot \mbA$ for $q =1$ or $\mbC = \mbA \cdot \mbB^T$ for $q=2$. 

@@ -1,13 +1,15 @@
 \section{Background}
 \label{sec:preliminaries}
 
-\subsubsection{Notation}
+\subsection{Notation}
 \label{sec:preliminaries:notation}
 An order-$p$ tensor is a $p$-dimensional array \cite{lim:2017:hypermatrices} where tensor elements are contiguously stored in memory. % \cite{lee:2018:fundamental}
 We write $a$, $\mba$, $\mbA$ and $\mubA$ in order to denote scalars, vectors, matrices and tensors. 
 If not otherwise mentioned, we assume $\mubA$ to have order $p>2$.
 The $p$-tuple $\mbn = (n_1,n_2,\dots,n_p)$ will be referred to as a dimension tuple with $n_r>1$.
 We will use round brackets $\mubA(i_1,i_2,\dots,i_p)$ or $\mubA(\mbi)$ to denote a tensor element where $\mbi = (i_1,i_2,\dots,i_p)$ is a multi-index.
+For convenience, we will also use square brackets to concatenate index tuples such that 
+$[\mbi,\mbj] = (i_1,i_2,\dots,i_r,\allowbreak j_1,j_2,\dots,j_q)$ where $\mbi$ and $\mbj$ are multi-indices of length $r$ and $q$, respectively.
 A subtensor is denoted by $\mubA'$ and references elements of a tensor $\mubA$.
 They are specified by a selection grid consisting of $p$ index ranges.
 The index range in this work shall either address all indices of a given mode or a by a single index $i_r$ with $1 \leq r \leq p$. % denoted by $\colon$ 
@@ -19,7 +21,7 @@ A subtensor is called a slice $\mubA_{u,v}'$ if only two modes of $\mubA$ is sel
 A fiber $\mubA_u'$ is a tensor slice with only one dimension greater than $1$.
 \vspace{-1em}
 
-\subsubsection{Linear Tensor Layouts}
+\subsection{Linear Tensor Layouts}
 \label{sec:preliminaries:layout}
 We use a layout tuple $\mbpi \in \bbN^p$ to encode all linear tensor layouts including the first-order or last-order layout.
 They contain permuted tensor modes whose priority is given by their index.
@@ -34,7 +36,7 @@ For a given tensor layout and stride tuple, a layout function $\lambda_{\mbw}$ m
 %Reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 %\vspace{-1em}
 
-\subsubsection{Non-Modifying Flattening and Reshaping}
+\subsection{Non-Modifying Flattening and Reshaping}
 \label{sec:preliminaries:flattening.reshaping}
 The flattening operation $\varphi_{r,q}$ transforms an order-$p$ tensor $\mubA$ to another order-$p'$ view $\mubB$ that has different a shape $\mbm$ and layout $\mbtau$ tuple of length $p'$ with $p' = p-q+r$ and $1 \leq r < q \leq p$.
 It is related to the tensor unfolding operation as defined in \cite[p.459]{kolda:2009:decompositions} but neither changes the element ordering nor copies tensor elements.
@@ -48,16 +50,16 @@ In this work, it permutes the shape and layout tuple simultaneously without chan
 The operation $\rho$ is defined by a permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ that defines elements of $\mbm$ and $\mbtau$ with $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
 %\vspace{-1em}
 
-\subsubsection{Tensor-Matrix Multiplication}
+\subsection{Tensor-Matrix Multiplication}
 Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = (n_1,\dots,n_q,\dots,n_p)$ and $\mbn_c =(n_1,\dots,n_{q-1},m,n_{q+1},\dots,n_p)$. 
 Let $\mbB$ be a matrix of shape $\mbn_b = (m,n_q)$.
 A mode-$q$ tensor-matrix product is denoted by $\mubC = \mubA \times_q \mbB$. 
 An element of $\mubC$ is defined by
 \begin{equation}
 \label{equ:tensor.matrix.multplication}
-\mubC(i_1, \dots, i_{q-1}, j, i_{q+1}, \dots, i_p) = \sum_{i_q=1}^{n_q} \mubA(i_1, \dots, i_q, \dots, i_p) \cdot \mbB(j,i_q)
+\mubC([\mbi_1, j, \mbi_2]) = \sum_{i_q=1}^{n_q} \mubA([\mbi_1, i_q, \mbi_2]) \cdot \mbB(j,i_q)
 \end{equation}
-with $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$ \cite{li:2015:input, kolda:2009:decompositions}.
+with $\mbi_1 = (i_1,\dots,i_{q-1})$, $\mbi_2 = (i_{q+1},\dots,i_p)$ where $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$ \cite{li:2015:input, kolda:2009:decompositions}.
 %Similar to the tensor-vector multiplication, the multiplication consists of multiple inner productd of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
 Mode $q$ is called the contraction mode with $1 \leq q \leq p$.
 The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
