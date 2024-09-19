@@ -15,12 +15,13 @@ in (c) and (f) \tf{<par-loops,seq-gemm>} with subtensors.
 
 
 \begin{figure*}[t]
-\input{figures/performance.tlib.case8-cdf} % boxplot
+\input{figures/performance.tlib.case8-cdf-mkl}
+\input{figures/performance.tlib.case8-cdf-aocl}
 \caption{ %
 \footnotesize%
 Cumulative performance distributions of the proposed algorithms for the eighth case.
 Each distribution line belongs to one algorithm:
-\tf{<gemm\_batch>} \ref{coord:gemm_batch} , %
+\tf{<gemm\_batch>} (\ref{coord:gemm_batch}) , %
 \tf{<seq-loops,par-gemm>} (\ref{coord:seq_loops_par_gemm_slice}) and
 \tf{<par-loops,seq-gemm>} (\ref{coord:par_loops_seq_gemm_slice}) using tensor slices,
 \tf{<seq-loops,par-gemm>} (\ref{coord:seq_loops_par_gemm_subtensor}) and
@@ -59,7 +60,7 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 \end{figure*}
 
 
-\subsubsection{Slicing Methods}
+\subsection{Slicing Methods}
 The next paragraphs analyze the two proposed slicing methods and  discuss runtime results of \tf{<par-loops,seq-gemm>} and \tf{<gemm-batch>} using asymmetrically and symmetrically shaped tensors.
 %Note that this analysis is equal to minimizing or maximizing the input parameter $M_C$.
 Fig. \ref{performance.tlib.contour} contains six contour plots (performance maps) in which \tf{<par-loops,seq-gemm>} either uses subtensors or tensor slices and \tf{<gemm-batch>} loops over subtensors only.
@@ -76,7 +77,7 @@ In contrast to the performance maps with asymmetrically shaped tensors, all func
 This can by the fact that both dimensions are equal or larger than $4096$ enabling \tf{gemm} to operate under optimal conditions.
 \vspace{-1em}
 
-\subsubsection{Parallelization Methods}
+\subsection{Parallelization Methods}
 The contour plots in Fig. \ref{performance.tlib.contour} contain performance data of all cases except for $4$ and $5$, see Table \ref{tab:mapping}.
 The effects of the presented slicing and parallelization methods can be better understood if performance data of only the eighth case is examined.
 Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions of all the proposed algorithms which are generated \tf{gemm} or \tf{gemm\_batch} calls within case 8.
@@ -102,7 +103,7 @@ We have also observed no performance improvement if \tf{par-gemm} was used with 
 Moreover, in most cases the \tf{seq-loops} implementations are independent of the tensor shape slower than \tf{par-loops}, even for smaller tensor slices.
 \vspace{-1em}
 
-\subsubsection{Layout-Oblivious Algorithms}
+\subsection{Layout-Oblivious Algorithms}
 Fig. \ref{fig:performance.tlib.format} contains two subfigures visualizing performance statics in double-precision Tflops of \tf{<gemm\_batch>} (left subfigure) and \tf{<par-loops,seq-gemm>} with subtensors (right subfigure).
 Each box plot with the number $k$ has been computed from benchmark data with symmetrically shaped order-$7$ tensors with the $k$-order tensor layout.
 The $1$-order and $7$-order layout, for instance, are the first- and last-order storage formats for the order-$7$ tensor with $\pi_F=(1,2,...,7)$ and $\pi_L= (7,6,...,1)$.
@@ -116,7 +117,7 @@ The runtime results with different $k$-order tensor layouts show that the perfor
 Moreover, the performance stays within an acceptable range independent of the tensor layout.
 \vspace{-1em}
 
-\subsubsection{Comparison with other Approaches}
+\subsection{Comparison with other Approaches}
 We have compared the best performing algorithm with four libraries that implement the tensor-matrix multiplication.
 
 Library \tbf{tcl} implements the TTGT approach with a high-perform tensor-transpose library \tbf{hptt} which is discussed in \cite{springer:2018:design}.
