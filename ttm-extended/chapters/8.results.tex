@@ -5,15 +5,14 @@
 \input{figures/performance.tlib.contour-aocl}
 \caption{%
 \footnotesize %
-Performance maps in double-precision Tflops of the proposed algorithms with varying tensor orders $p$  and contraction modes $q$. 
-Tensors are asymmetrically shaped on the top plots and symmetrically shaped on the bottom plots.
-In (a) and (d) function \tf{<gemm\_batch>} is executed,
-in (b) and (e) \tf{<par-loops,seq-gemm>} with tensor slices, %
-in (c) and (f) \tf{<par-loops,seq-gemm>} with subtensors.
+Performance maps of the TTM in double-precision Gflops per core of the proposed algorithms with varying tensor orders $p$ and contraction modes $q$. 
+The top row of maps (1.) are measured on an Intel Xeon Gold 5318Y with MKL routines while bottom row of maps with number (2.) are measured on an AMD EPYC 9354 with AOCL routines.
+Tensors are asymmetrically shaped on the left four maps (a,b) and symmetrically shaped on the right four maps (c,d).
+Tensor $\mbC$ and $\mbC$ have the first-order while $\mbB$ has the second-order storage format (row-major).
 \label{performance.tlib.contour}
 }
 \end{figure*}
-
+%TODO: Would it be better if we only examine one CPU and instead use the other parallelization methods tgemm?
 
 \begin{figure*}[t]
 \input{figures/performance.tlib.case8-cdf-mkl}
@@ -45,7 +44,8 @@ Box plot number $k$ denotes the $k$-order tensor layout of symmetrically shaped 
 \end{figure*}
 
 \begin{figure*}[t]
-\input{figures/performance.comparison}
+\input{figures/performance.comparison-mkl}
+\input{figures/performance.comparison-aocl}
 \caption{ %
 \footnotesize%
 Cumulative performance distributions of tensor-times-matrix algorithms in double-precision Tflops.

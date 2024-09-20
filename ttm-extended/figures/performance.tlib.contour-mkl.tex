@@ -9,7 +9,8 @@ grid style={dotted},
 align=center,
 %xlabel={tensor order},
 ylabel={contr. mode (q)},
-title={{(a)}}, %  ompfor<slice>, asymmetric, row-major
+title={(1.a)\\\tss{par-loops<slice>}}, %  ompfor<slice>, asymmetric, row-major
+title style={yshift=-1ex},
 scaled ticks=false,
 zlabel={GFlops/core},
 view={0}{90}, 
@@ -60,7 +61,8 @@ grid style={dotted},
 align=center,
 %xlabel={tensor order},
 %ylabel={contr. mode (q)},
-title={{(b)}}, %  ompfor<subtensor>, asymmetric, mkl
+title={{(1.b)}\\\tss{par-loops<subtensor>}}, %  ompfor<subtensor>, asymmetric, mkl
+title style={yshift=-1ex},
 scaled ticks=false,
 zlabel={GFlops},
 view={0}{90}, 
@@ -121,7 +123,8 @@ grid style={dotted},
 align=center,
 %xlabel={tensor order},
 ylabel={contr. mode (q)},
-title={{(c)}}, %  ompfor<slice>, symmetric, row-major
+title={{(1.c)}\\\tss{par-loops<slice>}}, %  ompfor<slice>, symmetric, row-major
+title style={yshift=-1ex},
 scaled ticks=false,
 zlabel={GFlops},
 view={0}{90}, 
@@ -166,7 +169,8 @@ grid style={dotted},
 align=center,
 %xlabel={tensor order},
 %ylabel={contr. mode (q)},
-title={{(d)}}, %  ompfor<subtensor>, symmetric, row-major
+title={{(1.d)}\\\tss{par-loops<subtensor>}}, %  ompfor<subtensor>, symmetric, row-major
+title style={yshift=-1ex},
 scaled ticks=false,
 zlabel={GFlops},
 view={0}{90}, 

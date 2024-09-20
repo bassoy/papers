@@ -248,7 +248,7 @@ Next, three parallel approaches for the eighth case.
 Note that cases 1 to 7 already call a multi-threaded \tf{gemm}.
 %\vspace{-1em}
 
-\subsubsection{Sequential Loops and Multithreaded Matrix Multiplication}
+\subsubsection{Sequential Loops and Parallel Matrix Multiplication}
 A simple approach is to not modify algorithm \ref{alg:ttm.sequential.coalesced} and sequentially call a multi-threaded \tf{gemm} in the base case as described in subsection \ref{sec:design:blas.based.algorithm.slices}.
 This is beneficial if $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{q}$ are large or if the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
 However, when the above conditions are not met, the algorithm executes multi-threaded \tf{gemm} with small subtensors.
