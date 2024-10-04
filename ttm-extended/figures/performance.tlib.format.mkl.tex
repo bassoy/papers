@@ -1,0 +1,69 @@
+\begin{tikzpicture}
+\begin{axis}[
+boxplot/draw direction=y,
+width=0.5\textwidth,
+height=0.2\textheight,
+style={font=\footnotesize},
+grid=major,
+grid style={dotted},
+align=center,
+xlabel={$k$-order layout},
+ylabel={Tflops/s},
+ylabel near ticks,
+title={Intel MKL (rm) },
+xtick={1,2,3,4,5,6,7},
+xticklabels={1,2,3,4,5,6,7},
+ymin=0,
+ymax=8,
+ytick={0,2,4,6,8},
+yticklabels={0,2,4,6,8},
+cycle list={{black}},
+boxplot/variable width,
+boxplot/box extend=0.5,
+boxplot/every box/.style={fill=black,thick},
+boxplot/every median/.style={draw=white,thin},
+]
+\addplot+[boxplot prepared={lower whisker = 0.222311, lower quartile = 1.062817, median = 2.095423, upper quartile = 2.445500, upper whisker = 6.630949} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.245183, lower quartile = 1.163115, median = 2.066062, upper quartile = 2.514304, upper whisker = 4.921195} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.235031, lower quartile = 1.195775, median = 2.095329, upper quartile = 2.645421, upper whisker = 6.517069} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.223277, lower quartile = 1.025390, median = 2.138559, upper quartile = 2.454309, upper whisker = 4.802512} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.224844, lower quartile = 1.051605, median = 2.117759, upper quartile = 2.482665, upper whisker = 4.752532} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.215008, lower quartile = 1.179416, median = 2.117941, upper quartile = 2.470308, upper whisker = 6.787822} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.215662, lower quartile = 1.080059, median = 1.980501, upper quartile = 2.410754, upper whisker = 6.431995} ] coordinates{};
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+boxplot/draw direction=y,
+width=0.5\textwidth,
+height=0.2\textheight,
+style={font=\footnotesize},
+grid=major,
+grid style={dotted},
+align=center,
+xlabel={$k$-order layout},
+ylabel={TFlops},
+ylabel near ticks,
+title={Intel MKL (cm) },
+xtick={1,2,3,4,5,6,7},
+xticklabels={1,2,3,4,5,6,7},
+ymin=0,
+ymax=8,
+ytick={0,2,4,6,8},
+yticklabels={0,2,4,6,8},
+cycle list={{black}},
+boxplot/variable width,
+boxplot/box extend=0.5,
+boxplot/every box/.style={fill=black,thick},
+boxplot/every median/.style={draw=white,thin},
+]
+\addplot+[boxplot prepared={lower whisker = 0.211438, lower quartile = 1.157492, median = 2.169335, upper quartile = 2.574061, upper whisker = 7.382679} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.253487, lower quartile = 1.339416, median = 2.200520, upper quartile = 2.714294, upper whisker = 6.801558} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.247239, lower quartile = 1.307572, median = 2.178256, upper quartile = 2.450358, upper whisker = 7.147759} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.250218, lower quartile = 1.196322, median = 2.155946, upper quartile = 2.466837, upper whisker = 6.800138} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.253739, lower quartile = 1.305761, median = 2.197693, upper quartile = 2.575710, upper whisker = 7.810185} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.208201, lower quartile = 1.166692, median = 2.179619, upper quartile = 2.514617, upper whisker = 7.605348} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.173366, lower quartile = 1.161815, median = 2.193905, upper quartile = 2.501870, upper whisker = 7.191211} ] coordinates{};
+\end{axis}
+\end{tikzpicture}
