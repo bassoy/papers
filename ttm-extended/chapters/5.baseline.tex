@@ -115,13 +115,13 @@ Case & Order $p$ & Layout $\mbpi_{\mubA,\mubC}$ & Layout $\mbpi_{\mbB}$ & Mode $
 \caption%
 {%
 \footnotesize
-Eight cases of CBLAS routines for the mode-$q$ tensor-matrix multiplication.
+Eight cases of CBLAS functions \tf{gemm} and \tf{gemv} implementing the mode-$q$ tensor-matrix multiplication with a row-major or column-major format.
 %Argument for \tf{gemv} and \tf{gemm} with 
 Arguments \tf{T}, \tf{M}, \tf{N}, etc. of \tf{gemv} and \tf{gemm} are chosen with respect to the tensor order $p$, layout $\mbpi$ of $\mubA$, $\mbB$, $\mubC$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
-Routine \tf{gemm*} with a star denotes multiple \tf{gemm} calls with different tensor slices.
+Function \tf{gemm*} with a star denotes multiple \tf{gemm} calls with different tensor slices.
 Argument $\bar{n}_q$ for case 6 and 7 is defined as $\bar{n}_q = (\prod_r^p n_r)/n_q$.
-The input matrix $\mbB$ is either stored in column-major \tss{cm} or row-major \tss{rm} order.
-The element ordering of the tensor slices is determined by the storage format of the input matrix $\mbB$.
+Input matrix $\mbB$ is either stored in the column-major or row-major format.
+The storage format flag set for \tf{gemm} and \tf{gemv} is determined by the element ordering of $\mbB$.
 }
 \label{tab:mapping_rm_cm}
 \end{table*}
@@ -183,8 +183,10 @@ The matrix-matrix product $\mbC = \mbB \cdot \mbA$ is performed by interpreting 
 \subsubsection{Column-Major Matrix Multiplication}
 The tensor-matrix multiplication is performed with the column-major version of \ttt{gemm} when the input matrix $\mbB$ is stored in column-major order.
 Although the number of \ttt{gemm} cases remains the same, the \ttt{gemm} arguments must be rearranged.
-The argument arrangement for the column-major version can be derived from the row-major version by swapping the BLAS arguments of \ttt{M} and \ttt{N}, as well as \ttt{A} and \ttt{B}.
-Additionally, the transposition flag for matrix $\mbB$ is toggled and the leading dimension argument of \ttt{A} is swapped to \ttt{LDB} or \ttt{LDA} as well.
+The argument arrangement for the column-major version can be derived from the row-major version that is provided in table \ref{tab:mapping_rm_cm}.
+Firstly, the BLAS arguments of \ttt{M} and \ttt{N}, as well as \ttt{A} and \ttt{B} must be swapped.
+Additionally, the transposition flag for matrix $\mbB$ is toggled.
+Also, the leading dimension argument of \ttt{A} is swapped to \ttt{LDB} or \ttt{LDA}.
 The only new argument is the new leading dimension of \ttt{B}.
 Given case 4 with the row-major matrix multiplication in table \ref{tab:mapping_rm_cm} where tensor $\mubA$ and matrix $\mbB$ are passed to \ttt{B} and \ttt{A}.
 The corresponding column-major version is attained when tensor $\mubA$ and matrix $\mbB$ are passed to \ttt{A} and \ttt{B} where the transpose flag for $\mbB$ is set and the remaining dimensions are adjusted accordingly.
@@ -200,72 +202,110 @@ In addtion, the transposition flag must be set for \ttt{A} or \ttt{B} in the new
 Given case 4 with the column-major matrix multiplication in table \ref{tab:mapping_rm_cm} where tensor $\mubA$ and matrix $\mbB$ are set for \ttt{A} and \ttt{B} and $\mbB$ is transposed.
 Then the arguments of an equivalent row-major multiplication for \ttt{A}, \ttt{B}, \ttt{M}, \ttt{N}, \ttt{LDA}, \ttt{LDB} and \ttt{T} are $\mbB$, $\mubA$, $m$, $n_2$, $m$, $n_2$ and $\mbB$.
 Another possible matrix multiplication variant that yields the same product is computed when, instead of $\mbB$, both tensors $\mubA$ and $\mubC$ are transposed and their corresponding arguments are adjusted accordingly. 
-However, we assume that such reformulations of the matrix multiplication do not outperform the variants shown in Table \ref{tab:mapping_rm_cm}, as we expect the use of highly optimized BLAS libraries.
+However, we assume that such reformulations of the matrix multiplication do not outperform the variants shown in Table \ref{tab:mapping_rm_cm}, as we expect highly optimized BLAS libraries to adjust .
 
 
-\subsection{BLAS-Based Algorithms with Subtensors}
+\subsection{BLAS-Based Algorithms with Large Tensor Slices}
 \label{sec:design:blas.based.algorithm.subtensors}
-The eighth case can be further optimized by slicing larger subtensors and use additional dimensions for the slice-matrix multiplication.
-% by utilizing larger subtensors than tensor slices
-%This is accomplished 
-The selected dimensions must adhere to flatten the subtensor into a matrix without reordering or copying elements, see lemma 4.1 in \cite{li:2015:input}.
-%We will use our flattening operation which does not copy or reorder elements, see section \ref{sec:preliminaries:flattening.reshaping}.
-% see section \ref{sec:preliminaries:flattening.reshaping}.
-The number of additional modes is $\mhq-1$ with $\mhq = \mbpi^{-1}(q)$ and the corresponding modes are $\pi_1,\pi_2,\dots,\pi_{\mhq-1}$.
-%with dimensions $n_{\pi_1},\dots,n_{\pi_{\mhq-1}}, n_{q}$
-Applying flattening $\varphi_{1,\mhq-1}$ and reshaping $\rho$ with $\mbrho = (2,1)$ on a subtensor of $\mubA$ yields a row-major matrix $\mbA$ with shape $(n_q,\prod_{r=1}^{\mhq-1} n_{\pi_r})$.
+The \ttt{gemm} function in the eighth case can be called with larger subtensors using additional modes of the input and output tensor.
+Given a contraction mode $q$, the maximum number of additionally fusible modes is given by $\mhq-1$ with $\mhq = \mbpi^{-1}(q)$ where $\pi_1,\pi_2,\dots,\pi_{\mhq-1}$ are their corresponding modes.
+Applying the flattening and the reshaping operation $\varphi_{1,\mhq-1}$  and $\rho$ with $\mbrho = (2,1)$ on a subtensor of $\mubA$ yields a row-major matrix $\mbA$ with shape $(n_q,\prod_{r=1}^{\mhq-1} n_{\pi_r})$.
 Analogously, tensor $\mubC$ becomes a row-major matrix with the shape $(m, \prod_{r=1}^{\mhq-1} n_{\pi_r})$.
-This description supports all linear tensor layouts and generalizes lemma 4.2 in \cite{li:2015:input}.
+This description supports all linear tensor layouts and generalizes lemma 4.2 in \cite{li:2015:input} without copying tensor elements, see section \ref{sec:preliminaries:flattening.reshaping}.
 
-Algorithm \ref{alg:ttm.sequential.coalesced} needs a minor modification so that \ttt{gemm} can be used with flattened subtensors instead of tensor slices.
+Algorithm \ref{alg:ttm.sequential.coalesced} needs a minor modification to support flattened mode-$\mhq$ tensor slices.
 The non-base case of the modified algorithm only iterates over dimensions with indices that are larger than $\mhq$, omitting the first $\mhq$ modes $\mbpi_{1,\mhq} = (\pi_1, \dots, \pi_{\mhq})$ with $\pi_{\mhq} = q$.
 The conditions in line 2 and 4 are changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
-The single indices of the subtensors $\mubA_{\mbpi_{1,\mhq}}'$ and $\mubC_{\mbpi_{1,\mhq}}'$ are given by the loop induction variables that belong to the $\pi_r$-th loop with $\mhq+1 \leq r \leq p$.  
+The single indices of the subtensors $\mubA_{\mbpi_{1,\mhq}}'$ and $\mubC_{\mbpi_{1,\mhq}}'$ are given by the loop induction variables that belong to the $\pi_r$-th loop with $\mhq+1 \leq r \leq p$.
  
 \subsection{Parallel BLAS-based Algorithms}
 \label{subsec:parallel.multi-loops}
-Next, three parallel approaches for the eighth case.
-Note that cases 1 to 7 already call a multi-threaded \ttt{gemm}.
-%\vspace{-1em}
+Most BLAS libraries provide API functions for adjusting the number of threads.
+Hence, functions such as \ttt{gemm} and \ttt{gemv} can be run either using a single or multiple threads.
+For the cases one to seven with a single BLAS call, the number of threads is always set to the number of available cores.
+The following subsections discuss parallel versions for the eighth case in which the outer loops of algorithm \ref{alg:ttm.sequential.coalesced} and the \ttt{gemm} function inside the base case can be run in parallel.
+Note that the parallelization strategies can be combined with the aforementioned slicing methods.
 
 \subsubsection{Sequential Loops and Parallel Matrix Multiplication}
-A simple approach is to not modify algorithm \ref{alg:ttm.sequential.coalesced} and sequentially call a multi-threaded \ttt{gemm} in the base case as described in subsection \ref{sec:design:blas.based.algorithm.slices}.
-This is beneficial if $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{q}$ are large or if the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
-However, when the above conditions are not met, the algorithm executes multi-threaded \ttt{gemm} with small subtensors.
-This might lead to a low utilization of available computational resources.
+Similar to the first seven cases, algorithm \ref{alg:ttm.sequential.coalesced} does not need to be modified except for enabling \ttt{gemm} to run multi-threaded in the base case by using BLAS function calls to adjust the thread count.
+This type of parallelization strategy might be beneficial with order-$\mhq$ tensor slices where the contraction mode satisfies $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{\mhq}$ are large and the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
+For instance, given a first-order storage format and the contraction mode $q$ with $q=p-1$ and $n_p=2$, the dimensions of flattened order-$q$ tensor slices are $\prod_{r=1}^{p-2}n_r$ and $n_{p-1}$.
+This allows \ttt{gemm} to be executed with large dimensions using multiple threads increasing the likelihood to reach a high throughput.
+However, if the above conditions are not met, a multi-threaded \ttt{gemm} operates on small tensor slices leading to an suboptimal utilization of the available cores.
 This algorithm version will be referred to as \tf{<seq-loops,par-gemm>}.
-% that is executable with subtensors or tensor slices
-%\vspace{-1em}
 
-\subsubsection{Parallel Loops and Multithreaded Matrix Multiplication}
-A more advanced version of the above algorithm executes a single-threaded \ttt{gemm} in parallel with all available (free) modes.
-The number of free modes depends on the tensor slicing.
-If subtensors are used, all $\pi_{\mhq+1}, \dots, \pi_{p}$ modes are free and can be used for parallel execution.
-In case of tensor slices, only dimensions with indices $\pi_1$ and $\pi_{\mhq}$ are free.
+
+\begin{algorithm}[t]
+\footnotesize
+\DontPrintSemicolon
+\SetAlgoVlined
+\SetKwProg{Fn}{}{}{end}
+\SetKwFunction{Func}{ttm<par-for,seq-gemm,slice-2d>}%
+\SetKwFunction{GEMM}{gemm}%
+\SetKw{KwWith}{with}
+\SetKw{KwStep}{step}
+\SetKw{KwThreads}{threads}
+\SetKwFor{ParallelFor}{parallel for}{do}{endfor}
+\hrule
+\BlankLine
+\Fn{\Func{$\mubA'$, $\mubC'$, $\mbn'$, $\mbw'$, $m$}}
+{	
+	\ParallelFor{$i \leftarrow 1$ \KwTo $n_{4}'$}
+	{
+		\ParallelFor{$j \leftarrow 1$ \KwTo $n_{2}'$}
+		{
+			%$\mubA' = \varphi_{\pi_{2},\pi_{\mhq-1}} ( \varphi_{\pi_{\mhq+1},\pi_p} (\mubA) ) $\;
+			%$\mubC' = \varphi_{\pi_{2},\pi_{\mhq-1}} ( \varphi_{\pi_{\mhq+1},\pi_p} (\mubC) ) $\;
+			% \tf{'rm'},\tf{'n'},\tf{'n'}, 
+			\GEMM{$m$,$n_{1}'$,$n_{3}'$, $1$,$\mbB$, $n_{3}'$, $\mubA_{ij}'$,$w_{3}'$, $0$, $\mubC_{ij}'$,$w_{3}'$}\;
+		}
+	}
+}
+\BlankLine
+\hrule
+{
+\footnotesize
+Function \tf{ttm<par-for,seq-gemm,slice-2d>} is an optimized version of \tf{ttm} in Algorithm \ref{alg:ttm.sequential.coalesced} for order-$p$ tensors $\mubA$ and $\mubC$ with layout tuple $\mbpi$.
+ 
+Their respective dimension tuples are $\mbn$ and $\mbm$ with $m_{r} = n_{r}$ for $1 \leq r \neq q \leq p$ and $m_q = m$.
+Team of $t$ threads call the \tf{gemm} function that executes multiple slice-matrix multiplications with tensor slices $\mubA'$ and $\mubC'$.
+Argument $\mbvarphi$ is their common permutation tuple.
+Argument $\mbn'$ is the shape tuple of $\mubA'$ with the corresponding stride tuple $\mbw'$.
+\label{alg:ttm.slice.fused.parallel}
+}
+\end{algorithm}
+
+
+\subsubsection{Parallel Loops and Sequential Matrix Multiplication}
+A different version of the previously described algorithm executes a single-threaded \ttt{gemm} in parallel using all available (free) modes.
+The number of free modes depends on the tensor slicing, i.e. on the tensor order $p$ and contraction mode $q$.
+If order-$\mhq$ tensor slices are used, the outer modes $\pi_{\mhq+1}, \dots, \pi_{p}$ are free and can be used for parallel execution.
+In case of tensor slices, all modes except for those with indices $\pi_1$ and $\pi_{\mhq}$ are free.
 %The corresponding maximum degree of parallelism for both cases is $\prod_{r=\mhq+1}^{p} n_{\pi_r}$ and $\prod_{r=1}^{p} n_{r} / (n_{\pi_1} n_{\pi_{\mhq}})$, respectively.
 
-%whereas 
-%todo: Note that the number of free modes depends on the tensor order $p$ and contraction mode $q$.
 %\footnote{In \cite{li:2015:input}, free modes are called loop modes and are elements of the set $M_L$.}.
 
-%The parallel execution of free loops is accomplished with OpenMP directives and by flattening (collapsing) all loops within the tree-recursion into one or two loops depending on the available fusible loops.
+%The parallel execution of free loop´s is accomplished with OpenMP directives and by flattening (collapsing) all loops within the tree-recursion into one or two loops depending on the available fusible loops.
 
 Using tensor slices for the multiplication, $\mubA$ and $\mubC$ are flattened twice with $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{2},\pi_{\mhq-1}}$.
-The flattened tensors are of order $4$ with dimensions $n_{\pi_1}$, $\mhn_{\pi_2}$, $n_{q}$ or $m$, $\mhn_{\pi_4}$ where $\mhn_{\pi_2} = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_4} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
+The flattened tensors $\mubA'$ and $\mubC'$ are of order $4$ with dimensions $n_{\pi_1}$, $\mhn_{\pi_2}$, $n_{q}$ (for $\mubA$) or $m$ (for $\mubC$), $\mhn_{\pi_4}$ where $\mhn_{\pi_2} = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_4} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
 This approach transforms the tree-recursion into two loops.
-The outer loop iterates over $\mhn_{\pi_4}$ while the inner loop iterates over $\mhn_{\pi_2}$ calling \ttt{gemm} with slices $\mubA_{\pi_1,q}'$ and $\mubC_{\pi_1,q}'$.
+The outer loop iterates over $n_4' = \mhn_{\pi_4}$ while the inner loop iterates over $n_2' = \mhn_{\pi_2}$ calling \ttt{gemm} with slices $\mubA_{\pi_1,q}'$ and $\mubC_{\pi_1,q}'$.
+The adjusted algorithm is given in Algorithm \ref{alg:ttm.slice.fused.parallel} where $\mbn'=(n_{\pi_1},\mhn_{\pi_2},n_q,\mhn_{\pi_4})$ and $\mbw'$ is the adjusted new stride tuple with respect to the new layout tuple $\mbpi'$.
+
+
 %Hence, only two contraction modes $\pi_1$ and $\pi_q$ are involved in the matrix multiplication.
 %\footnote{In \cite{li:2015:input}, contraction modes are component modes and are elements of the set $M_C$.}.
-Both loops are parallelized using \tf{omp parallel for} together with the \tf{collapse(2)} and the \tf{num\_threads} clause which specifies the thread number.
+Both loops are parallelized using \ttt{omp parallel for} together with the \tf{collapse(2)} and the \ttt{num\_threads} clause which specifies the thread number.
 
 
 If subtensors are used, both tensors are flattened twice with $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{1},\pi_{\mhq-1}}$. 
 The flattened tensors are of order $3$ with dimensions $\mhn_{\pi_1}$, $n_{q}$ or $m$, $\mhn_{\pi_4}$ where $\mhn_{\pi_1} = \prod_{r=1}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_4} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
 The corresponding algorithm consists of one loops which iterates over $\mhn_{\pi_4}$ calling single-threaded \ttt{gemm} with multiple subtensors $\mubA_{\mbpi',q}'$ and $\mubC_{\mbpi',q}'$ with $\mbpi' = (\pi_1,\dots,\pi_{\mhq-1})$.
 
-Both algorithm variants will be referred to as \tf{<par-loops,seq-gemm>} which can be used with subtensors or tensor slices.
-Note that \tf{<seq-loops,par-gemm>} and \tf{<par-loops,seq-gemm>} are opposing versions where either \ttt{gemm} or the free loops are performed in parallel.
-The all-parallel version \tf{<par-loops,par-gemm>} executes available loops in parallel where each loop thread executes a multi-threaded \ttt{gemm} with either subtensors or tensor slices.
+Both algorithm variants will be referred to as \ttt{<par-loops}\allowbreak\ttt{,}\allowbreak\ttt{seq-gemm>} which can be used with subtensors or tensor slices.
+Note that \ttt{<seq-loops}\allowbreak\ttt{,}\allowbreak\ttt{par-gemm>} and \ttt{<par-loops}\allowbreak\ttt{,}\allowbreak\ttt{seq-gemm>} are opposing versions where either \ttt{gemm} or the fused loop is performed in parallel.
+Version \ttt{<par-loops}\allowbreak\ttt{,}\allowbreak\ttt{par-gemm>} executes available loops in parallel where each loop thread executes a multi-threaded \ttt{gemm} with either subtensors or tensor slices.
 %\vspace{-1em}
 
 \subsubsection{Multithreaded Batched Matrix Multiplication}
