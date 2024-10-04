@@ -263,10 +263,10 @@ This algorithm version will be referred to as \tf{<seq-loops,par-gemm>}.
 }
 \BlankLine
 \hrule
-{
+\caption{%
 \footnotesize
 Function \tf{ttm<par-for,seq-gemm,slice-2d>} is an optimized version of \tf{ttm} in Algorithm \ref{alg:ttm.sequential.coalesced} for order-$p$ tensors $\mubA$ and $\mubC$ with layout tuple $\mbpi$.
- 
+%TODO: weiter hier
 Their respective dimension tuples are $\mbn$ and $\mbm$ with $m_{r} = n_{r}$ for $1 \leq r \neq q \leq p$ and $m_q = m$.
 Team of $t$ threads call the \tf{gemm} function that executes multiple slice-matrix multiplications with tensor slices $\mubA'$ and $\mubC'$.
 Argument $\mbvarphi$ is their common permutation tuple.
@@ -292,11 +292,18 @@ The flattened tensors $\mubA'$ and $\mubC'$ are of order $4$ with dimensions $n_
 This approach transforms the tree-recursion into two loops.
 The outer loop iterates over $n_4' = \mhn_{\pi_4}$ while the inner loop iterates over $n_2' = \mhn_{\pi_2}$ calling \ttt{gemm} with slices $\mubA_{\pi_1,q}'$ and $\mubC_{\pi_1,q}'$.
 The adjusted algorithm is given in Algorithm \ref{alg:ttm.slice.fused.parallel} where $\mbn'=(n_{\pi_1},\mhn_{\pi_2},n_q,\mhn_{\pi_4})$ and $\mbw'$ is the adjusted new stride tuple with respect to the new layout tuple $\mbpi'$.
-
-
+The latter is again 
+%TODO: Weiter hier:
 %Hence, only two contraction modes $\pi_1$ and $\pi_q$ are involved in the matrix multiplication.
 %\footnote{In \cite{li:2015:input}, contraction modes are component modes and are elements of the set $M_C$.}.
-Both loops are parallelized using \ttt{omp parallel for} together with the \tf{collapse(2)} and the \ttt{num\_threads} clause which specifies the thread number.
+Both loops are parallelized using \ttt{omp parallel for} together with the \ttt{collapse(2)}, the \ttt{num\_threads} and the \ttt{proc\_bind} clause.
+The latter specifies 
+
+which specifies the thread number
+
+\ttt{proc\_bind(spread)}
+no false sharing 
+shared variables are only read from
 
 
 If subtensors are used, both tensors are flattened twice with $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{1},\pi_{\mhq-1}}$. 
