@@ -8,28 +8,28 @@ grid=major,
 grid style={dotted},
 align=center,
 xlabel={$k$-order layout},
-ylabel={Tflops/s},
+ylabel={Gflops/core},
 ylabel near ticks,
 title={AMD AOCL (rm) },
 xtick={1,2,3,4,5,6,7},
 xticklabels={1,2,3,4,5,6,7},
 ymin=0,
-ymax=8,
-ytick={0,2,4,6,8},
-yticklabels={0,2,4,6,8},
+ymax=10,
+ytick={0,2,4,6,8,10},
+yticklabels={0,2,4,6,8,10},
 cycle list={{black}},
 boxplot/variable width,
 boxplot/box extend=0.5,
 boxplot/every box/.style={fill=black,thick},
 boxplot/every median/.style={draw=white,thin},
 ]
-\addplot+[boxplot prepared={lower whisker = 0.006801, lower quartile = 0.053774, median = 0.287521, upper quartile = 0.989789, upper whisker = 1.912140} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.006792, lower quartile = 0.053731, median = 0.329519, upper quartile = 0.978497, upper whisker = 1.925435} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.006800, lower quartile = 0.046868, median = 0.285942, upper quartile = 1.039211, upper whisker = 1.822213} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.006761, lower quartile = 0.052660, median = 0.282477, upper quartile = 1.035217, upper whisker = 2.390603} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.006783, lower quartile = 0.053169, median = 0.327881, upper quartile = 1.066024, upper whisker = 6.705372} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.006763, lower quartile = 0.053985, median = 0.270512, upper quartile = 0.970962, upper whisker = 1.847661} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.006810, lower quartile = 0.053760, median = 0.275688, upper quartile = 1.029510, upper whisker = 7.902947} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.017638, lower quartile = 0.197808, median = 0.700823, upper quartile = 1.558298, upper whisker = 5.750793} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.017728, lower quartile = 0.202116, median = 0.531791, upper quartile = 1.428076, upper whisker = 1.791317} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.017811, lower quartile = 0.328616, median = 0.934536, upper quartile = 1.546815, upper whisker = 6.273393} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.017738, lower quartile = 0.204019, median = 0.522302, upper quartile = 1.348515, upper whisker = 1.775661} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.017756, lower quartile = 0.202238, median = 0.700340, upper quartile = 1.600296, upper whisker = 7.185700} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.017760, lower quartile = 0.200640, median = 0.531063, upper quartile = 1.402741, upper whisker = 1.822836} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.017724, lower quartile = 0.201667, median = 0.481415, upper quartile = 1.203351, upper whisker = 1.901511} ] coordinates{};
 \end{axis}
 \end{tikzpicture}
 \hfill
@@ -49,21 +49,22 @@ title={AMD AOCL (cm) },
 xtick={1,2,3,4,5,6,7},
 xticklabels={1,2,3,4,5,6,7},
 ymin=0,
-ymax=8,
-ytick={0,2,4,6,8},
-yticklabels={0,2,4,6,8},
+ymax=10,
+ytick={0,2,4,6,8,10},
+yticklabels={0,2,4,6,8,10},
 cycle list={{black}},
 boxplot/variable width,
 boxplot/box extend=0.5,
 boxplot/every box/.style={fill=black,thick},
 boxplot/every median/.style={draw=white,thin},
 ]
-\addplot+[boxplot prepared={lower whisker = 0.009539, lower quartile = 0.272750, median = 0.690799, upper quartile = 1.484314, upper whisker = 6.800201} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.009471, lower quartile = 0.171867, median = 0.692765, upper quartile = 1.363835, upper whisker = 4.363331} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.009350, lower quartile = 0.191197, median = 0.743146, upper quartile = 1.361930, upper whisker = 1.663253} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.009347, lower quartile = 0.200233, median = 0.742583, upper quartile = 1.316166, upper whisker = 1.693980} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.009566, lower quartile = 0.166427, median = 0.654067, upper quartile = 1.382983, upper whisker = 1.642533} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.009475, lower quartile = 0.199757, median = 0.604926, upper quartile = 1.262476, upper whisker = 1.853770} ] coordinates{};
-\addplot+[boxplot prepared={lower whisker = 0.009496, lower quartile = 0.129009, median = 0.598907, upper quartile = 1.206226, upper whisker = 1.641697} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.056610, lower quartile = 0.355304, median = 1.604772, upper quartile = 1.854768, upper whisker = 9.564341} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.053224, lower quartile = 0.204302, median = 1.015842, upper quartile = 1.644501, upper whisker = 2.116184} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.053392, lower quartile = 0.230051, median = 1.581577, upper quartile = 1.795145, upper whisker = 8.407662} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.057285, lower quartile = 0.203801, median = 0.947029, upper quartile = 1.617604, upper whisker = 2.294445} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.054296, lower quartile = 0.271849, median = 1.586519, upper quartile = 1.791003, upper whisker = 9.359328} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.057361, lower quartile = 0.230950, median = 1.492804, upper quartile = 1.717333, upper whisker = 5.833667} ] coordinates{};
+\addplot+[boxplot prepared={lower whisker = 0.052985, lower quartile = 0.229488, median = 1.577828, upper quartile = 1.827169, upper whisker = 9.032054} ] coordinates{};
+
 \end{axis}
 \end{tikzpicture}
