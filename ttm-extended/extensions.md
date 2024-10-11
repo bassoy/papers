@@ -1,5 +1,11 @@
 # Extension
 
+## Minor
+
+
+
+## Major
+
 * Section Introduction:
     * [todo] adds additional references
     * [todo] adds additional major contribution ??
@@ -7,7 +13,8 @@
     * [todo] instead of subtensor, the notion of qd-slices is used.
     * [todo] add cblas description with paramater explanation. 
 * Section Algorithm:
-    * description considers + table?? includes matrix B with column-major format
+    * description considers + table includes matrix B with column-major format
+    * [todo] decide if you want the table to be included
         * [done] extra chapter reveals
 * Section Experimental Setup:
     * [todo] adds better description to the tensor shapes 
@@ -21,4 +28,7 @@
     * [todo] fine granular distinguishment betweeen different algorithm versions!! 
 * TLIB.TTM Implementation:
     * also supports matrix B with column-major format
-    * also supports aocl lifbrary, next to openblas and mkl 
+    * also supports aocl lifbrary, next to openblas and mkl
+    
+    
+
