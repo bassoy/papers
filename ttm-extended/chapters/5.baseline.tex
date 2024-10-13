@@ -247,7 +247,7 @@ This type of parallelization strategy might be beneficial with order-$\mhq$ tens
 For instance, given a first-order storage format and the contraction mode $q$ with $q=p-1$ and $n_p=2$, the dimensions of flattened order-$q$ tensor slices are $\prod_{r=1}^{p-2}n_r$ and $n_{p-1}$.
 This allows \ttt{gemm} to be executed with large dimensions using multiple threads increasing the likelihood to reach a high throughput.
 However, if the above conditions are not met, a multi-threaded \ttt{gemm} operates on small tensor slices which might lead to an suboptimal utilization of the available cores.
-This algorithm version will be referred to as \ttt{<seq-loops,par-gemm>}.
+This algorithm version will be referred to as \ttt{<par-gemm>}.
 Depending on the subtensor shape, we will either add \ttt{<slice>} for order-$2$ subtensors or \ttt{<subtensor>} for order-$\mhq$ subtensors with $\mhq = \pi^{-1}_q$.
 
 \begin{algorithm}[t]
@@ -255,7 +255,7 @@ Depending on the subtensor shape, we will either add \ttt{<slice>} for order-$2$
 \DontPrintSemicolon
 \SetAlgoVlined
 \SetKwProg{Fn}{}{}{end}
-\SetKwFunction{Func}{ttm<par-for,seq-gemm,slice>}%
+\SetKwFunction{Func}{ttm<par-loop><slice>}%
 \SetKwFunction{GEMM}{gemm}%
 \SetKwFunction{flatten}{flatten}%
 \SetKw{KwWith}{with}
@@ -283,7 +283,7 @@ Depending on the subtensor shape, we will either add \ttt{<slice>} for order-$2$
 \hrule
 \caption{%
 \footnotesize
-Function \tf{ttm<par-for,seq-gemm,slice>} is an optimized version of Algorithm \ref{alg:ttm.sequential.coalesced}.
+Function \tf{ttm<par-loop><slice>} is an optimized version of Algorithm \ref{alg:ttm.sequential.coalesced}.
 The \tf{flatten} function transforms the order-$p$ tensors $\mubA$ and $\mubC$ with layout tuple $\mbpi$ and their respective dimension tuples $\mbn$ and $\mbm$ into order-$4$ tensors $\mubA'$ and $\mubC'$ with layout tuple $\mbpi'$ and their respective dimension tuples $\mbn'$ and $\mbm'$ where $\mbn' = (n_{\pi_1},\mhn_{\pi_2},n_q,\mhn_{\pi_4})$ and $m_3' = m$ and $n_k' = m_k'$ for $k \neq 3$.
 Each thread calls multiple single-threaded \tf{gemm} functions each of which executes a slice-matrix multiplication with the order-$2$ tensor slices $\mubA_{ij}'$ and $\mubC_{ij}'$.
 Matrix $\mbB$ has the row-major storage format.
@@ -297,7 +297,7 @@ Instead of sequentially calling multi-threaded \ttt{gemm}, it is also possible t
 Similar to the previous approach, the matrix multiplication can be performed with tensor slices or order-$\mhq$ subtensors.
 
 \paragraph{Matrix Multiplication with Tensor Slices}
-Algorithm \ref{alg:ttm.slice.fused.parallel} with function \ttt{ttm}\ttt{<par-for,}\allowbreak\ttt{seq-gemm,}\ttt{slice>} executes a single-threaded \ttt{gemm} with tensor slices in parallel using all modes except $\pi_1$ and $\pi_{\mhq}$.
+Algorithm \ref{alg:ttm.slice.fused.parallel} with function \ttt{ttm}\ttt{<par-loop>}\allowbreak\ttt{<slice>} executes a single-threaded \ttt{gemm} with tensor slices in parallel using all modes except $\pi_1$ and $\pi_{\mhq}$.
 The first statement of the algorithm calls the \ttt{flatten} function which transforms tensors $\mubA$ and $\mubC$ without copying elements by calling the flattening operation $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{2},\pi_{\mhq-1}}$.
 The resulting tensors $\mubA'$ and $\mubC'$ are of order $4$.
 Tensor $\mubA'$ has the shape $\mbn'=(n_{\pi_1},\mhn_{\pi_2},n_{q}, \mhn_{\pi_4})$ with the dimensions $\mhn_{\pi_2} = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_4} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
@@ -323,11 +323,11 @@ Tensor $\mubC'$ has the same dimensions as $\mubA'$ except for $m_2=m$.
 Algorithm \ref{alg:ttm.slice.fused.parallel} needs a minor modification  for supporting order-$\mhq$ subtensors.
 Instead of two loops, the modified algorithm consists of a single loop which iterates over dimension $\mhn_{\pi_3}$ calling a single-threaded \ttt{gemm} with large tensor slices $\mubA'$ and $\mubC'$.
 The shape and strides of both tensor slices as well as the function arguments of \ttt{gemm} have already been provided by the previous subsection \ref{sec:design:blas.based.algorithm.subtensors}.
-This \ttt{ttm} version will referred to as \ttt{<par-for,}\allowbreak\ttt{seq-gemm,}\ttt{subtensor>}.
+This \ttt{ttm} version will referred to as \ttt{<par-loop>}\allowbreak\ttt{<subtensor>}.
 
-Note that function with the tags \ttt{<seq-loops}\allowbreak\ttt{,}\allowbreak\ttt{par-gemm>} and \ttt{<par-loops}\allowbreak\ttt{,}\allowbreak\ttt{seq-gemm>} implement opposing versions of the \ttt{ttm} where either \ttt{gemm} or the fused loop is performed in parallel.
-Version \ttt{<par-loops}\allowbreak\ttt{,}\allowbreak\ttt{par-gemm>} executes available loops in parallel where each loop thread executes a multi-threaded \ttt{gemm} with either subtensors or tensor slices.
-%\vspace{-1em}
+Note that function with the tags \ttt{<par-gemm>} and \ttt{<par-loop>} implement opposing versions of the \ttt{ttm} where either \ttt{gemm} or the fused loop is performed in parallel.
+Version \ttt{<par-loop-gemm} executes available loops in parallel where each loop thread executes a multi-threaded \ttt{gemm} with either subtensors or tensor slices.
+%TODO: do we need the latter version to mention?
 
 \subsubsection{Multithreaded Batched Matrix Multiplication}
 The next version of the base algorithm is a modified version of the general subtensor-matrix approach that calls a single batched \ttt{gemm} for the eighth case.
