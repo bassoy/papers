@@ -325,7 +325,7 @@ Instead of two loops, the modified algorithm consists of a single loop which ite
 The shape and strides of both tensor slices as well as the function arguments of \ttt{gemm} have already been provided by the previous subsection \ref{sec:design:blas.based.algorithm.subtensors}.
 This \ttt{ttm} version will referred to as \ttt{<par-loop>}\allowbreak\ttt{<subtensor>}.
 
-Note that function with the tags \ttt{<par-gemm>} and \ttt{<par-loop>} implement opposing versions of the \ttt{ttm} where either \ttt{gemm} or the fused loop is performed in parallel.
+Note that functions \ttt{<par-gemm>} and \ttt{<par-loop>} implement opposing versions of the \ttt{ttm} where either \ttt{gemm} or the fused loop is performed in parallel.
 Version \ttt{<par-loop-gemm} executes available loops in parallel where each loop thread executes a multi-threaded \ttt{gemm} with either subtensors or tensor slices.
 %TODO: do we need the latter version to mention?
 
