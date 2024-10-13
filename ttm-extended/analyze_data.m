@@ -108,7 +108,7 @@ function analyze_data()
   tlib_ompforloop_slice_all_gflops_median_per_core = median(tlib_ompforloop_slice_all_gflops_per_core(:))
 
 
-  tlib_threadedgemm_subtensor_gflops_per_core        = tlib_threadedgemm_subtensor_gflops./cores
+  tlib_threadedgemm_subtensor_gflops_per_core        = tlib_threadedgemm_subtensor_gflops./cores;
   tlib_threadedgemm_subtensor_gflops_max             = max   (tlib_threadedgemm_subtensor_gflops(:))
   tlib_threadedgemm_subtensor_gflops_mean            = mean  (tlib_threadedgemm_subtensor_gflops(:))
   tlib_threadedgemm_subtensor_gflops_median          = median(tlib_threadedgemm_subtensor_gflops(:))
@@ -116,7 +116,7 @@ function analyze_data()
   tlib_threadedgemm_subtensor_gflops_mean_per_core   = mean  (tlib_threadedgemm_subtensor_gflops_per_core(:))
   tlib_threadedgemm_subtensor_gflops_median_per_core = median(tlib_threadedgemm_subtensor_gflops_per_core(:))
 
-  tlib_threadedgemm_slice_gflops_per_core        = tlib_threadedgemm_slice_gflops./cores
+  tlib_threadedgemm_slice_gflops_per_core        = tlib_threadedgemm_slice_gflops./cores;
   tlib_threadedgemm_slice_gflops_max             = max   (tlib_threadedgemm_slice_gflops(:))
   tlib_threadedgemm_slice_gflops_mean            = mean  (tlib_threadedgemm_slice_gflops(:))
   tlib_threadedgemm_slice_gflops_median          = median(tlib_threadedgemm_slice_gflops(:))
@@ -148,7 +148,7 @@ function analyze_data()
   %slice_subtensor_pargemm_ratio_median = median(slice_subtensor_pargemm_ratio(:))
   %slice_subtensor_pargemm_ratio_mean   = mean  (slice_subtensor_pargemm_ratio(:))
 
-  subtensor_slice_pargemm_ratio        = tlib_threadedgemm_subtensor_gflops./tlib_threadedgemm_slice_gflops
+  subtensor_slice_pargemm_ratio        = tlib_threadedgemm_subtensor_gflops./tlib_threadedgemm_slice_gflops;
   subtensor_slice_pargemm_ratio_median = median(subtensor_slice_pargemm_ratio(:))
   subtensor_slice_pargemm_ratio_mean   = mean  (subtensor_slice_pargemm_ratio(:))
 
@@ -196,11 +196,11 @@ function analyze_data()
   %plot_scatter_gflops(modes, x, y, cmap, tlib_ompforloop_slice_all_gflops,       'ParLoop-SeqGemm-2D');
   %plot_scatter_gflops(modes, x, y, cmap, tlib_ompforloop_subtensor_outer_gflops, 'ParLoop-SeqGemm-qD');
 
-  %cmap = get_cmap();
+  cmap = get_cmap();
   %plot_scatter_ratio(modes, x, y, cmap, tlib_threadedgemm_ratio, ['Comparison of par-gemm (2D vs. qD) with ',shape,' shapes.']);
   %plot_scatter_ratio(modes, x, y, cmap, tlib_ompforloop_ratio,   ['Comparison of par-loop (2D vs. qD) with ',shape,' shapes.']);
   %plot_scatter_ratio(modes, x, y, cmap, tlib_slice_ratio,        ['Comparison of slice-2D (par-loop vs. par-gemm) with ',shape,' shapes.']);
-  %plot_scatter_ratio(modes, x, y, cmap, tlib_subtensor_ratio,    ['Comparison of slice-qD (par-loop vs. par-gemm) with ',shape,' shapes.']);
+  plot_scatter_ratio(modes, x, y, cmap, tlib_subtensor_ratio,    ['Comparison of slice-qD (par-loop vs. par-gemm) with ',shape,' shapes.']);
   %plot_scatter_ratio(modes, x, y, cmap, tlib_best_ratio,         ['Comparison of par-loop-slice-2D vs. par-gemm-slice-qD with ',shape,' shapes.']);
 
   %plot_histogram(modes, tlib_threadedgemm_ratio, 'Comparison of par-gemm (2D vs. qD)');
