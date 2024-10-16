@@ -11,6 +11,27 @@ We will use round brackets $\mubA(i_1,i_2,\dots,i_p)$ or $\mubA(\mbi)$ to denote
 For convenience, we will also use square brackets to concatenate index tuples such that 
 $[\mbi,\mbj] = (i_1,i_2,\dots,i_r,\allowbreak j_1,j_2,\dots,j_q)$ where $\mbi$ and $\mbj$ are multi-indices of length $r$ and $q$, respectively.
 
+\subsection{Tensor-Matrix Multiplication}
+Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = ([\mbn_1,n_q,\mbn_2])$ and $\mbn_c =([\mbn_1,m,\mbn_2])$ where $\mbn_1 = (n_1,n_2,\allowbreak\dots,n_{q-1})$ and $\mbn_2 = (n_{q+1},n_{q+2},\allowbreak\dots,n_p)$.
+Let $\mbB$ be a matrix of shape $\mbn_b = (m,n_q)$.
+A $q$-mode tensor-matrix product is denoted by $\mubC = \mubA \times_q \mbB$. 
+An element of $\mubC$ is defined by
+\begin{equation}
+	\label{equ:tensor.matrix.multplication}
+	\mubC([\mbi_1, j, \mbi_2]) = \sum_{i_q=1}^{n_q} \mubA([\mbi_1, i_q, \mbi_2]) \cdot \mbB(j,i_q)
+\end{equation}
+with $\mbi_1 = (i_1,\dots,i_{q-1})$, $\mbi_2 = (i_{q+1},\dots,i_p)$ where $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$ \cite{li:2015:input, kolda:2009:decompositions}.
+%Similar to the tensor-vector multiplication, the multiplication consists of multiple inner productd of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
+Mode $q$ is called the contraction mode with $1 \leq q \leq p$.
+The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
+Its arithmetic intensity is equal to that of a matrix-matrix multiplication and is not memory-bound.
+%TODO: %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
+
+In the following, we assume that the tensors $\mubA$ and $\mubC$ have the same tensor layout $\mbpi$. 
+Elements of matrix $\mubB$ can be stored either in the column-major or row-major format.
+The tensor-matrix multiplication with $i_q$ iterating over the second mode of $\mbB$ is also referred to as the $q$-mode product which is a building block for tensor methods such as the higher-order orthogonal iteration or the higher-order singular value decomposition \cite{kolda:2009:decompositions}.
+Please note that the following method can be applied, if indices $j$ and $i_q$ of matrix $\mbB$ are swapped.
+
 \subsection{Subtensors}
 A subtensor references elements of a tensor $\mubA$ and is denoted by $\mubA'$.
 It is specified by a selection grid that consists of $p$ index ranges.
@@ -49,7 +70,7 @@ It is akin to tensor unfolding, also known as matricization and vectorization \c
 However, it neither modifies the element ordering nor copies tensor elements.
 Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{u,v}$ is defined for contiguous modes $\mbhpi = (\pi_u,\pi_{u+1}, \dots, \pi_{v})$ of $\mbpi$.
 With $j_k = 0$ if $k \leq u$ and $j_k = v-u$ if $k>u$ where $1 \leq k \leq p'$, the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is then given by $\tau_u = \min(\mbpi_{u,v})$ and
-$$\tau_k = \pi_{k+j_k} - s_k \quad \text{for} \ k \neq u$$ 
+$\tau_k = \pi_{k+j_k} - s_k \quad \text{for} \ k \neq u$
 with $s_k = \left| \{ \pi_i \mid \pi_{k+j_k} > \pi_i \wedge \pi_i \neq \min(\mbhpi) \wedge u \leq i \leq p \} \right|$.
 Elements of the shape tuple $\mbm$ are defined by $m_{\tau_u} = \prod_{k=u}^v n_{\pi_k}$ and $m_{\tau_k} = n_{\pi_{k+j}}$ for $k \neq u$.
 
@@ -59,52 +80,4 @@ Elements of the shape tuple $\mbm$ are defined by $m_{\tau_u} = \prod_{k=u}^v n_
 %The operation $\rho$ is defined by a permutation tuple $\mbrho = (\rho_1,\dots,\rho_p)$ that defines elements of $\mbm$ and $\mbtau$ with $m_r = n_{\rho_r}$ and $\tau_r = \pi_{\rho_r}$, respectively.
 %\vspace{-1em}
 
-\subsection{Tensor-Matrix Multiplication}
-Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = ([\mbn_1,n_q,\mbn_2])$ and $\mbn_c =([\mbn_1,m,\mbn_2])$ where $\mbn_1 = (n_1,n_2,\allowbreak\dots,n_{q-1})$ and $\mbn_2 = (n_{q+1},n_{q+2},\allowbreak\dots,n_p)$.
-Let $\mbB$ be a matrix of shape $\mbn_b = (m,n_q)$.
-A $q$-mode tensor-matrix product is denoted by $\mubC = \mubA \times_q \mbB$. 
-An element of $\mubC$ is defined by
-\begin{equation}
-\label{equ:tensor.matrix.multplication}
-\mubC([\mbi_1, j, \mbi_2]) = \sum_{i_q=1}^{n_q} \mubA([\mbi_1, i_q, \mbi_2]) \cdot \mbB(j,i_q)
-\end{equation}
-with $\mbi_1 = (i_1,\dots,i_{q-1})$, $\mbi_2 = (i_{q+1},\dots,i_p)$ where $1 \leq i_r \leq n_r$ and $1 \leq j \leq m$ \cite{li:2015:input, kolda:2009:decompositions}.
-%Similar to the tensor-vector multiplication, the multiplication consists of multiple inner productd of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
-Mode $q$ is called the contraction mode with $1 \leq q \leq p$.
-The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
-Its arithmetic intensity is equal to that of a matrix-matrix multiplication and is not memory-bound.
-%TODO: %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
 
-In the following, we assume that the tensors $\mubA$ and $\mubC$ have the same tensor layout $\mbpi$. 
-Elements of matrix $\mubB$ can be stored either in the column-major or row-major format.
-The tensor-matrix multiplication with $i_q$ iterating over the second mode of $\mbB$ is also referred to as the $q$-mode product which is a building block for tensor methods such as the higher-order orthogonal iteration or the higher-order singular value decomposition \cite{kolda:2009:decompositions}.
-Please note that the following method can be applied, if indices $j$ and $i_q$ of matrix $\mbB$ are swapped.
-
-
-\subsection{BLAS}
-The Basic Linear Algebra Subprograms (BLAS) are Fortran routines that perform basic vector and matrix operations.
-They are considered as a de-facto standard for writing efficient and portable linear algebra software which is why most processor vendors provide efficient machine-specific BLAS implementations.
-The BLAS are subdivided into three groups.
-While routines in the first level and second level operate on matrices and vectors, third level routines perform matrix operations.
-With a high arithmetic intensity, level three routines are compute-bound.
-
-CBLAS denotes the C interface to the BLAS that can be used by C or C++ programs where each C function is prefixed with \ttt{cblas}.
-For the sake of simplicity, we omit the \ttt{cblas} prefix of CBLAS functions.
-The following algorithms implementing the tensor-matrix multiplication uses the general matrix-matrix multiplication \ttt{gemm} and only for one special case the matrix-vector multiplications \ttt{gemv}.
-Function \ttt{gemm} is defined as \ttt{C:=a*op(A)*op(B)+b*C} where 
-\ttt{a} and \ttt{b} are scalars, 
-\ttt{A}, \ttt{B} and \ttt{C} are matrices,
-\ttt{op(A)} is an \ttt{M}-by-\ttt{K} matrix, 
-\ttt{op(B)} is a \ttt{K}-by-\ttt{N} matrix and 
-\ttt{C} is an \ttt{N}-by-\ttt{N} matrix.
-Function \ttt{op(x)} either transposes the corresponding matrix \ttt{x} such that \ttt{op(x)=x'} or not \ttt{op(x)=x}.
-In CBLAS matrices are passed by reference using pointers to contiguously stored matrix elements.
-
-The BLAS interfaces also allow the user to specify the leading dimension of a matrix by providing the \ttt{lda}, \ttt{ldb} and \ttt{ldc} parameters.
-A leading dimension determines the number of elements that is required for iterating over the non-contiguous matrix dimension.
-This allows matrix operations to perform on submatrices or even matrix fibers where fiber elements are contiguously stored in memory.
-The leading dimension parameter is necessary for implementing BLAS-based tensor-matrix multiplication.
-The CBLAS interface also provides an additional layout parameter \ttt{CBLAS\_LAYOUT} with which one can specify the column-major or row-major ordering.
-The selection of the storage format prevents unnecessary transpose operations for the tensor-matrix multiplication by choosing the best format for tensor slices.
-
-%TODO: gemm-batch
