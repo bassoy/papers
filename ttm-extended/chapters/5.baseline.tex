@@ -125,18 +125,31 @@ The storage format flag set for \tf{gemm} and \tf{gemv} is determined by the ele
 }
 \label{tab:mapping_rm_cm}
 \end{table*}
-Algorithm \ref{alg:ttm.sequential.coalesced} computes the mode-$q$ tensor-matrix product in a recursive fashion.
-The base case multiplies different tensor slices of $\mubA$ with the matrix $\mbB$.
-Instead of optimizing the slice-matrix multiplication in the base case, one can use a \ttt{gemm} routine instead.
-Note that algorithm \ref{alg:ttm.sequential.coalesced} is the general case for $p\geq 2$ but only executable for $\pi_1 \neq q$.
+
+Algorithm \ref{alg:ttm.sequential.coalesced} computes the mode-$q$ tensor-matrix product in a recursive fashion for $p\geq 2$ and $\pi_1 \neq q$ where its base case multiplies different tensor slices of $\mubA$ with the matrix $\mbB$.
+Instead of optimizing the slice-matrix multiplication in the base case, one can use a CBLAS \ttt{gemm} function instead\footnote{CBLAS denotes the C interface to the BLAS.}.
+The latter denotes a general matrix-matrix multiplication which is defined as \ttt{C:=a*op(A)*op(B)+b*C} where 
+\ttt{a} and \ttt{b} are scalars, 
+\ttt{A}, \ttt{B} and \ttt{C} are matrices,
+\ttt{op(A)} is an \ttt{M}-by-\ttt{K} matrix, 
+\ttt{op(B)} is a \ttt{K}-by-\ttt{N} matrix and 
+\ttt{C} is an \ttt{N}-by-\ttt{N} matrix.
+Function \ttt{op(x)} either transposes the corresponding matrix \ttt{x} such that \ttt{op(x)=x'} or not \ttt{op(x)=x}.
+
 For $\pi_1 = q$, the tensor-matrix product can be computed by a matrix-matrix multiplication where the input tensor $\mubA$ can be flattened into a matrix without any copy operation.
 The same can be applied when $\pi_p = q$ and five other cases where the input tensor is either one or two-dimensional.
 In summary, there are seven other corner cases to the general case where a single \ttt{gemv} or \ttt{gemm} call suffices to compute the tensor-matrix product.
 All eight cases per storage format are listed in table \ref{tab:mapping_rm_cm}.
-The arguments of the CBLAS routines \ttt{gemv} or \ttt{gemm} are set according to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$.
-If the input matrix $\mbB$ has the row-major order, parameter \ttt{CBLAS\_ORDER} of function \ttt{gemm} is set to \ttt{CblasRowMajor} and \ttt{CblasColMajor} otherwise.
+The arguments of the routines \ttt{gemv} or \ttt{gemm} are set according to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$.
+If the input matrix $\mbB$ has the row-major order, parameter \ttt{CBLAS\_ORDER} of function \ttt{gemm} is set to \ttt{CblasRowMajor} (\ttt{rm}) and \ttt{CblasColMajor} (\ttt{cm}) otherwise.
 Note that table \ref{tab:mapping_rm_cm} supports all linear tensor layouts of $\mubA$ and $\mubC$ with no limitations on tensor order and contraction mode.
-The following subsection describes all eight cases when the input matrix $\mbB$ has the row-major order.
+The following subsection describes all eight cases when the input matrix $\mbB$ has the row-major ordering.
+
+Note that the CBLAS also allows users to specify matrix's leading dimension by providing the \ttt{LDA}, \ttt{LDB} and \ttt{LDC} parameters.
+A leading dimension determines the number of elements that is required for iterating over the non-contiguous matrix dimension.
+The additional parameter enables the matrix multiplication to be performed with submatrices or even fibers within submatrices.
+The leading dimension parameter is necessary for implementing BLAS-based tensor-matrix multiplication.
+
 
 %Note , all linear tensor layouts can be supported by setting the remaining parameters of \ttt{gemm}.
 
@@ -327,13 +340,27 @@ This \ttt{ttm} version will referred to as \ttt{<par-loop>}\allowbreak\ttt{<subt
 
 Note that functions \ttt{<par-gemm>} and \ttt{<par-loop>} implement opposing versions of the \ttt{ttm} where either \ttt{gemm} or the fused loop is performed in parallel.
 Version \ttt{<par-loop-gemm} executes available loops in parallel where each loop thread executes a multi-threaded \ttt{gemm} with either subtensors or tensor slices.
-%TODO: do we need the latter version to mention?
+
+
+\subsubsection{Combined Matrix Multiplication}
+The combined matrix multiplication calls one of the previously discussed functions depending on the number of available cores.
+The heuristic is designed under the assumption that function \ttt{<par-gemm>} is not able to efficiently utilize the processor cores if subtensors or tensor slices are too small.
+The corresponding algorithm switches between \ttt{<par-loop>} and \ttt{<par-gemm>} with subtensors by first calculating the parallel and combined loop count $\mhn = \prod_{r=1}^{\mhq-1} n_{\pi_r}$ and $\mhn' = \prod_{r=1}^{p} n_{\pi_r} / n_q$, respectively.
+Given number of physical processor cores as \ttt{ncores}, the algorithm executes \ttt{<par-loop>} with \ttt{<subtensor>} if \ttt{ncores} is greater than or equal to $\mhn$ and call \ttt{<par-loop>} with \ttt{<slice>} if \ttt{ncores} is greater than or equal to $\mhn'$.
+Otherwise, the algorithm will default to \ttt{<par-gemm>} with \ttt{<subtensor>}.
+Function \ttt{par-gemm} with tensor slices is not used here.
+The presented strategy is different to the one presented in \cite{li:2015:input} that maximizes the number of modes involved in the matrix multiply.
+We will refer to this version as \ttt{<combined>} to denote a selected combination of \ttt{<par-loop>} and \ttt{<par-gemm>} functions.
 
 \subsubsection{Multithreaded Batched Matrix Multiplication}
-The next version of the base algorithm is a modified version of the general subtensor-matrix approach that calls a single batched \ttt{gemm} for the eighth case.
-The subtensor dimensions and remaining \ttt{gemm} arguments remain the same.
-The library implementation is responsible how subtensor-matrix multiplications are executed and if subtensors are further divided into smaller subtensors or tensor slices.
-This version will be referred to as the \ttt{<gemm\_batch>} variant.
+The multithreaded batched matrix multiplication version calls in the eighth case a single \ttt{gemm\_batch} function that is provided by Intel MKL's BLAS-like extension.
+With an interface that is similar to the one of \ttt{cblas\_gemm}, function \ttt{gemm\_batch} performs a series of matrix-matrix operations with general matrices.
+All parameters except \ttt{CBLAS\_LAYOUT} requires an array as an argument which is why different subtensors of the same corresponding tensors are passed to \ttt{gemm\_batch}.
+The subtensor dimensions and remaining \ttt{gemm} arguments are replicated within the corresponding arrays.
+Note that the MKL is responsible of how subtensor-matrix multiplications are executed and whether subtensors are further divided into smaller subtensors or tensor slices.
+This algorithm will be referred to as \ttt{<mkl-batch-gemm>}.
+
+
 
 
 \subsubsection{OpenMP Parallelization}
