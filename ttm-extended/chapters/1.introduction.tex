@@ -5,9 +5,12 @@ These computations use basic tensor operations as building blocks for decomposin
 Tensor contractions are an important subset of basic operations that need to be fast for efficiently solving tensor methods.
 
 There are three main approaches for implementing tensor contractions.
-The Transpose-Transpose-GEMM-Transpose (TGGT) approach reorganizes (flattens) tensors in order to perform a tensor contraction using optimized General Matrix Multiplication (GEMM) implementations \citep{bader:2006:algorithm862,solomonik:2013:cyclops}.
-Implementations of the GEMM-like Tensor-Tensor multiplication (GETT) method have macro-kernels that are similar to the ones used in fast GEMM implementations \citep{springer:2018:design, matthews:2018:high}.
-The third method is the Loops-over-GEMM (LoG) approach in which BLAS are utilized with multiple tensor slices or subtensors if possible \citep{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction, bassoy:2019:ttv}.
+The Transpose Transpose GEMM Transpose (TGGT) approach reorganizes tensors in order to perform a tensor contraction using optimized implementations of the general matrix multiplication (GEMM) \citep{bader:2006:algorithm862,solomonik:2013:cyclops}.
+GEMM-like Tensor-Tensor multiplication (GETT) method implement macro-kernels that are similar to the ones used in fast GEMM implementations \citep{springer:2018:design, matthews:2018:high}.
+The third method is the Loops-over-GEMM (LoG) or the BLAS-based approach in which Basic Linear Algebra Subprograms (BLAS) are utilized with multiple tensor slices or subtensors if possible \citep{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction, bassoy:2019:ttv}.
+The BLAS are considered the de facto standard for writing efficient and portable linear algebra software, which is why nearly all processor vendors provide highly optimized BLAS implementations.
+%The BLAS are subdivided into three groups of which third level routines perform matrix operations.
+%With a high arithmetic intensity, level three routines are compute-bound.
 Implementations of the LoG and TTGT approaches are in general easier to maintain and faster to port than GETT implementations which might need to adapt vector instructions or blocking parameters according to a processor's microarchitecture.
 %todo: Compiler-based approaches like as described in \cite{gareev:2018:high} 
 
@@ -18,7 +21,7 @@ It is a compute-bound tensor operation and has the same arithmetic intensity as 
 %%with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
 To our best knowledge, we are the first to combine the LoG approach described in \citep{bassoy:2019:ttv, pawlowski:2019:morton.tensor.computations} for tensor-vector multiplications with the findings on tensor slicing for the tensor-matrix multiplication in \citep{li:2015:input}.
 Our algorithms support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
-They compute the tensor-matrix product in parallel using efficient GEMM or batched GEMM without transposing or flattening tensors.
+They compute the tensor-matrix product in parallel using efficient GEMM without transposing or flattening tensors.
 Despite their high performance, all algorithms are layout-oblivious and provide a sustained performance independent of the tensor layout and without tuning.
 
 %The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processor's compute units.
