@@ -1,0 +1,200 @@
+processor = icelake
+shape = nonsymmetric
+aformat = order1
+bformat = rm
+processor = genoa
+shape = nonsymmetric
+aformat = order1
+bformat = rm
+
+Computing the difference between processor types of method tlib_threadedgemm_slice
+Ratio between Intel and Amd processor all cases: mean=2.7186 median=2.4358
+Ratio between Intel and Amd processor for case 8: mean=2.4374 median=2.3042
+Statistics Intel (LQR,Median,UQR) for case 8: 26.2725,33.7883,38.4236
+Statistics Amd (LQR,Median,UQR) for case 8: 12.9563,14.3298,15.4492
+
+Computing the difference between processor types of method tlib_threadedgemm_subtensor
+Ratio between Intel and Amd processor all cases: mean=2.6764 median=2.5464
+Ratio between Intel and Amd processor for case 8: mean=2.0488 median=2.0875
+Statistics Intel (LQR,Median,UQR) for case 8: 28.5185,35.8054,39.7828
+Statistics Amd (LQR,Median,UQR) for case 8: 14.8494,17.8949,25.6666
+
+Computing the difference between processor types of method tlib_ompforloop_slice
+Ratio between Intel and Amd processor all cases: mean=2.8829 median=2.6584
+Ratio between Intel and Amd processor for case 8: mean=1.4829 median=1.4666
+Statistics Intel (LQR,Median,UQR) for case 8: 21.8283,32.7155,36.7443
+Statistics Amd (LQR,Median,UQR) for case 8: 12.7988,22.5963,28.7587
+
+Computing the difference between processor types of method tlib_ompforloop_subtensor
+Ratio between Intel and Amd processor all cases: mean=2.7612 median=2.5593
+Ratio between Intel and Amd processor for case 8: mean=1.6227 median=1.6608
+Statistics Intel (LQR,Median,UQR) for case 8: 5.5093,11.2841,22.5942
+Statistics Amd (LQR,Median,UQR) for case 8: 3.5326,7.0496,15.5969
+
+Computing the difference between processor types of method tlib_combined
+Ratio between Intel and Amd processor all cases: mean=2.2312 median=2.143
+Ratio between Intel and Amd processor for case 8: mean=1.8026 median=1.3809
+Statistics Intel (LQR,Median,UQR) for case 8: 32.0487,36.1519,40.4235
+Statistics Amd (LQR,Median,UQR) for case 8: 18.092,25.2256,29.5755
+
+Short Summary (Asymmetric, RM): 
+perf(intel): combined, par-gemm-subtensor, par-gemm-slice, par-loop-slice, par-loop-subtensor
+perf(amd): combined, par-loop-slice, par-gemm-slice, par-gemm-subtensor, par-loop-subtensor
+
+8th case: TTM with MKL runs on average at least 1.48 and at most 2.3 faster than TTM with AOCL.
+all cases: TTM with MKL runs on average at least 2.3 and at most 2.8 faster than TTM with AOCL.
+
+
+
+
+
+
+
+
+processor = icelake
+shape = symmetric
+aformat = order1
+bformat = rm
+processor = genoa
+shape = symmetric
+aformat = order1
+bformat = rm
+
+Computing the difference between processor types of method tlib_threadedgemm_slice
+Ratio between Intel and Amd processor all cases: mean=2.0746 median=1.9156
+Ratio between Intel and Amd processor for case 8: mean=1.9315 median=1.7239
+Statistics Intel (LQR,Median,UQR) for case 8: 0.32416,0.59638,0.96422
+Statistics Amd (LQR,Median,UQR) for case 8: 0.22398,0.3157,0.503
+
+Computing the difference between processor types of method tlib_threadedgemm_subtensor
+Ratio between Intel and Amd processor all cases: mean=1.845 median=1.5562
+Ratio between Intel and Amd processor for case 8: mean=2.1933 median=1.5842
+Statistics Intel (LQR,Median,UQR) for case 8: 0.60769,1.9016,4.2142
+Statistics Amd (LQR,Median,UQR) for case 8: 0.43213,0.90827,2.3575
+
+Computing the difference between processor types of method tlib_ompforloop_slice
+Ratio between Intel and Amd processor all cases: mean=1.7203 median=1.5405
+Ratio between Intel and Amd processor for case 8: mean=5.2126 median=6.0507
+Statistics Intel (LQR,Median,UQR) for case 8: 0.94921,4.0225,9.2852
+Statistics Amd (LQR,Median,UQR) for case 8: 0.11833,0.62798,5.2249
+
+Computing the difference between processor types of method tlib_ompforloop_subtensor
+Ratio between Intel and Amd processor all cases: mean=1.5578 median=1.2653
+Ratio between Intel and Amd processor for case 8: mean=2.9819 median=1.5394
+Statistics Intel (LQR,Median,UQR) for case 8: 2.7215,4.7379,8.6761
+Statistics Amd (LQR,Median,UQR) for case 8: 1.3276,3.1469,6.7382
+
+Computing the difference between processor types of method tlib_combined
+Ratio between Intel and Amd processor all cases: mean=1.2445 median=1.0738
+Ratio between Intel and Amd processor for case 8: mean=4.8137 median=1.8539
+Statistics Intel (LQR,Median,UQR) for case 8: 2.2618,4.2871,9.3296
+Statistics Amd (LQR,Median,UQR) for case 8: 0.47021,2.2256,6.3404
+
+Short Summary (Symmetric, RM):
+perf(intel): par-loop-subtensor, combined, par-loop-slice, par-gemm-subtensor, par-gemm-slice,  
+perf(amd): par-loop-subtensor, combined, par-gemm-subtensor, par-loop-slice, par-gemm-slice,  
+
+8th case: TTM with MKL runs on average at least 1.9 and at most 5.2 faster than TTM with AOCL.
+all cases: TTM with MKL runs on average at least 1.2 and at most 2.0 faster than TTM with AOCL.
+
+
+
+
+
+
+processor = icelake
+shape = nonsymmetric
+aformat = order1
+bformat = cm
+processor = genoa
+shape = nonsymmetric
+aformat = order1
+bformat = cm
+
+Computing the difference between processor types of method tlib_threadedgemm_slice
+Ratio between Intel and Amd processor all cases: mean=2.6648 median=2.4569
+Ratio between Intel and Amd processor for case 8: mean=2.245 median=2.1955
+Statistics Intel (LQR,Median,UQR) for case 8: 23.4824,33.4329,37.475
+Statistics Amd (LQR,Median,UQR) for case 8: 12.7015,14.3962,15.8112
+
+Computing the difference between processor types of method tlib_threadedgemm_subtensor
+Ratio between Intel and Amd processor all cases: mean=2.6773 median=2.5954
+Ratio between Intel and Amd processor for case 8: mean=2.1552 median=2.0015
+Statistics Intel (LQR,Median,UQR) for case 8: 26.9566,35.2668,39.5915
+Statistics Amd (LQR,Median,UQR) for case 8: 14.1027,18.3716,26.1171
+
+Computing the difference between processor types of method tlib_ompforloop_slice
+Ratio between Intel and Amd processor all cases: mean=2.5852 median=2.3843
+Ratio between Intel and Amd processor for case 8: mean=1.4832 median=1.5058
+Statistics Intel (LQR,Median,UQR) for case 8: 21.4631,31.7637,35.1846
+Statistics Amd (LQR,Median,UQR) for case 8: 12.6752,21.5505,28.2592
+
+Computing the difference between processor types of method tlib_ompforloop_subtensor
+Ratio between Intel and Amd processor all cases: mean=2.5623 median=2.4192
+Ratio between Intel and Amd processor for case 8: mean=1.6402 median=1.6902
+Statistics Intel (LQR,Median,UQR) for case 8: 5.5895,11.0917,22.4075
+Statistics Amd (LQR,Median,UQR) for case 8: 3.4909,6.9862,15.3417
+
+Computing the difference between processor types of method tlib_combined
+Ratio between Intel and Amd processor all cases: mean=2.2137 median=2.1135
+Ratio between Intel and Amd processor for case 8: mean=1.6694 median=1.3742
+Statistics Intel (LQR,Median,UQR) for case 8: 31.6921,35.9658,40.1264
+Statistics Amd (LQR,Median,UQR) for case 8: 18.4253,25.0842,28.944
+
+
+Short Summary (Asymmetric, CM):
+perf(intel): combined, par-gemm-subtensor, par-gemm-slice, par-loop-slice, par-loop-subtensor
+perf(amd): combined, par-loop-slice, par-gemm-subtensor, par-gemm-slice, par-loop-subtensor <-- par-gemm-sice, par-gemm-subtensor in RM
+
+8th case: TTM with MKL runs on average at least 1.48 and at most 2.2 faster than TTM with AOCL.
+all cases: TTM with MKL runs on average at least 2.2 and at most 2.6 faster than TTM with AOCL.
+
+
+
+
+
+processor = icelake
+shape = symmetric
+aformat = order1
+bformat = cm
+processor = genoa
+shape = symmetric
+aformat = order1
+bformat = cm
+Computing the difference between processor types of method tlib_threadedgemm_slice
+Ratio between Intel and Amd processor all cases: mean=4.3442 median=1.506
+Ratio between Intel and Amd processor for case 8: mean=2.0102 median=1.8583
+Statistics Intel (LQR,Median,UQR) for case 8: 0.32099,0.57558,0.92912
+Statistics Amd (LQR,Median,UQR) for case 8: 0.22891,0.30601,0.49224
+
+Computing the difference between processor types of method tlib_threadedgemm_subtensor
+Ratio between Intel and Amd processor all cases: mean=2.1449 median=1.9684
+Ratio between Intel and Amd processor for case 8: mean=7.3429 median=1.7602
+Statistics Intel (LQR,Median,UQR) for case 8: 0.67063,1.8872,4.4326
+Statistics Amd (LQR,Median,UQR) for case 8: 0.36277,0.73425,2.2898
+
+Computing the difference between processor types of method tlib_ompforloop_slice
+Ratio between Intel and Amd processor all cases: mean=1.7706 median=1.4498
+Ratio between Intel and Amd processor for case 8: mean=4.9577 median=6.003
+Statistics Intel (LQR,Median,UQR) for case 8: 0.8741,4.0318,8.9116
+Statistics Amd (LQR,Median,UQR) for case 8: 0.11824,0.62417,6.2328
+
+Computing the difference between processor types of method tlib_ompforloop_subtensor
+Ratio between Intel and Amd processor all cases: mean=1.4534 median=1.2327
+Ratio between Intel and Amd processor for case 8: mean=2.7853 median=1.533
+Statistics Intel (LQR,Median,UQR) for case 8: 2.5862,4.6979,8.5558
+Statistics Amd (LQR,Median,UQR) for case 8: 1.429,2.9645,6.2682
+
+Computing the difference between processor types of method tlib_combined
+Ratio between Intel and Amd processor all cases: mean=1.3012 median=1.028
+Ratio between Intel and Amd processor for case 8: mean=6.2039 median=1.8468
+Statistics Intel (LQR,Median,UQR) for case 8: 2.6283,5.9176,10.0851
+Statistics Amd (LQR,Median,UQR) for case 8: 0.46281,1.7839,6.2982
+
+
+Short Summary (Symmetric, RM):
+perf(intel): par-loop-subtensor, combined, par-loop-slice, par-gemm-subtensor, par-gemm-slice,  
+perf(amd): par-loop-subtensor, combined, par-gemm-subtensor, par-loop-slice, par-gemm-slice,  
+
+8th case: TTM with MKL runs on average at least 2.0 and at most 7.3 faster than TTM with AOCL.
+all cases: TTM with MKL runs on average at least 1.2 and at most 2.0 faster than TTM with AOCL.

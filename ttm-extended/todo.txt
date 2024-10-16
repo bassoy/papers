@@ -1,0 +1,14 @@
+todo [before submission]:
+
+[] reformulate the test setup - processors, libraries, max flops, MKL / AOCL
+[] integrate OpenMP as perhaps implemetnation details? (first general  ) 
+[] check if you have anything named as *optimized* algorithm 
+
+
+todo [after submission]:
+
+[] merge ttm back to master
+[x] rename `optimized` to `combined` 
+
+
+

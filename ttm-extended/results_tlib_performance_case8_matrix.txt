@@ -1,0 +1,95 @@
+processor = icelake
+shape = nonsymmetric
+aformat = order1
+bformat = rm
+processor = icelake
+shape = nonsymmetric
+aformat = order1
+bformat = cm
+Percentage difference in [\%] of the median: 0.52863 of the lower quartile: 5.6078 and of the upper quartile: 1.2498
+Standardized Euclidean Distance: 5.5439 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 0.75777 of the lower quartile: 2.8154 and of the upper quartile: 0.241
+Standardized Euclidean Distance: 3.477 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 1.4762 of the lower quartile: 0.84356 and of the upper quartile: 2.1684
+Standardized Euclidean Distance: 1.9562 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 0.8599 of the lower quartile: 0.72257 and of the upper quartile: 0.41493
+Standardized Euclidean Distance: 1.2061 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 0.25802 of the lower quartile: 0.55948 and of the upper quartile: 0.36877
+Standardized Euclidean Distance: 3.5086 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+
+processor = icelake
+shape = symmetric
+aformat = order1
+bformat = rm
+processor = icelake
+shape = symmetric
+aformat = order1
+bformat = cm
+Percentage difference in [\%] of the median: 1.775 of the lower quartile: 0.49073 and of the upper quartile: 1.8539
+Standardized Euclidean Distance: 1.8423 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 0.38028 of the lower quartile: 4.924 and of the upper quartile: 2.5252
+Standardized Euclidean Distance: 1.7696 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 0.11564 of the lower quartile: 4.1196 and of the upper quartile: 2.0532
+Standardized Euclidean Distance: 1.4703 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 0.42373 of the lower quartile: 2.5499 and of the upper quartile: 0.69771
+Standardized Euclidean Distance: 1.3772 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 15.9779 of the lower quartile: 7.495 and of the upper quartile: 3.8911
+Standardized Euclidean Distance: 3.7561 with 135 elements and min/max dissimilarity of (0,11.619)
+
+
+processor = genoa
+shape = nonsymmetric
+aformat = order1
+bformat = rm
+processor = genoa
+shape = nonsymmetric
+aformat = order1
+bformat = cm
+Percentage difference in [\%] of the median: 0.23108 of the lower quartile: 0.99286 and of the upper quartile: 1.158
+Standardized Euclidean Distance: 8.7482 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 1.3145 of the lower quartile: 2.5793 and of the upper quartile: 0.87006
+Standardized Euclidean Distance: 4.5121 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 2.369 of the lower quartile: 0.48529 and of the upper quartile: 0.8759
+Standardized Euclidean Distance: 3.0922 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 0.45164 of the lower quartile: 0.59427 and of the upper quartile: 0.82479
+Standardized Euclidean Distance: 2.2807 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+Percentage difference in [\%] of the median: 0.28095 of the lower quartile: 0.91276 and of the upper quartile: 1.0792
+Standardized Euclidean Distance: 5.8673 with 288 elements and min/max dissimilarity of (0,16.9706)
+
+
+
+processor = genoa
+shape = symmetric
+aformat = order1
+bformat = rm
+processor = genoa
+shape = symmetric
+aformat = order1
+bformat = cm
+Percentage difference in [\%] of the median: 1.5596 of the lower quartile: 1.0874 and of the upper quartile: 1.081
+Standardized Euclidean Distance: 0.53289 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 10.5949 of the lower quartile: 8.7259 and of the upper quartile: 1.4565
+Standardized Euclidean Distance: 3.4226 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 0.30417 of the lower quartile: 0.03812 and of the upper quartile: 8.7969
+Standardized Euclidean Distance: 1.8827 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 2.9854 of the lower quartile: 3.6793 and of the upper quartile: 3.6136
+Standardized Euclidean Distance: 6.85 with 135 elements and min/max dissimilarity of (0,11.619)
+
+Percentage difference in [\%] of the median: 11.0173 of the lower quartile: 0.79358 and of the upper quartile: 0.33376
+Standardized Euclidean Distance: 2.0017 with 135 elements and min/max dissimilarity of (0,11.619)
