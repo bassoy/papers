@@ -4,11 +4,13 @@ todo [before submission]:
 [x] integrate OpenMP as perhaps implemetnation details? (first general  ) 
 [x] rename *optimized* to *combined* 
 [x] rename slice-qd to order-q subtensor 
-[] rename *cases* to *TTM cases*
-[] explain omp_set_nested into the OpenMP section
+[x] rename *cases* to *TTM cases*
+[x] explain omp_set_nested into the OpenMP section
 [] update the introduction/contribution
 [] update the conclusion
+[] refer to the original paper and reference it 
 [] read your paper
+[] adjust line breaking and bad formatting
 
 todo [after submission]:
 

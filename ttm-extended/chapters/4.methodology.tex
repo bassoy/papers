@@ -21,6 +21,7 @@ For the AMD CPU, we have compiled AMD AOCL v4.2.0 together with set the \ttt{zen
 \subsection{OpenMP Parallelization}
 The two \ttt{parallel for} loops have been parallelized using the OpenMP directive \ttt{omp parallel for} together with the \ttt{schedule(static)}, \ttt{num\_threads(ncores)} and \ttt{proc\_bind}\allowbreak\ttt{(spread)} clauses.
 In case of tensor-slices, the \ttt{collapse(2)} clause is added for transforming both loops into one loop which has an iteration space of the first loop times the second one. 
+For AMD AOCL, we also had to enable nested parallelism using \ttt{omp\_set\_nested} to toggle between single- and multi-threaded \ttt{gemm} calls for different TTM cases.
 
 The \ttt{num\_threads(ncores)} clause specifies the number of threads within a team where \ttt{ncores} is equal to the number of processor cores. 
 Hence, each OpenMP thread is responsible for computing $\bar{n}' / \text{\ttt{ncores}}$ independent slice-matrix products where $\bar{n}' = n_2' \cdot n_4'$ for tensor slices and $\bar{n}' = n_4'$ for mode-$\mhq$ subtensors.
@@ -37,7 +38,7 @@ We did not measure any performance improvements for a higher thread count.
 The \ttt{proc\_bind(spread)} clause additionally binds each OpenMP thread to one OpenMP place which lowers inter-node or inter-socket communication and improves local memory access.
 Moreover, with the \ttt{spread} thread affinity policy, consecutive OpenMP threads are spread across OpenMP places which can be beneficial if the user decides to set \ttt{ncores} smaller than the number of processor cores.
 
-
+ 
 
 \subsection{Tensor Shapes} 
 We have used asymmetrically and symmetrically shaped tensors in order to cover many use cases. 
