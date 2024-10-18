@@ -10,6 +10,8 @@ todo [before submission]:
 [] update the conclusion
 [] refer to the original paper and reference it 
 [] read your paper
+[] go through the TODOs in the paper
+[] remove \tf formatting in the titles of some TLIB figures 
 [] adjust line breaking and bad formatting
 
 todo [after submission]:

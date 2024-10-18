@@ -17,31 +17,31 @@ Implementations of the LoG and TTGT approaches are in general easier to maintain
 
 In this work, we present high-performance algorithms for the tensor-matrix multiplication which is used in many numerical methods such as the alternating least squares method \citep{lee:2018:fundamental, kolda:2009:decompositions}.
 It is a compute-bound tensor operation and has the same arithmetic intensity as a matrix-matrix multiplication which can almost reach the practical peak performance of a computing machine.
-
 %%with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
-To our best knowledge, we are the first to combine the LoG approach described in \citep{bassoy:2019:ttv, pawlowski:2019:morton.tensor.computations} for tensor-vector multiplications with the findings on tensor slicing for the tensor-matrix multiplication in \citep{li:2015:input}.
+To our best knowledge, we are the first to combine the LoG-approach described in \citep{bassoy:2019:ttv, pawlowski:2019:morton.tensor.computations} for tensor-vector multiplications with the findings on tensor slicing for the tensor-matrix multiplication in \citep{li:2015:input}.
 Our algorithms support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
 They compute the tensor-matrix product in parallel using efficient GEMM without transposing or flattening tensors.
 Despite their high performance, all algorithms are layout-oblivious and provide a sustained performance independent of the tensor layout and without tuning.
 
 %The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processor's compute units.
-Moreover, every proposed algorithm can be implemented with less than 150 lines of \tf{C++} code where the algorithmic complexity is reduced by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
-We have provided an open-source \tf{C++} implementation of all algorithms and a python interface for convenience.
-While Intel's MKL is used for our benchmarks, the user is free to select any other library that provides the BLAS interface and even integrate it's own implementation to be library independent.
+Moreover, every proposed algorithm can be implemented with less than 150 lines of C++ code where the algorithmic complexity is reduced by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
+We have provided an open-source C++ implementation of all algorithms and a python interface for convenience.
+While we have used Intel MKL and AMD AOCL for our benchmarks, the user is free to select any other library that provides a BLAS interface.
 
 The analysis in this work quantifies the impact of the tensor layout, the tensor slicing method and parallel execution of slice-matrix multiplications with varying contraction modes.
 The runtime measurements of our implementations are compared with state-of-the-art approaches discussed in \citep{springer:2018:design, matthews:2018:high, paszke:2019:pytorch} including Libtorch and Eigen. In summary, the main findings of our work are:
 \begin{itemize}
 	\item 
 	%
-	A tensor-matrix multiplication can be implemented by an in-place algorithm with $1$ GEMV and $7$ GEMM calls, supporting all combinations of contraction mode, tensor order and dimensions for any linear tensor layout.
+	Given a row-major or column-major input matrix, the tensor-matrix multiplication with tensors of any linear tensor layout can be implemented by an in-place algorithm with $1$ GEMV and $7$ GEMM instances, supporting all combinations of contraction mode, tensor order and tensor dimensions.
 	\item 
-	Our fastest algorithm with tensor slices is on average $17$\% faster than Intel's batched GEMM implementation when the contraction and leading dimensions of the tensors are greater than $256$.
+	The performance of all proposed algorithms do not vary significantly for different tensor layouts if the contraction conditions remain the same.
 	\item 
-	The proposed algorithms are layout-oblivious. 
-	Their performance does not vary significantly for different tensor layouts if the contraction conditions remain the same.
+	A simple heuristic is sufficient to select one of the proposed algorithms at runtime, providing a near-optimal performance for a wide range of tensor shapes.	
+	\item 
+	Our best-performing algorithm is a factor of $2.57$ faster than Intel's batched GEMM implementation for large tensor slices.
 	\item
-	Our fastest algorithm computes the tensor-matrix multiplication on average, by at least $14.05$\% and up to a factor of $3.79$ faster than other state-of-the art library implementations, including LibTorch and Eigen.
+	Our best-performing algorithm is on average $25.05$\% faster than other state-of-the art library implementations, including LibTorch and Eigen.
 	% state-of-the-art approaches and actively developed libraries.
 \end{itemize}
 
@@ -49,5 +49,6 @@ The remainder of the paper is organized as follows.
 Section~\ref{sec:related} presents related work.
 Section~\ref{sec:preliminaries} introduces some notation on tensors and defines the tensor-matrix multiplication.
 Algorithm design and methods for slicing and parallel execution are discussed in Section~\ref{sec:design}.
-Section~\ref{sec:experimental.setup} describes the test setup. Benchmark results are presented in Section \ref{sec:results}.
+Section~\ref{sec:experimental.setup} describes the test setup. 
+Benchmark results are presented in Section \ref{sec:results}.
 Conclusions are drawn in Section~\ref{sec:conclusion}.
