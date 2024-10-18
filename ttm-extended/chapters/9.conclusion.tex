@@ -1,26 +1,27 @@
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
-We presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication which is essential for many tensor methods.
+We have presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication that is essential for many tensor methods.
 Our approach is based on the LOG-method and computes the tensor-matrix product in-place without transposing tensors.
 It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input} for linear tensor layouts.
 The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
 
-Our benchmarks show that dividing the base algorithm into eight different TTM cases improves the overall performance.
-We have demonstrated that algorithms with parallel loops over single-threaded GEMM calls with tensor slices and subtensors perform best.
-Interestingly, they outperform a single batched GEMM with subtensors, on average, by $14$\% in case of asymmetrically shaped tensors and if tensor slices are used.
-Both version computes the tensor-matrix product on average faster than other state-of-the-art implementations.
-We have shown that our algorithms are layout-oblivious and do not need further refinement if the tensor layout is changed. 
-We measured a relative standard deviation of $12.95$\% and $17.61$\% with symmetrically-shaped tensors for different $k$-order tensor layouts.
+The base algorithm has been divided into eight different TTM cases where seven of them perform a single \ttt{cblas\_gemm}.
+We have presented multiple algorithm variants for the eighth case which either calls a single- or multi-threaded \ttt{cblas\_gemm} with small or large tensor slices in parallel or sequentially.
+We have developed a simple heuristic that selects one of the variants based on the performance evaluation in the original work \cite{bassoy:2024:ttm}.
+With a large set of tensor instances of different shapes, we have evaluated the proposed variants on an Intel Xeon Gold 5318Y and an AMD EPYC 9354 CPUs.
 
-One can conclude that LOG-based tensor-times-matrix algorithms are on par or can even outperform TTGT-based and GETT-based implementations without loosing their flexibility.
+Our performance tests show that our algorithms are layout-oblivious and do not need layout-specific optimizations, even for different storage ordering of the input matrix.
+Despite the flexible design, our best-performing algorithm is able to outperform Intel's BLAS-like extension function \ttt{cblas\_gemm\_batch} by a factor of $2.57$ in case of asymmetrically shaped tensors.
+Moreover, the presented performance results show that TLIB is able to compute the tensor-matrix product on average $25$\% faster than other state-of-the-art implementations for a majority of tensor instances.
+
+Our findings show that the LoG-based approach is a viable solution for the general tensor-matrix multiplication which can be as fast as efficient GETT-based implementations.
 Hence, other actively developed libraries such as LibTorch and Eigen might benefit from implementing the proposed algorithms.
-Our header-only library provides \tf{C++} interfaces and a python module which allows frameworks to easily integrate our library.
+Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 
 In the near future, we intend to incorporate our implementations in TensorLy, a widely-used framework for tensor computations \cite{cohen:2022:tensor.computations, kossaifi:2019:tensorly}.
-Currently, we lack a heuristic for selecting subtensor sizes and choosing the corresponding algorithm. 
 Using the insights provided in \cite{li:2015:input} could help to further increase the performance.
 Additionally, we want to explore to what extend our approach can be applied for the general tensor contractions.
 
 \subsubsection{Source Code Availability}
 Project description and source code can be found at \tf{\url{https://github.com/bassoy/ttm}}.
-The sequential tensor-matrix multiplication of TLIB is part of uBLAS and in the official release of \tf{Boost} \tf{v1.70.0} and later.
+The sequential tensor-matrix multiplication of TLIB is part of Boost's uBLAS library.
