@@ -1,9 +1,14 @@
 todo [before submission]:
 
-[] reformulate the test setup - processors, libraries, max flops, MKL / AOCL
-[] integrate OpenMP as perhaps implemetnation details? (first general  ) 
-[] check if you have anything named as *optimized* algorithm 
-
+[x] reformulate the test setup - processors, libraries, max flops, MKL / AOCL
+[x] integrate OpenMP as perhaps implemetnation details? (first general  ) 
+[x] rename *optimized* to *combined* 
+[x] rename slice-qd to order-q subtensor 
+[] rename *cases* to *TTM cases*
+[] explain omp_set_nested into the OpenMP section
+[] update the introduction/contribution
+[] update the conclusion
+[] read your paper
 
 todo [after submission]:
 
