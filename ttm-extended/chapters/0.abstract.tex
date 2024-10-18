@@ -4,18 +4,17 @@ The tensor-matrix multiplication is a basic tensor operation required by various
 %
 This paper presents flexible high-performance algorithms that compute the tensor-matrix product according to the Loops-over-GEMM (LoG) approach.
 %
-Our algorithms can process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
+Our algorithms are able to process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
 %
-We discuss different tensor slicing methods with parallelization strategies and propose six algorithm versions that call BLAS with subtensors or tensor slices.
+We discuss two slicing methods with orthogonal parallelization strategies and propose four algorithms that call BLAS with subtensors or tensor slices.
 %
-Their performance is quantified on a set of tensors with various shapes and tensor orders.
+We provide a simple heuristic which selects one of the four proposed algorithms at runtime.
 %
-We use a simple heuristic to combine multiple algorithms and call one function depending on the two parameters.
+All algorithms have been evaluated on a large set of tensors with various tensor shapes and linear tensor layouts.
 %
-Our proposed algorithm attains a median performance of $2.47$ double precision TFLOPS on a dual socket Intel Xeon Gold 5318Y CPU using Intel's MKL and $2.93$ double precision TFLOPS on a dual socket AMD EPYC 9354 CPU using AMD AOCL.
+In case of large tensor slices, our best-performing algorithm achieves a median performance of $2.47$ TFLOPS on an Intel Xeon Gold 5318Y and $2.93$ TFLOPS an AMD EPYC 9354.
 %
-We show that our algorithms perform well for different linear tensor layouts.
-%TODO: weiter hier.
+Furthermore, it outperforms Intel's \ttt{cblas\_gemm\_batch} by a factor of $2.57$ with large tensor slices.
 %
-Our implementation is on average at least $14.05$\% and up to $3.79$x faster than other state-of-the-art approaches and actively developed libraries like Libtorch and Eigen.
+For the majority of our test tensors, our implementation is on average $25.05$\% faster than other state-of-the-art approaches, including actively developed libraries like Libtorch and Eigen.
 \end{abstract}
