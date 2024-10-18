@@ -148,12 +148,8 @@ The following subsection describes all eight cases when the input matrix $\mbB$ 
 Note that the CBLAS also allows users to specify matrix's leading dimension by providing the \ttt{LDA}, \ttt{LDB} and \ttt{LDC} parameters.
 A leading dimension determines the number of elements that is required for iterating over the non-contiguous matrix dimension.
 The additional parameter enables the matrix multiplication to be performed with submatrices or even fibers within submatrices.
-The leading dimension parameter is necessary for implementing BLAS-based tensor-matrix multiplication.
+The leading dimension parameter is necessary for implementing a BLAS-based tensor-matrix multiplication with subtensors and tensor slices.
 
-
-%Note , all linear tensor layouts can be supported by setting the remaining parameters of \ttt{gemm}.
-
-%TODO: previously explain how CBLAS is called and what options one has, i.e. explain the design space
 %TODO: explain the table for B format (already explained for RM) and CBLAS multiplication (already explained for RM) as on subsubsection and include two other subsection explaining what changes if we take B.format CM and another subsection explaining how the parameters change if it is CM.
 
 %We apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input, shi:2016:tensor.contraction}.
@@ -248,16 +244,16 @@ This description supports all linear tensor layouts and generalizes lemma 4.2 in
  
 \subsection{Parallel BLAS-based Algorithms}
 \label{subsec:parallel.multi-loops}
-Most BLAS libraries provide API functions for adjusting the number of threads.
+Most BLAS libraries allow to change the number of threads.
 Hence, functions such as \ttt{gemm} and \ttt{gemv} can be run either using a single or multiple threads.
-For the cases one to seven with a single BLAS call, the number of threads is always set to the number of available cores.
+The TTM cases one to seven contain a single BLAS call which is why we set the number of threads to the number of available cores.
 The following subsections discuss parallel versions for the eighth case in which the outer loops of algorithm \ref{alg:ttm.sequential.coalesced} and the \ttt{gemm} function inside the base case can be run in parallel.
 Note that the parallelization strategies can be combined with the aforementioned slicing methods.
 
 \subsubsection{Sequential Loops and Parallel Matrix Multiplication}
-Similar to the first seven cases, algorithm \ref{alg:ttm.sequential.coalesced} does not need to be modified except for enabling \ttt{gemm} to run multi-threaded in the base case by using BLAS function calls to adjust the thread count.
-This type of parallelization strategy might be beneficial with order-$\mhq$ tensor slices where the contraction mode satisfies $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{\mhq}$ are large and the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
-For instance, given a first-order storage format and the contraction mode $q$ with $q=p-1$ and $n_p=2$, the dimensions of flattened order-$q$ tensor slices are $\prod_{r=1}^{p-2}n_r$ and $n_{p-1}$.
+Algorithm \ref{alg:ttm.sequential.coalesced} is run for the eighth case and does not need to be modified except for  enabling \ttt{gemm} to run multi-threaded in the base case.
+This type of parallelization strategy might be beneficial with order-$\mhq$ subtensors where the contraction mode satisfies $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{\mhq}$ are large and the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
+For instance, given a first-order storage format and the contraction mode $q$ with $q=p-1$ and $n_p=2$, the dimensions of flattened order-$q$ subtensors are $\prod_{r=1}^{p-2}n_r$ and $n_{p-1}$.
 This allows \ttt{gemm} to be executed with large dimensions using multiple threads increasing the likelihood to reach a high throughput.
 However, if the above conditions are not met, a multi-threaded \ttt{gemm} operates on small tensor slices which might lead to an suboptimal utilization of the available cores.
 This algorithm version will be referred to as \ttt{<par-gemm>}.
@@ -334,8 +330,8 @@ The flattened tensors are of order $3$ where $\mubA'$ has the shape $\mbn'=(\mhn
 Tensor $\mubC'$ has the same dimensions as $\mubA'$ except for $m_2=m$.
 
 Algorithm \ref{alg:ttm.slice.fused.parallel} needs a minor modification  for supporting order-$\mhq$ subtensors.
-Instead of two loops, the modified algorithm consists of a single loop which iterates over dimension $\mhn_{\pi_3}$ calling a single-threaded \ttt{gemm} with large tensor slices $\mubA'$ and $\mubC'$.
-The shape and strides of both tensor slices as well as the function arguments of \ttt{gemm} have already been provided by the previous subsection \ref{sec:design:blas.based.algorithm.subtensors}.
+Instead of two loops, the modified algorithm consists of a single loop which iterates over dimension $\mhn_{\pi_3}$ calling a single-threaded \ttt{gemm} with subtensors $\mubA'$ and $\mubC'$.
+The shape and strides of both subtensors as well as the function arguments of \ttt{gemm} have already been provided by the previous subsection \ref{sec:design:blas.based.algorithm.subtensors}.
 This \ttt{ttm} version will referred to as \ttt{<par-loop>}\allowbreak\ttt{<subtensor>}.
 
 Note that functions \ttt{<par-gemm>} and \ttt{<par-loop>} implement opposing versions of the \ttt{ttm} where either \ttt{gemm} or the fused loop is performed in parallel.
