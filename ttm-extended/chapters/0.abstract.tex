@@ -14,7 +14,7 @@ All algorithms have been evaluated on a large set of tensors with various tensor
 %
 In case of large tensor slices, our best-performing algorithm achieves a median performance of $2.47$ TFLOPS on an Intel Xeon Gold 5318Y and $2.93$ TFLOPS an AMD EPYC 9354.
 %
-Furthermore, it outperforms Intel's \ttt{cblas\_gemm\_batch} by a factor of $2.57$ with large tensor slices.
+Furthermore, it outperforms batched GEMM implementation of Intel MKL by a factor of $2.57$ with large tensor slices.
 %
 For the majority of our test tensors, our implementation is on average $25.05$\% faster than other state-of-the-art approaches, including actively developed libraries like Libtorch and Eigen.
 \end{abstract}

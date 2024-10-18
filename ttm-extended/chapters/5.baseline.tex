@@ -115,7 +115,7 @@ Case & Order $p$ & Layout $\mbpi_{\mubA,\mubC}$ & Layout $\mbpi_{\mbB}$ & Mode $
 \caption%
 {%
 \footnotesize
-Eight cases of CBLAS functions \tf{gemm} and \tf{gemv} implementing the mode-$q$ tensor-matrix multiplication with a row-major or column-major format.
+Eight TTM cases of CBLAS functions \tf{gemm} and \tf{gemv} implementing the mode-$q$ tensor-matrix multiplication with a row-major or column-major format.
 %Argument for \tf{gemv} and \tf{gemm} with 
 Arguments \tf{T}, \tf{M}, \tf{N}, etc. of \tf{gemv} and \tf{gemm} are chosen with respect to the tensor order $p$, layout $\mbpi$ of $\mubA$, $\mbB$, $\mubC$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
 Function \tf{gemm*} with a star denotes multiple \tf{gemm} calls with different tensor slices.
@@ -137,13 +137,13 @@ The latter denotes a general matrix-matrix multiplication which is defined as \t
 Function \ttt{op(x)} either transposes the corresponding matrix \ttt{x} such that \ttt{op(x)=x'} or not \ttt{op(x)=x}.
 
 For $\pi_1 = q$, the tensor-matrix product can be computed by a matrix-matrix multiplication where the input tensor $\mubA$ can be flattened into a matrix without any copy operation.
-The same can be applied when $\pi_p = q$ and five other cases where the input tensor is either one or two-dimensional.
+The same can be applied when $\pi_p = q$ and five other TTM cases where the input tensor is either one or two-dimensional.
 In summary, there are seven other corner cases to the general case where a single \ttt{gemv} or \ttt{gemm} call suffices to compute the tensor-matrix product.
-All eight cases per storage format are listed in table \ref{tab:mapping_rm_cm}.
+All eight TTM cases per storage format are listed in table \ref{tab:mapping_rm_cm}.
 The arguments of the routines \ttt{gemv} or \ttt{gemm} are set according to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$.
 If the input matrix $\mbB$ has the row-major order, parameter \ttt{CBLAS\_ORDER} of function \ttt{gemm} is set to \ttt{CblasRowMajor} (\ttt{rm}) and \ttt{CblasColMajor} (\ttt{cm}) otherwise.
 Note that table \ref{tab:mapping_rm_cm} supports all linear tensor layouts of $\mubA$ and $\mubC$ with no limitations on tensor order and contraction mode.
-The following subsection describes all eight cases when the input matrix $\mbB$ has the row-major ordering.
+The following subsection describes all eight TTM cases when the input matrix $\mbB$ has the row-major ordering.
 
 Note that the CBLAS also allows users to specify matrix's leading dimension by providing the \ttt{LDA}, \ttt{LDB} and \ttt{LDC} parameters.
 A leading dimension determines the number of elements that is required for iterating over the non-contiguous matrix dimension.
@@ -168,7 +168,7 @@ In this case the tensor-matrix product can be computed with a single \ttt{gemm}.
 If $\mbA$ and $\mbC$ have the column-major format with $\mbpi=(1,2)$, \ttt{gemm} either executes $\mbC = \mbA \cdot \mbB^T$ for $q =1$ or $\mbC = \mbB \cdot \mbA$ for $q=2$.
 Both matrices can be interpreted $\mbC$ and $\mbA$ as matrices in row-major format although both are stored column-wise.
 If $\mbA$ and $\mbC$ have the row-major format with $\mbpi=(2,1)$, \ttt{gemm} either executes $\mbC = \mbB \cdot \mbA$ for $q =1$ or $\mbC = \mbA \cdot \mbB^T$ for $q=2$. 
-The transposition of $\mbB$ is necessary for the cases 2 and 5 which is independent of the chosen layout.
+The transposition of $\mbB$ is necessary for the TTM cases $2$ and $5$ which is independent of the chosen layout.
 
 \tit{Case 6-7 :}
 % If the order of $\mubA$ and $\mubC$ is greater than $2$ 
