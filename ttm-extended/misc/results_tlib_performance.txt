@@ -1,0 +1,215 @@
+processor = icelake
+shape = nonsymmetric
+aformat = order1
+bformat = cm
+tlib_ompforloop_subtensor_outer_gflops_max = 2775.5
+tlib_ompforloop_subtensor_outer_gflops_mean = 1412.0
+tlib_ompforloop_subtensor_outer_gflops_median = 1497.8
+tlib_ompforloop_subtensor_outer_gflops_max_per_core = 57.823
+tlib_ompforloop_subtensor_outer_gflops_mean_per_core = 29.416
+tlib_ompforloop_subtensor_outer_gflops_median_per_core = 31.204
+
+tlib_ompforloop_slice_all_gflops_max = 2764.2
+tlib_ompforloop_slice_all_gflops_mean = 1641.7
+tlib_ompforloop_slice_all_gflops_median = 1713.7
+tlib_ompforloop_slice_all_gflops_max_per_core = 57.588
+tlib_ompforloop_slice_all_gflops_mean_per_core = 34.203
+tlib_ompforloop_slice_all_gflops_median_per_core = 35.703
+
+tlib_threadedgemm_subtensor_gflops_max = 2793.8
+tlib_threadedgemm_subtensor_gflops_mean = 1753.9
+tlib_threadedgemm_subtensor_gflops_median = 1838.3
+tlib_threadedgemm_subtensor_gflops_max_per_core = 58.205
+tlib_threadedgemm_subtensor_gflops_mean_per_core = 36.539
+tlib_threadedgemm_subtensor_gflops_median_per_core = 38.298
+
+tlib_threadedgemm_slice_gflops_max = 2754.1
+tlib_threadedgemm_slice_gflops_mean = 1699.5
+tlib_threadedgemm_slice_gflops_median = 1775.4
+tlib_threadedgemm_slice_gflops_max_per_core = 57.378
+tlib_threadedgemm_slice_gflops_mean_per_core = 35.407
+tlib_threadedgemm_slice_gflops_median_per_core = 36.987
+
+slice_subtensor_parloop_ratio_median = 1.0115
+slice_subtensor_parloop_ratio_mean = 1.8661
+slice_subtensor_parloop_ratio_d8_mean = 3.1583
+slice_subtensor_parloop_ratio_d8_median = 1.8407
+
+subtensor_slice_pargemm_ratio_median = 1.0135
+subtensor_slice_pargemm_ratio_mean = 1.0494
+subtensor_slice_pargemm_ratio_d8_median = 1.0747
+subtensor_slice_pargemm_ratio_d8_mean = 1.1015
+
+pargemm_parloop_slice_ratio_median = 0.9971
+pargemm_parloop_slice_ratio_mean = 1.2908
+pargemm_parloop_slice_ratio_d8_median = 1.0747
+pargemm_parloop_slice_ratio_d8_mean = 1.1015
+
+pargemm_parloop_subtensor_ratio_median = 1.0226
+pargemm_parloop_subtensor_ratio_mean = 2.2907
+pargemm_parloop_subtensor_ratio_d8_median = 2.9801
+pargemm_parloop_subtensor_ratio_d8_mean = 4.2091
+
+
+
+
+processor = icelake
+shape = symmetric
+aformat = order1
+bformat = cm
+tlib_ompforloop_subtensor_outer_gflops_max = 2793.4
+tlib_ompforloop_subtensor_outer_gflops_mean = 848.91
+tlib_ompforloop_subtensor_outer_gflops_median = 390.78
+tlib_ompforloop_subtensor_outer_gflops_max_per_core = 58.195
+tlib_ompforloop_subtensor_outer_gflops_mean_per_core = 17.686
+tlib_ompforloop_subtensor_outer_gflops_median_per_core = 8.1412
+
+tlib_ompforloop_slice_all_gflops_max = 2795.9
+tlib_ompforloop_slice_all_gflops_mean = 836.63
+tlib_ompforloop_slice_all_gflops_median = 405.68
+tlib_ompforloop_slice_all_gflops_max_per_core = 58.248
+tlib_ompforloop_slice_all_gflops_mean_per_core = 17.430
+tlib_ompforloop_slice_all_gflops_median_per_core = 8.4516
+
+tlib_threadedgemm_subtensor_gflops_max = 2799.6
+tlib_threadedgemm_subtensor_gflops_mean = 777.48
+tlib_threadedgemm_subtensor_gflops_median = 321.95
+tlib_threadedgemm_subtensor_gflops_max_per_core = 58.326
+tlib_threadedgemm_subtensor_gflops_mean_per_core = 16.197
+tlib_threadedgemm_subtensor_gflops_median_per_core = 6.7074
+
+tlib_threadedgemm_slice_gflops_max = 2794.5
+tlib_threadedgemm_slice_gflops_mean = 752.09
+tlib_threadedgemm_slice_gflops_median = 261.90
+tlib_threadedgemm_slice_gflops_max_per_core = 58.218
+tlib_threadedgemm_slice_gflops_mean_per_core = 15.669
+tlib_threadedgemm_slice_gflops_median_per_core = 5.4563
+
+slice_subtensor_parloop_ratio_median = 0.9993
+slice_subtensor_parloop_ratio_mean = 0.9241
+slice_subtensor_parloop_ratio_d8_mean = 0.7818
+slice_subtensor_parloop_ratio_d8_median = 0.9656
+
+subtensor_slice_pargemm_ratio_median = 1.0026
+subtensor_slice_pargemm_ratio_mean = 1.9676
+subtensor_slice_pargemm_ratio_d8_median = 2.8642
+subtensor_slice_pargemm_ratio_d8_mean = 3.7059
+
+pargemm_parloop_slice_ratio_median = 0.9886
+pargemm_parloop_slice_ratio_mean = 0.7583
+pargemm_parloop_slice_ratio_d8_median = 2.8642
+pargemm_parloop_slice_ratio_d8_mean = 3.7059
+
+pargemm_parloop_subtensor_ratio_median = 0.9883
+pargemm_parloop_subtensor_ratio_mean = 0.8290
+pargemm_parloop_subtensor_ratio_d8_median = 0.5006
+pargemm_parloop_subtensor_ratio_d8_mean = 0.5068
+
+
+
+processor = icelake
+shape = nonsymmetric
+aformat = order1
+bformat = rm
+tlib_ompforloop_subtensor_outer_gflops_max = 2829.8
+tlib_ompforloop_subtensor_outer_gflops_mean = 1440.3
+tlib_ompforloop_subtensor_outer_gflops_median = 1510.2
+tlib_ompforloop_subtensor_outer_gflops_max_per_core = 58.954
+tlib_ompforloop_subtensor_outer_gflops_mean_per_core = 30.006
+tlib_ompforloop_subtensor_outer_gflops_median_per_core = 31.463
+
+tlib_ompforloop_slice_all_gflops_max = 2774.5
+tlib_ompforloop_slice_all_gflops_mean = 1678.5
+tlib_ompforloop_slice_all_gflops_median = 1760.9
+tlib_ompforloop_slice_all_gflops_max_per_core = 57.803
+tlib_ompforloop_slice_all_gflops_mean_per_core = 34.969
+tlib_ompforloop_slice_all_gflops_median_per_core = 36.686
+
+tlib_threadedgemm_subtensor_gflops_max = 2782.7
+tlib_threadedgemm_subtensor_gflops_mean = 1782.2
+tlib_threadedgemm_subtensor_gflops_median = 1870.9
+tlib_threadedgemm_subtensor_gflops_max_per_core = 57.974
+tlib_threadedgemm_subtensor_gflops_mean_per_core = 37.128
+tlib_threadedgemm_subtensor_gflops_median_per_core = 38.978
+
+tlib_threadedgemm_slice_gflops_max = 2779.8
+tlib_threadedgemm_slice_gflops_mean = 1748.4
+tlib_threadedgemm_slice_gflops_median = 1810.2
+tlib_threadedgemm_slice_gflops_max_per_core = 57.912
+tlib_threadedgemm_slice_gflops_mean_per_core = 36.425
+tlib_threadedgemm_slice_gflops_median_per_core = 37.713
+
+slice_subtensor_parloop_ratio_median = 1.0077
+slice_subtensor_parloop_ratio_mean = 1.8964
+slice_subtensor_parloop_ratio_d8_mean = 3.2301
+slice_subtensor_parloop_ratio_d8_median = 1.8429
+
+subtensor_slice_pargemm_ratio_median = 1.0058
+subtensor_slice_pargemm_ratio_mean = 1.0342
+subtensor_slice_pargemm_ratio_d8_median = 1.0524
+subtensor_slice_pargemm_ratio_d8_mean = 1.0877
+
+pargemm_parloop_slice_ratio_median = 0.9992
+pargemm_parloop_slice_ratio_mean = 1.3057
+pargemm_parloop_slice_ratio_d8_median = 1.0524
+pargemm_parloop_slice_ratio_d8_mean = 1.0877
+
+pargemm_parloop_subtensor_ratio_median = 1.0164
+pargemm_parloop_subtensor_ratio_mean = 2.3179
+pargemm_parloop_subtensor_ratio_d8_median = 2.8978
+pargemm_parloop_subtensor_ratio_d8_mean = 4.2808
+
+
+
+
+processor = icelake
+shape = symmetric
+aformat = order1
+bformat = rm
+tlib_ompforloop_subtensor_outer_gflops_max = 2818.7
+tlib_ompforloop_subtensor_outer_gflops_mean = 846.16
+tlib_ompforloop_subtensor_outer_gflops_median = 393.80
+tlib_ompforloop_subtensor_outer_gflops_max_per_core = 58.723
+tlib_ompforloop_subtensor_outer_gflops_mean_per_core = 17.628
+tlib_ompforloop_subtensor_outer_gflops_median_per_core = 8.2042
+
+tlib_ompforloop_slice_all_gflops_max = 2817.9
+tlib_ompforloop_slice_all_gflops_mean = 832.42
+tlib_ompforloop_slice_all_gflops_median = 406.96
+tlib_ompforloop_slice_all_gflops_max_per_core = 58.706
+tlib_ompforloop_slice_all_gflops_mean_per_core = 17.342
+tlib_ompforloop_slice_all_gflops_median_per_core = 8.4783
+
+tlib_threadedgemm_subtensor_gflops_max = 2821.1
+tlib_threadedgemm_subtensor_gflops_mean = 767.31
+tlib_threadedgemm_subtensor_gflops_median = 310.58
+tlib_threadedgemm_subtensor_gflops_max_per_core = 58.772
+tlib_threadedgemm_subtensor_gflops_mean_per_core = 15.986
+tlib_threadedgemm_subtensor_gflops_median_per_core = 6.4705
+
+tlib_threadedgemm_slice_gflops_max = 2820.7
+tlib_threadedgemm_slice_gflops_mean = 740.67
+tlib_threadedgemm_slice_gflops_median = 266.21
+tlib_threadedgemm_slice_gflops_max_per_core = 58.764
+tlib_threadedgemm_slice_gflops_mean_per_core = 15.431
+tlib_threadedgemm_slice_gflops_median_per_core = 5.5461
+
+slice_subtensor_parloop_ratio_median = 0.9976
+slice_subtensor_parloop_ratio_mean = 0.9181
+slice_subtensor_parloop_ratio_d8_mean = 0.7686
+slice_subtensor_parloop_ratio_d8_median = 0.9780
+
+subtensor_slice_pargemm_ratio_median = 1.0044
+subtensor_slice_pargemm_ratio_mean = 1.8774
+subtensor_slice_pargemm_ratio_d8_median = 2.8050
+subtensor_slice_pargemm_ratio_d8_mean = 3.4361
+
+pargemm_parloop_slice_ratio_median = 0.9871
+pargemm_parloop_slice_ratio_mean = 0.7524
+pargemm_parloop_slice_ratio_d8_median = 2.8050
+pargemm_parloop_slice_ratio_d8_mean = 3.4361
+
+pargemm_parloop_subtensor_ratio_median = 0.9850
+pargemm_parloop_subtensor_ratio_mean = 0.8104
+pargemm_parloop_subtensor_ratio_d8_median = 0.4400
+pargemm_parloop_subtensor_ratio_d8_mean = 0.4482

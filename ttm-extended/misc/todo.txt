@@ -1,0 +1,23 @@
+todo [before submission]:
+
+[x] reformulate the test setup - processors, libraries, max flops, MKL / AOCL
+[x] integrate OpenMP as perhaps implemetnation details? (first general  ) 
+[x] rename *optimized* to *combined* 
+[x] rename slice-qd to order-q subtensor 
+[x] rename *cases* to *TTM cases*
+[x] explain omp_set_nested into the OpenMP section
+[x] update the introduction/contribution
+[x] update the conclusion
+[x] refer to the original paper and reference it 
+[] read your paper
+[] go through the TODOs in the paper
+[x] remove \tf formatting in the titles of some TLIB figures 
+[] adjust line breaking and bad formatting
+
+todo [after submission]:
+
+[] merge ttm back to master
+[x] rename `optimized` to `combined` 
+
+
+
