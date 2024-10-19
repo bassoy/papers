@@ -8,10 +8,10 @@ todo [before submission]:
 [x] explain omp_set_nested into the OpenMP section
 [x] update the introduction/contribution
 [x] update the conclusion
-[] refer to the original paper and reference it 
+[x] refer to the original paper and reference it 
 [] read your paper
 [] go through the TODOs in the paper
-[] remove \tf formatting in the titles of some TLIB figures 
+[x] remove \tf formatting in the titles of some TLIB figures 
 [] adjust line breaking and bad formatting
 
 todo [after submission]:

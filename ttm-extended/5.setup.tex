@@ -3,14 +3,14 @@
 \subsection{Computing System} 
 The experiments have been carried out on a dual socket Intel Xeon Gold 5318Y CPU with an Ice Lake architecture and a dual socket AMD EPYC 9354 CPU with a Zen4 architecture.
 With two NUMA domains, the Intel CPU consists of $2\times24$ cores which run at a base frequency of $2.1$ GHz.
-Assuming peak AVX-512 Turbo frequency of $2.5$ GHz, the CPU is able to process $3.84$ TFLOPS in double precision.
+Assuming a peak AVX-512 Turbo frequency of $2.5$ GHz, the CPU is able to process $3.84$ TFLOPS in double precision.
 %$2.5$ GHz x $2$ FMA units / cores x $16$ OPS / FMA unit x $48$ cores = $3.84$ Tflops.
-Using the Likwid performance tool, we measured a peak double-precision floating-point performance of $3.8043$ TFLOPS ($79.25$ GFLOPS/core) and a peak memory throughput of $288.68$ GB/s.
+We measured a peak double-precision floating-point performance of $3.8043$ TFLOPS ($79.25$ GFLOPS/core) and a peak memory throughput of $288.68$ GB/s using the Likwid performance tool.
 %3328
-The AMD CPU consists of $2\times32$ cores running at a base frequency of $3.25$ GHz.
+The AMD EPYC 9354 CPU consists of $2\times32$ cores running at a base frequency of $3.25$ GHz.
 Assuming an all-core boost frequency of $3.75$ GHz, the CPU is theoretically capable of performing $3.84$ TFLOPS in double precision.
 %$3.25$ GHz x $1$ FMA units / cores x $16$ OPS / FMA unit x $64$ cores = $3.84$ Tflops.
-Using the Likwid performance tool, we measured a peak double-precision floating-point performance of $3.87$ TFLOPS ($60.5$ GFLOPS/core) and a peak memory throughput of $788.71$ GB/s.
+We measured a peak double-precision floating-point performance of $3.87$ TFLOPS ($60.5$ GFLOPS/core) and a peak memory throughput of $788.71$ GB/s.
  
 We have used the GNU compiler v11.2.0 with the highest optimization level \ttt{-O3} together with the \ttt{-fopenmp} and \ttt{-std=c++17} flags. 
 Loops within the eighth case have been parallelized using GCC's OpenMP v4.5 implementation.
@@ -19,19 +19,19 @@ For the AMD CPU, we have compiled AMD AOCL v4.2.0 together with set the \ttt{zen
 
 
 \subsection{OpenMP Parallelization}
-The two \ttt{parallel for} loops have been parallelized using the OpenMP directive \ttt{omp parallel for} together with the \ttt{schedule(static)}, \ttt{num\_threads(ncores)} and \ttt{proc\_bind}\allowbreak\ttt{(spread)} clauses.
-In case of tensor-slices, the \ttt{collapse(2)} clause is added for transforming both loops into one loop which has an iteration space of the first loop times the second one. 
-For AMD AOCL, we also had to enable nested parallelism using \ttt{omp\_set\_nested} to toggle between single- and multi-threaded \ttt{gemm} calls for different TTM cases.
+The loops in the \ttt{par-loop} algorithms have been parallelized using the OpenMP directive \ttt{omp parallel for} together with the \ttt{schedule(static)}, \ttt{num\_threads(ncores)} and \ttt{proc\_bind}\allowbreak\ttt{(spread)} clauses.
+In case of tensor-slices, the \ttt{collapse(2)} clause has been added for transforming both loops into one loop which has an iteration space of the first loop times the second one. 
+We also had to enable nested parallelism using \ttt{omp\_set\_nested} to toggle between single- and multi-threaded \ttt{gemm} calls for different TTM cases when using AMD AOCL.
 
 The \ttt{num\_threads(ncores)} clause specifies the number of threads within a team where \ttt{ncores} is equal to the number of processor cores. 
 Hence, each OpenMP thread is responsible for computing $\bar{n}' / \text{\ttt{ncores}}$ independent slice-matrix products where $\bar{n}' = n_2' \cdot n_4'$ for tensor slices and $\bar{n}' = n_4'$ for mode-$\mhq$ subtensors.
 
 The \ttt{schedule(static)} instructs the OpenMP runtime to divide the iteration space into almost equally sized chunks.
 Each thread sequentially computes $ \bar{n}' / \text{\ttt{ncores}}$ slice-matrix products.
-We decided to use this scheduling kind as all slice-matrix multiplications have the same number of floating-point operations with a regular workload where one can assume negligible load imbalance.
+We have decided to use this scheduling kind as all slice-matrix multiplications exhibit the same number of floating-point operations with a regular workload where one can assume negligible load imbalance.
 Moreover, we wanted to prevent scheduling overheads for small slice-matrix products were data locality can be an important factor for achieving higher throughput.
 
-We did not set the \ttt{OMP\_PLACES} environment variable which defaults to the OpenMP \ttt{cores} setting defining a place as a single processor core. % 1 place <-> 1 core
+The \ttt{OMP\_PLACES} environment variable has not been explicitly set and thus defaults to the OpenMP \ttt{cores} setting which defines an OpenMP place as a single processor core. % 1 place <-> 1 core
 Together with the clause \ttt{num\_threads(ncores)}, the number of OpenMP threads is equal to the number of OpenMP places, i.e. to the number of processor cores.
 We did not measure any performance improvements for a higher thread count.
 
@@ -49,9 +49,8 @@ A special feature of this test set is that the contraction dimension and the lea
 The second set consists of $336 = 6\times8\times 7$ dimensions tuples where the tensor order ranges from $2$ to $7$ and has $8$ dimension tuples for each order.
 Each tensor dimension within the second set is $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$.
 A detailed explanation of the tensor shape setup is given in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
-
 If not otherwise mentioned, both tensors $\mubA$ and $\mubC$ are stored according to the first-order tensor layout.
-Matrix $\mbB$ has the row-major storage format.
+%Matrix $\mbB$ has the row-major storage format.
 %The benchmark results of each function are the average of 10 runs.
 %\vspace{-1em}\\
 

@@ -21,21 +21,23 @@ It is a compute-bound tensor operation and has the same arithmetic intensity as 
 To our best knowledge, we are the first to combine the LoG-approach described in \citep{bassoy:2019:ttv, pawlowski:2019:morton.tensor.computations} for tensor-vector multiplications with the findings on tensor slicing for the tensor-matrix multiplication in \citep{li:2015:input}.
 Our algorithms support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
 They compute the tensor-matrix product in parallel using efficient GEMM without transposing or flattening tensors.
-Despite their high performance, all algorithms are layout-oblivious and provide a sustained performance independent of the tensor layout and without tuning.
+In addition to their high performance, all algorithms are layout-oblivious and provide a sustained performance independent of the tensor layout and without tuning.
+We provide a single algorithm that selects one of the proposed algorithms based on a simple heuristic.
 
 %The parallel versions of the recursive base algorithm execute fused loops in parallel and are able to fully utilize a processor's compute units.
-Moreover, every proposed algorithm can be implemented with less than 150 lines of C++ code where the algorithmic complexity is reduced by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
+Every proposed algorithm can be implemented with less than 150 lines of C++ code where the algorithmic complexity is reduced by the BLAS implementation and the corresponding selection of subtensors or tensor slices.
 We have provided an open-source C++ implementation of all algorithms and a python interface for convenience.
-While we have used Intel MKL and AMD AOCL for our benchmarks, the user is free to select any other library that provides a BLAS interface.
 
 The analysis in this work quantifies the impact of the tensor layout, the tensor slicing method and parallel execution of slice-matrix multiplications with varying contraction modes.
-The runtime measurements of our implementations are compared with state-of-the-art approaches discussed in \citep{springer:2018:design, matthews:2018:high, paszke:2019:pytorch} including Libtorch and Eigen. In summary, the main findings of our work are:
+The runtime measurements of our implementations are compared with state-of-the-art approaches discussed in \citep{springer:2018:design, matthews:2018:high, paszke:2019:pytorch} including Libtorch and Eigen. 
+While our implementation have been benchmarked with the Intel MKL and AMD AOCL libraries, the user choose other BLAS libraries.
+In summary, the main findings of our work are:
 \begin{itemize}
 	\item 
 	%
 	Given a row-major or column-major input matrix, the tensor-matrix multiplication with tensors of any linear tensor layout can be implemented by an in-place algorithm with $1$ GEMV and $7$ GEMM instances, supporting all combinations of contraction mode, tensor order and tensor dimensions.
 	\item 
-	The performance of all proposed algorithms do not vary significantly for different tensor layouts if the contraction conditions remain the same.
+	The proposed algorithms show a similar performance characteristic across different tensor layouts, provided that the contraction conditions remain the same.
 	\item 
 	A simple heuristic is sufficient to select one of the proposed algorithms at runtime, providing a near-optimal performance for a wide range of tensor shapes.	
 	\item 

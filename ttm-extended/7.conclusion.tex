@@ -6,7 +6,7 @@ It applies the flexible approach described in \cite{bassoy:2019:ttv} and general
 The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
 
 The base algorithm has been divided into eight different TTM cases where seven of them perform a single \ttt{cblas\_gemm}.
-We have presented multiple algorithm variants for the eighth case which either calls a single- or multi-threaded \ttt{cblas\_gemm} with small or large tensor slices in parallel or sequentially.
+We have presented multiple algorithm variants for the general TTM case which either calls a single- or multi-threaded \ttt{cblas\_gemm} with small or large tensor slices in parallel or sequentially.
 We have developed a simple heuristic that selects one of the variants based on the performance evaluation in the original work \cite{bassoy:2024:ttm}.
 With a large set of tensor instances of different shapes, we have evaluated the proposed variants on an Intel Xeon Gold 5318Y and an AMD EPYC 9354 CPUs.
 
@@ -14,7 +14,7 @@ Our performance tests show that our algorithms are layout-oblivious and do not n
 Despite the flexible design, our best-performing algorithm is able to outperform Intel's BLAS-like extension function \ttt{cblas\_gemm\_batch} by a factor of $2.57$ in case of asymmetrically shaped tensors.
 Moreover, the presented performance results show that TLIB is able to compute the tensor-matrix product on average $25$\% faster than other state-of-the-art implementations for a majority of tensor instances.
 
-Our findings show that the LoG-based approach is a viable solution for the general tensor-matrix multiplication which can be as fast as efficient GETT-based implementations.
+Our findings show that the LoG-based approach is a viable solution for the general tensor-matrix multiplication which can be as fast as or even outperform efficient GETT-based implementations.
 Hence, other actively developed libraries such as LibTorch and Eigen might benefit from implementing the proposed algorithms.
 Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 
