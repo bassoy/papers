@@ -2,14 +2,15 @@
 \label{sec:design}
 \subsection{Baseline Algorithm with Contiguous Memory Access}
 \label{sec:design:modified.baseline.algorithm}
-The tensor-times-matrix multiplication in equation \ref{equ:tensor.matrix.multplication} can be implemented with one sequential algorithm using a nested recursion \cite{bassoy:2018:fast}.
-It consists of two \ttt{if} statements with an \ttt{else} branch that computes a fiber-matrix product with two loops.
-The outer loop iterates over the dimension $m$ of $\mubC$ and $\mbB$, while the inner iterates over dimension $n_q$ of $\mubA$ and $\mbB$ computing an inner product with fibers of $\mubA$ and $\mbB$. 
-While matrix $\mbB$ can be accessed contiguously depending on its storage format, elements of $\mubA$ and $\mubC$ are accessed non-contiguously if $\pi_1 \neq q$.
-
+The tensor-times-matrix multiplication in equation \ref{equ:tensor.matrix.multplication} can be implemented with a single algorithm that uses nested recursion.
+Similar the algorithm design presented in \cite{bassoy:2018:fast}, it consists of \ttt{if} statements with recursive calls and an \ttt{else} branch which is the base case of the algorithm.
+A naive implementation recursively selects fibers of the input and output tensor for the base case that computes a fiber-matrix product.
+The outer loop iterates over the dimension $m$ and selects an element of $\mubC$'s fiber and a row of $\mbB$. 
+The inner loop then iterates over dimension $n_q$ and computes the inner product of a fiber of $\mubA$ and the row $\mbB$. 
+In this case, elements of $\mubA$ and $\mubC$ are accessed non-contiguously whenever $\pi_1 \neq q$ and matrix $\mbB$ is accessed only with unit strides 
+if it elements are stored contiguously along its rows.
 %The access pattern can be improved by reordering tensor elements according to the storage format.
 %However, copy operations reduce the overall throughput of the operation, see \cite{shi:2016:tensor.contraction}.
-
 
 A better approach is illustrated in algorithm \ref{alg:ttm.sequential.coalesced} where the loop order is adjusted to the tensor layout $\mbpi$ and memory is accessed contiguously for $\pi_1 \neq q$ and $p > 1$.
 The rearrangement of the loop order is accomplished in line 5 which uses the layout tuple $\mbpi$ to select a multi-index element $i_{\pi_r}$ and to increment it with the corresponding stride $w_{\pi_r}$.
