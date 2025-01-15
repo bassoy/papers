@@ -2,7 +2,7 @@
 \label{sec:design}
 \subsection{Baseline Algorithm with Contiguous Memory Access}
 \label{sec:design:modified.baseline.algorithm}
-The tensor-times-matrix multiplication in equation \ref{equ:tensor.matrix.multplication} can be implemented with a single algorithm that uses nested recursion.
+The tensor-times-matrix multiplication (TTM) in equation \ref{equ:tensor.matrix.multplication} can be implemented with a single algorithm that uses nested recursion.
 Similar the algorithm design presented in \cite{bassoy:2018:fast}, it consists of \ttt{if} statements with recursive calls and an \ttt{else} branch which is the base case of the algorithm.
 A naive implementation recursively selects fibers of the input and output tensor for the base case that computes a fiber-matrix product.
 The outer loop iterates over the dimension $m$ and selects an element of $\mubC$'s fiber and a row of $\mbB$. 
@@ -67,7 +67,7 @@ The third loop increments $j$ and could be placed as the second loop if $\mbB$ i
 \hrule
 \caption{
 \footnotesize %
-Modified baseline algorithm with contiguous memory access for the tensor-matrix multiplication.
+Modified baseline algorithm for TTM with contiguous memory access.
 The tensor order $p$ must be greater than $1$ and the contraction mode $q$ must satisfy $1 \leq q \leq p$ and $\pi_1 \neq q$.
 The initial call must happen with $r=p$ where $\mbn$ is the shape tuple of $\mubA$ and $m$ is the $q$-th dimension of $\mubC$. 
 %Iteration along mode $q$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
@@ -116,7 +116,7 @@ Case & Order $p$ & Layout $\mbpi_{\mubA,\mubC}$ & Layout $\mbpi_{\mbB}$ & Mode $
 \caption%
 {%
 \footnotesize
-Eight TTM cases implementing the mode-$q$ tensor-matrix multiplication with the \tf{gemm} and \tf{gemv} CBLAS functions.
+Eight TTM cases implementing the mode-$q$ TTM with the \tf{gemm} and \tf{gemv} CBLAS functions.
 Arguments of \tf{gemv} and \tf{gemm} (\tf{T}, \tf{M}, \tf{N}, $dots$) are chosen with respect to the tensor order $p$, layout $\mbpi$ of $\mubA$, $\mbB$, $\mubC$ and contraction mode $q$ where \tf{T} specifies if $\mbB$ is transposed.
 Function \tf{gemm*} with a star denotes multiple \tf{gemm} calls with different tensor slices.
 Argument $\bar{n}_q$ for case 6 and 7 is defined as $\bar{n}_q = (\prod_r^p n_r)/n_q$.
@@ -138,7 +138,7 @@ Function \ttt{op(x)} either transposes the corresponding matrix \ttt{x} such tha
 The CBLAS interface also allows users to specify matrix's leading dimension by providing the \ttt{LDA}, \ttt{LDB} and \ttt{LDC} parameters.
 A leading dimension specifies the number of elements that is required for iterating over the non-contiguous matrix dimension.
 The leading dimension can be used to perform a matrix multiplication with submatrices or even fibers within submatrices.
-The leading dimension parameter is necessary for the BLAS-based tensor-matrix multiplication.
+The leading dimension parameter is necessary for the BLAS-based TTM.
 
 The eighth TTM case in Table \ref{tab:mapping_rm_cm} contains all arguments that are necessary to perform a CBLAS \ttt{gemm} in the base case of Algorithm \ref{alg:ttm.sequential.coalesced}.
 The arguments of \ttt{gemm} are set according to the tensor order $p$, tensor layout $\mbpi$ and contraction mode $q$.

@@ -15,7 +15,7 @@ Implementations of the LoG and TTGT approaches are in general easier to maintain
 %todo: Compiler-based approaches like as described in \cite{gareev:2018:high} 
 
 
-In this work, we present high-performance algorithms for the tensor-matrix multiplication which is used in many numerical methods such as the alternating least squares method \citep{lee:2018:fundamental, kolda:2009:decompositions}.
+In this work, we present high-performance algorithms for the tensor-matrix multiplication (TTM) which is used in many numerical methods such as the alternating least squares method \citep{lee:2018:fundamental, kolda:2009:decompositions}.
 It is a compute-bound tensor operation and has the same arithmetic intensity as a matrix-matrix multiplication which can almost reach the practical peak performance of a computing machine.
 %%with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
 To our best knowledge, we are the first to combine the LoG-approach described in \citep{bassoy:2019:ttv, pawlowski:2019:morton.tensor.computations} for tensor-vector multiplications with the findings on tensor slicing for the tensor-matrix multiplication in \citep{li:2015:input}.
