@@ -23,13 +23,17 @@ todo [after submission]:
 todo [review1]:
 
 Major concerns:
-[] This paper is not self-contained, e.g., lines 228 and 632. 
-    [x] rework line 228: the algorithm description has been updated and is now self-contained. it has been made clear that the following algorithm design is similar to one that has been previously described. 
-    [] 
+[x] This paper is not self-contained, e.g., lines 228 and 632. Please write important things in this paper and do not refer to other papers to omit the explanation. Otherwise, readers will have to open the referred papers to read this paper.
+    * line 228: the algorithm description has been updated and is now self-contained. it has been made clear that the following algorithm design is similar to one that has been previously described. 
+    *  line 632: the tensor setup description has been updated and is now self-contained.
+    *  line 204: improved description.
 
-Please write important things in this paper and do not refer to other papers to omit the explanation. Otherwise, readers will have to open the referred papers to read this paper.
-[] The author mentions that the performance of matrix multiplication is not memory-bound in line 156, but it is not always true, for example, a multiplication of two tall-skinny matrices and bached small matrix multiplications. For better performance analysis, it would be better to use a roofline model in the evaluation section.
-[] What is the essential difference between Algorithm 2 and TTGT? Is it true that both are the same if we put all \underbar{A'}_{i,j} matrices in a continuous memory space and interpret it as a large matrix?
+[o] The author mentions that the performance of matrix multiplication is not memory-bound in line 156, but it is not always true, for example, a multiplication of two tall-skinny matrices and bached small matrix multiplications. For better performance analysis, it would be better to use a roofline model in the evaluation section.
+    * This is correct. A matrix-matrix multiplication can be memory-bound. Line 156 has been updated accordingly.
+
+[x] What is the essential difference between Algorithm 2 and TTGT? Is it true that both are the same if we put all \underbar{A'}_{i,j} matrices in a continuous memory space and interpret it as a large matrix?
+    * TTGT flattens tensors into matrices with respect to the contraction mode (function x in x) while LoG, with algorithm 2 including table 1 does not flatten any of the tensors. The word flatten in this paper is a non-copy operation as defined in subsection 3.5 and in the explanation of algorithm 2 in line 463. However, I think the reviewer is understandably confused by using the same word flatten. Hence, I renamed function "flatten" to "reshape" to underline
+
 [] There are some undefined words, such as TTV and TTM.
 [] It would be better to write an explanation of the experimental evaluation in a summary way. It is very hard to understand the evaluation results from the explanations. Also, there are many detailed numbers, especially on page 11, which make it difficult to understand the summary of the evaluation. What about changing the vertical axis of Figure 2 to the performance efficiency?
 [] Are there any tensor shapes where the proposed method has lower performance than the existing methods? The cumulative axis does not help to show this.

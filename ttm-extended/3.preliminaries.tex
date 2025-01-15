@@ -24,7 +24,7 @@ with $\mbi_1 = (i_1,\dots,i_{q-1})$, $\mbi_2 = (i_{q+1},\dots,i_p)$ where $1 \le
 %Similar to the tensor-vector multiplication, the multiplication consists of multiple inner productd of a fiber of $\mubA$ and $\mbb$.% with $1 \leq i_r \leq n_r$ and $1 \leq r \leq p$.
 The mode $q$ is called the contraction mode with $1 \leq q \leq p$.
 The tensor-matrix multiplication generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
-Its arithmetic intensity is equal to that of a matrix-matrix multiplication and is not memory-bound.
+Its arithmetic intensity is equal to that of a matrix-matrix multiplication which is compute-bound for large dense matrices.
 %TODO: %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
 
 In the following, we assume that the tensors $\mubA$ and $\mubC$ have the same tensor layout $\mbpi$. 
@@ -52,10 +52,11 @@ They contain permuted tensor modes whose priority is given by their index.
 For instance, the general $k$-order tensor layout for an order-$p$ tensor is given by the layout tuple $\mbpi$ with $\pi_r = k-r+1$ for $1 < r \leq k$ and $r$ for $k < r \leq p$.
 The first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$ and $\mbpi_{L} = (p,p-1,\dots,1)$.
 An inverse layout tuple $\mbpi^{-1}$ is defined by $\mbpi^{-1}(\mbpi(k)) = k$.
-Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple is given by $w_{\pi_r} = \prod_{k=1}^{r-1} n_{\pi_k}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
+Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple $\mbw$ is given by $w_{\pi_r} = \prod_{k=1}^{r-1} n_{\pi_k}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
 Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
-The location of tensor elements is determined by the tensor layout and the layout function.
-For a given tensor layout and stride tuple, a layout function $\lambda_{\mbw}$ maps a multi-index to a scalar index with $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_r (i_r-1)$, see \cite{bassoy:2018:fast,pawlowski:2019:morton.tensor.computations}.
+Their location is given by the layout function $\lambda_{\mbw}$ which maps a multi-index $\mbi$ to a scalar index such that $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_{r} (i_{r}-1)$, see also \cite{bassoy:2018:fast}.
+%For a given tensor layout $\mbpi$ and stride tuple $\mbw$, a layout function $\lambda_{\mbw}$ maps a multi-index $\mbi$ to a scalar index such that $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_{\pi_r} (i_{\pi_r}-1)$.
+%, see \cite{bassoy:2018:fast,pawlowski:2019:morton.tensor.computations}.
 %Index $j = \lambda_{\mbw} (\mbi)$ is called the relative memory position of an element.
 %Reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 %\vspace{-1em}

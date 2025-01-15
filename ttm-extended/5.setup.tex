@@ -41,18 +41,14 @@ Moreover, with the \ttt{spread} thread affinity policy, consecutive OpenMP threa
  
 
 \subsection{Tensor Shapes} 
-We have used asymmetrically and symmetrically shaped tensors in order to cover many use cases. 
-The dimension tuples of both shape types are organized within two three-dimensional arrays with which tensors are initialized.
-The dimension array for the first shape type contains $720 = 9\times 8 \times 10$ dimension tuples where the row number is the tensor order ranging from $2$ to $10$. 
-For each tensor order, $8$ tensor instances with increasing tensor size is generated.
+We evaluated the performance of our algorithms with both asymmetrically and symmetrically shaped tensors to account for a wide range of use cases. 
+The dimensions of these tensors are organized in two sets. 
+The first set consists of $720 = 9\times 8 \times 10$ dimension tuples each of which has differing elements.
+This set covers $10$ contraction modes ranging from $1$ to $10$.
+For each contraction mode, the tensor order increases from $2$ to $10$ and for a given tensor order, $8$ tensor instances with increasing tensor size are generated.
+Given the $k$-th contraction mode, the corresponding dimension array $\mbN_k$ consists of $9 \times 8$ dimension tuples $\mbn_{r,c}^k$ of length $r+1$ with $r = 1,2,\dots,9$ and $c = 1,2,\dots,8$.
+Elements $\mbn_{r,c}^k(i)$ of a dimension tuple are either $1024$ for $i = 1 \wedge k \neq 1$ or $i = 2 \wedge k = 1$, or $c \cdot 2^{15-r}$ for $i = \min(r+1,k)$ or $2$ otherwise, where $i = 1,2,\dots,r+1$.
 A special feature of this test set is that the contraction dimension and the leading dimension are disproportionately large.
 The second set consists of $336 = 6\times8\times 7$ dimensions tuples where the tensor order ranges from $2$ to $7$ and has $8$ dimension tuples for each order.
 Each tensor dimension within the second set is $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$.
-A detailed explanation of the tensor shape setup is given in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
-If not otherwise mentioned, both tensors $\mubA$ and $\mubC$ are stored according to the first-order tensor layout.
-%Matrix $\mbB$ has the row-major storage format.
-%The benchmark results of each function are the average of 10 runs.
-%\vspace{-1em}\\
-
-
-%TODO: as new computing systems are used but the same tensor shapes, we will only mention
+A similar setup has been used in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
