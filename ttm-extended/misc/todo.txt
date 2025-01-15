@@ -25,8 +25,8 @@ todo [review1]:
 Major concerns:
 [x] This paper is not self-contained, e.g., lines 228 and 632. Please write important things in this paper and do not refer to other papers to omit the explanation. Otherwise, readers will have to open the referred papers to read this paper.
     * line 228: the algorithm description has been updated and is now self-contained. it has been made clear that the following algorithm design is similar to one that has been previously described. 
-    *  line 632: the tensor setup description has been updated and is now self-contained.
-    *  line 204: improved description.
+    *  line 632: the tensor setup description has been updated and is now self-contained. TODO: should I add the dimension tables?
+    *  line 204: layout function description improved.
 
 [o] The author mentions that the performance of matrix multiplication is not memory-bound in line 156, but it is not always true, for example, a multiplication of two tall-skinny matrices and bached small matrix multiplications. For better performance analysis, it would be better to use a roofline model in the evaluation section.
     * This is correct. A matrix-matrix multiplication can be memory-bound. Line 156 has been updated accordingly.

@@ -61,19 +61,18 @@ Their location is given by the layout function $\lambda_{\mbw}$ which maps a mul
 %Reading from and writing to memory is accomplished with $j$ and the first element's address of $\mubA$.
 %\vspace{-1em}
 
-\subsection{Flattening and Reshaping}
+\subsection{Reshaping}
 \label{sec:preliminaries:flattening.reshaping}
-The following two operations define non-modifying reformatting transformations of dense tensors with contiguously stored elements and linear tensor layouts.
-
-%\subsubsection{Flattening}
-The flattening operation $\varphi_{u,v}$ transforms an order-$p$ tensor $\mubA$ with a shape $\mbn$ and layout $\mbpi$ tuple to an order-$p'$ view $\mubB$ with a shape $\mbm$ and layout $\mbtau$ tuple of length $p'$ with $p' = p-v+u$ and $1 \leq u < v \leq p$.
-It is akin to tensor unfolding, also known as matricization and vectorization \cite[p.459]{kolda:2009:decompositions}.
-However, it neither modifies the element ordering nor copies tensor elements.
-Given a layout tuple $\mbpi$ of $\mubA$, the flattening operation $\varphi_{u,v}$ is defined for contiguous modes $\mbhpi = (\pi_u,\pi_{u+1}, \dots, \pi_{v})$ of $\mbpi$.
+The reshape operation $$\varphi_{u,v}$$ defines a non-modifying reformatting transformation of dense tensors with contiguously stored elements and linear tensor layouts.
+It transforms an order-$p$ tensor $\mubA$ with a shape $\mbn$ and layout $\mbpi$ tuple to an order-$p'$ view $\mubB$ with a shape $\mbm$ and layout $\mbtau$ tuple of length $p'$ with $p' = p-v+u$ and $1 \leq u < v \leq p$.
+Given a layout tuple $\mbpi$ of $\mubA$ and contiguous modes $\mbhpi = (\pi_u,\pi_{u+1}, \dots, \pi_{v})$ of $\mbpi$, function $\varphi_{u,v}$ is defined as follows.
 With $j_k = 0$ if $k \leq u$ and $j_k = v-u$ if $k>u$ where $1 \leq k \leq p'$, the resulting layout tuple $\mbtau = (\tau_1,\dots,\tau_{p'})$ of $\mubB$ is then given by $\tau_u = \min(\mbpi_{u,v})$ and
 $\tau_k = \pi_{k+j_k} - s_k \quad \text{for} \ k \neq u$
 with $s_k = \left| \{ \pi_i \mid \pi_{k+j_k} > \pi_i \wedge \pi_i \neq \min(\mbhpi) \wedge u \leq i \leq p \} \right|$.
 Elements of the shape tuple $\mbm$ are defined by $m_{\tau_u} = \prod_{k=u}^v n_{\pi_k}$ and $m_{\tau_k} = n_{\pi_{k+j}}$ for $k \neq u$.
+Note that reshaping is not related to tensor unfolding or the flattening operations which rearrange tensors by copying tensor elements \cite[p.459]{kolda:2009:decompositions}.
+%However, it neither modifies the element ordering nor copies tensor elements.
+
 
 %\subsubsection{Reshaping}
 %Reshaping $\rho$ transforms an order-$p$ tensor $\mubA$ to another order-$p$ tensor $\mubB$ with the shape tuple $\mbm$ and layout tuple $\mbtau$ tuples, both of length $p$.

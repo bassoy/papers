@@ -145,7 +145,7 @@ The arguments of \ttt{gemm} are set according to the tensor order $p$, tensor la
 If the input matrix $\mbB$ has the row-major order, parameter \ttt{CBLAS\_ORDER} of function \ttt{gemm} is set to \ttt{CblasRowMajor} (\ttt{rm}) and \ttt{CblasColMajor} (\ttt{cm}) otherwise.
 The eighth case will be denoted as the general case in which function \ttt{gemm} is called multiple times with different tensor slices.
 Next to the eighth TTM case, there are seven corner cases where a single \ttt{gemv} or \ttt{gemm} call suffices to compute the tensor-matrix product.
-For instance if $\pi_1 = q$, the tensor-matrix product can be computed by a matrix-matrix multiplication where the input tensor $\mubA$ can be flattened into a matrix without any copy operation.
+For instance if $\pi_1 = q$, the tensor-matrix product can be computed by a matrix-matrix multiplication where the input tensor $\mubA$ can be reshaped and interpreted as a matrix without any copy operation.
 %The same can be applied when $\pi_p = q$ and five other TTM cases where the input tensor is either one or two-dimensional.
 Note that Table \ref{tab:mapping_rm_cm} supports all linear tensor layouts of $\mubA$ and $\mubC$ with no limitations on tensor order and contraction mode.
 The following subsection describes all eight TTM cases when the input matrix $\mbB$ has the row-major ordering.
@@ -178,10 +178,10 @@ The transposition of $\mbB$ is necessary for the TTM cases $2$ and $5$ which is 
 %the contraction mode $q$ is equal to $\pi_1$ 
 If $p>2$ and if $q=\pi_1$(case 6), a single \ttt{gemm} with the corresponding arguments executes $\mbC = \mbA \cdot \mbB^T$ and computes a tensor-matrix product $\mubC = \mubA \times_{\pi_1} \mbB$.
 % for any storage layout of $\mubA$ and $\mubC$
-Tensors $\mubA$ and $\mubC$ are flattened with $\varphi_{2,p}$ to row-major matrices $\mbA$ and $\mbC$.
+Tensors $\mubA$ and $\mubC$ are reshaped with $\varphi_{2,p}$ to row-major matrices $\mbA$ and $\mbC$.
 %$f_{2,p}$, see subsection \ref{sec:preliminaries:flattening}.
 Matrix $\mbA$ has $\bar{n}_{\pi_1} = \bar{n} / n_{\pi_1}$ rows and $n_{\pi_1}$ columns while matrix $\mbC$ has the same number of rows and $m$ columns.
-If $\pi_p=q$ (case 7), $\mubA$ and $\mubC$ are flattened with $\varphi_{1,p-1}$ to column-major matrices $\mbA$ and $\mbC$.
+If $\pi_p=q$ (case 7), $\mubA$ and $\mubC$ are reshaped with $\varphi_{1,p-1}$ to column-major matrices $\mbA$ and $\mbC$.
 Matrix $\mbA$ has $n_{\pi_p}$ rows and $\bar{n}_{\pi_p} =  \bar{n} / n_{\pi_p}$ columns while $\mbC$ has $m$ rows and the same number of columns.
 In this case, a single \ttt{gemm} executes $\mbC = \mbB \cdot \mbA$ and computes $\mubC = \mubA \times_{\pi_p} \mbB$.
 Noticeably, the desired contraction are performed without copy operations, see subsection \ref{sec:preliminaries:flattening.reshaping}. 
@@ -220,18 +220,18 @@ We assume that such reformulations of the matrix multiplication do not outperfor
 
 \subsection{Matrix Multiplication with Subtensors}
 \label{sec:design:blas.based.algorithm.subtensors}
-Algorithm \ref{alg:ttm.sequential.coalesced} can be slightly modified in order to call \ttt{gemm} with flattened order-$\mhq$ subtensors that correspond to larger tensor slices.
+Algorithm \ref{alg:ttm.sequential.coalesced} can be slightly modified in order to call \ttt{gemm} with reshaped order-$\mhq$ subtensors that correspond to larger tensor slices.
 Given the contraction mode $q$ with $1 < q < p$, the maximum number of additionally fusible modes is $\mhq-1$ with $\mhq = \mbpi^{-1}(q)$ where $\mbpi^{-1}$ is the inverse layout tuple.
 The corresponding fusible modes are therefore $\pi_1,\pi_2,\dots,\pi_{\mhq-1}$.
 
 The non-base case of the modified algorithm only iterates over dimensions that have indices larger than $\mhq$ and thus omitting the first $\mhq$ modes.
 The conditions in line 2 and 4 are changed to $1 < r \leq \mhq$ and $\mhq < r$, respectively.
 Thus, loop indices belonging to the outer $\pi_r$-th loop with $\mhq+1 \leq r \leq p$ define the order-$\mhq$ subtensors $\mubA_{\mbpi'}'$ and $\mubC_{\mbpi'}'$ of $\mubA$ and $\mubC$ with $\mbpi' = (\pi_1,\dots,\pi_{\mhq-1},q)$.
-Flattening the subtensors $\mubA_{\mbpi'}'$ and $\mubC_{\mbpi'}'$ with $\varphi_{1,\mhq-1}$ for the modes $\pi_1,\dots,\pi_{\mhq-1}$ yields two tensor slices with dimension $n_q$ or $m$ with the fused dimension $\bar{n}_q = \prod_{r=1}^{\mhq-1} n_{\pi_r}$ and $\bar{n}_q = w_q$.
+Reshaping the subtensors $\mubA_{\mbpi'}'$ and $\mubC_{\mbpi'}'$ with $\varphi_{1,\mhq-1}$ for the modes $\pi_1,\dots,\pi_{\mhq-1}$ yields two tensor slices with dimension $n_q$ or $m$ with the fused dimension $\bar{n}_q = \prod_{r=1}^{\mhq-1} n_{\pi_r}$ and $\bar{n}_q = w_q$.
 Both tensor slices can be interpreted either as row-major or column-major matrices with shapes $(n_q,\bar{n}_q)$ or $(w_q,\bar{n}_q)$ in case of $\mubA$ and $(m,\bar{n}_q)$ or $(\bar{n}_q,m)$ in case of $\mubC$, respectively.
 
 The \ttt{gemm} function in the base case is called with almost identical arguments except for the parameter $M$ or $N$ which is set to $\bar{n}_q$ for a column-major or row-major multiplication, respectively.
-Note that neither the selection of the subtensor nor the flattening operation copy tensor elements.
+Note that neither the selection of the subtensor nor the reshaping operation copy tensor elements.
 This description supports all linear tensor layouts and generalizes lemma 4.2 in \cite{li:2015:input} without copying tensor elements, see section \ref{sec:preliminaries:flattening.reshaping}.
 
 %\tf{rm} & 
@@ -255,7 +255,7 @@ Note that the parallelization strategies can be combined with the aforementioned
 \subsubsection{Sequential Loops and Parallel Matrix Multiplication}
 Algorithm \ref{alg:ttm.sequential.coalesced} is run for the eighth case and does not need to be modified except for  enabling \ttt{gemm} to run multi-threaded in the base case.
 This type of parallelization strategy might be beneficial with order-$\mhq$ subtensors where the contraction mode satisfies $q = \pi_{p-1}$, the inner dimensions $n_{\pi_1},\dots,n_{\mhq}$ are large and the outer-most dimension $n_{\pi_{p}}$ is smaller than the available processor cores.
-For instance, given a first-order storage format and the contraction mode $q$ with $q=p-1$ and $n_p=2$, the dimensions of flattened order-$q$ subtensors are $\prod_{r=1}^{p-2}n_r$ and $n_{p-1}$.
+For instance, given a first-order storage format and the contraction mode $q$ with $q=p-1$ and $n_p=2$, the dimensions of reshaped order-$q$ subtensors are $\prod_{r=1}^{p-2}n_r$ and $n_{p-1}$.
 This allows \ttt{gemm} to perform with large dimensions using multiple threads increasing the likelihood to reach a high throughput.
 However, if the above conditions are not met, a multi-threaded \ttt{gemm} operates on small tensor slices which might lead to an suboptimal utilization of the available cores.
 This algorithm version will be referred to as \ttt{<par-gemm>}.
@@ -268,7 +268,7 @@ Depending on the subtensor shape, we will either add \ttt{<slice>} for order-$2$
 \SetKwProg{Fn}{}{}{end}
 \SetKwFunction{Func}{ttm<par-loop><slice>}%
 \SetKwFunction{GEMM}{gemm}%
-\SetKwFunction{flatten}{flatten}%
+\SetKwFunction{reshape}{reshape}%
 \SetKw{KwWith}{with}
 \SetKw{KwStep}{step}
 \SetKw{KwThreads}{threads}
@@ -278,10 +278,10 @@ Depending on the subtensor shape, we will either add \ttt{<slice>} for order-$2$
 %\Fn{\Func{$\mubA'$, $\mubA'$$\mubC'$, $$ $\mbn'$, $\mbw'$, $m$}}
 \Fn{\Func{$\mubA$, $\mbB$, $\mubC$, $\mbn$, $\mbpi$, $m$, $q$, $p$}}
 {
-	%[$\mubA'$,$\mbn'$,$\mbw'$] $=$ \flatten($\mubA$, $\mbn$, $\mbpi$, $q$, $p$)\;
-	%[$\mubC'$,\_,\_] $=$ \flatten($\mubC$, $\mbm$, $\mbpi$, $q$, $p$)\;
-	%[$\mbn'$,$\mbw'$] $=$ \flatten($\mbn$, $\mbpi$, $q$, $p$)\;
-	[$\mubA'$, $\mubC'$, $\mbn'$, $\mbw'$] $=$ \flatten($\mubA$, $\mubC$, $\mbn$, $m$, $\mbpi$, $q$, $p$)\;
+	%[$\mubA'$,$\mbn'$,$\mbw'$] $=$ \reshape($\mubA$, $\mbn$, $\mbpi$, $q$, $p$)\;
+	%[$\mubC'$,\_,\_] $=$ \reshape($\mubC$, $\mbm$, $\mbpi$, $q$, $p$)\;
+	%[$\mbn'$,$\mbw'$] $=$ \reshape($\mbn$, $\mbpi$, $q$, $p$)\;
+	[$\mubA'$, $\mubC'$, $\mbn'$, $\mbw'$] $=$ \reshape($\mubA$, $\mubC$, $\mbn$, $m$, $\mbpi$, $q$, $p$)\;
 	\ParallelFor{$i \leftarrow 1$ \KwTo $n_{4}'$}
 	{
 		\ParallelFor{$j \leftarrow 1$ \KwTo $n_{2}'$}
@@ -295,7 +295,7 @@ Depending on the subtensor shape, we will either add \ttt{<slice>} for order-$2$
 \caption{%
 \footnotesize
 Function \tf{ttm<par-loop><slice>} is an optimized version of Algorithm \ref{alg:ttm.sequential.coalesced}.
-The \tf{flatten} function transforms the order-$p$ tensors $\mubA$ and $\mubC$ with layout tuple $\mbpi$ and their respective dimension tuples $\mbn$ and $\mbm$ into order-$4$ tensors $\mubA'$ and $\mubC'$ with layout tuple $\mbpi'$ and their respective dimension tuples $\mbn'$ and $\mbm'$ where $\mbn' = (n_{\pi_1},\mhn_{\pi_2},n_q,\mhn_{\pi_4})$ and $m_3' = m$ and $n_k' = m_k'$ for $k \neq 3$.
+The \tf{reshape} function transforms the order-$p$ tensors $\mubA$ and $\mubC$ with layout tuple $\mbpi$ and their respective dimension tuples $\mbn$ and $\mbm$ into order-$4$ tensors $\mubA'$ and $\mubC'$ with layout tuple $\mbpi'$ and their respective dimension tuples $\mbn'$ and $\mbm'$ where $\mbn' = (n_{\pi_1},\mhn_{\pi_2},n_q,\mhn_{\pi_4})$ and $m_3' = m$ and $n_k' = m_k'$ for $k \neq 3$.
 Each thread calls multiple single-threaded \tf{gemm} functions each of which executes a slice-matrix multiplication with the order-$2$ tensor slices $\mubA_{ij}'$ and $\mubC_{ij}'$.
 Matrix $\mbB$ has the row-major storage format.
 \label{alg:ttm.slice.fused.parallel}
@@ -309,7 +309,7 @@ Similar to the previous approach, the matrix multiplication can be performed wit
 
 \paragraph{Matrix Multiplication with Tensor Slices}
 Algorithm \ref{alg:ttm.slice.fused.parallel} with function \ttt{ttm}\ttt{<par-loop>}\allowbreak\ttt{<slice>} executes a single-threaded \ttt{gemm} with tensor slices in parallel using all modes except $\pi_1$ and $\pi_{\mhq}$.
-The first statement of the algorithm calls the \ttt{flatten} function which transforms tensors $\mubA$ and $\mubC$ without copying elements by calling the flattening operation $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{2},\pi_{\mhq-1}}$.
+The first statement of the algorithm calls the \ttt{reshape} function which transforms tensors $\mubA$ and $\mubC$ without copying elements by calling the reshaping operation $\varphi_{\pi_{\mhq+1},\pi_p}$ and $\varphi_{\pi_{2},\pi_{\mhq-1}}$.
 The resulting tensors $\mubA'$ and $\mubC'$ are of order $4$.
 Tensor $\mubA'$ has the shape $\mbn'=(n_{\pi_1},\mhn_{\pi_2},n_{q}, \mhn_{\pi_4})$ with the dimensions $\mhn_{\pi_2} = \prod_{r=2}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_4} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
 Tensor $\mubC'$ has the same shape as $\mubA'$ with dimensions $m_r' = n_r'$ except for the third dimension which is given by $m_3=m$.
@@ -319,16 +319,16 @@ The outer loop iterates over $n_4' = \mhn_{\pi_4}$ while the inner one loops ove
 Here, we assume that matrix $\mbB$ has the row-major format which is why both tensor slices are also treated as row-major matrices.
 Notice that \ttt{gemm} in Algorithm \ref{alg:ttm.slice.fused.parallel} will be called with exact same arguments as displayed in the eighth case in Table \ref{tab:mapping_rm_cm} where $n_{1}' = n_{\pi_1}$, $n_{3}' = n_q$ and $w_q = w_3'$. %$w_q = \prod_{r=1}^{\mhq-1} n_{\pi_r} = w_3' = n_{\pi_1} \cdot \mhn_{\pi_2} = \prod_{r=1}^{\mhq-1} n_{\pi_r}$
 For the sake of simplicity, we omitted the first three arguments of \ttt{gemm} which are set to \ttt{CblasRowMajor} and \ttt{CblasNoTrans} for \ttt{A} and \ttt{B}.
-With the help of the flattening operation, the tree-recursion has been transformed into two loops which iterate over all free indices.
+With the help of the reshaping operation, the tree-recursion has been transformed into two loops which iterate over all free indices.
 
 
 
 \paragraph{Matrix Multiplication with Subtensors}
 An alternative algorithm is given by combining Algorithm \ref{alg:ttm.slice.fused.parallel} with order-$\mhq$ subtensors that have been discussed in \ref{sec:design:blas.based.algorithm.subtensors}.
 With order-$\mhq$ subtensors, only the outer modes $\pi_{\mhq+1},\dots,\pi_{p}$ are free for parallel execution while the inner modes $\pi_{1},\dots,\pi_{\mhq-1},q$ are used for the slice-matrix multiplication.
-Therefore, both tensors are flattened twice using the flattening operations $\varphi_{\pi_{1},\pi_{\mhq-1}}$ and $\varphi_{\pi_{\mhq+1},\pi_p}$. 
-Note that in contrast to tensor slices, the first flattening also contains the dimension $n_{\pi_{1}}$.
-The flattened tensors are of order $3$ where $\mubA'$ has the shape $\mbn'=(\mhn_{\pi_1},n_{q},\mhn_{\pi_3})$ with $\mhn_{\pi_1} = \prod_{r=1}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_3} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
+Therefore, both tensors are reshaped twice using $\varphi_{\pi_{1},\pi_{\mhq-1}}$ and $\varphi_{\pi_{\mhq+1},\pi_p}$. 
+Note that in contrast to tensor slices, the first reshaping also contains the dimension $n_{\pi_{1}}$.
+The reshaped tensors are of order $3$ where $\mubA'$ has the shape $\mbn'=(\mhn_{\pi_1},n_{q},\mhn_{\pi_3})$ with $\mhn_{\pi_1} = \prod_{r=1}^{\mhq-1} n_{\pi_r}$ and $\mhn_{\pi_3} = \prod_{r=\mhq+1}^{p} n_{\pi_r}$.
 Tensor $\mubC'$ has the same dimensions as $\mubA'$ except for $m_2=m$.
 
 Algorithm \ref{alg:ttm.slice.fused.parallel} needs a minor modification for supporting order-$\mhq$ subtensors.
