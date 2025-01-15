@@ -54,7 +54,7 @@ The first- and last-order storage formats are given by $\mbpi_F = (1,2,\dots,p)$
 An inverse layout tuple $\mbpi^{-1}$ is defined by $\mbpi^{-1}(\mbpi(k)) = k$.
 Given a layout tuple $\mbpi$ with $p$ modes, the $\pi_r$-th element of a stride tuple $\mbw$ is given by $w_{\pi_r} = \prod_{k=1}^{r-1} n_{\pi_k}$ for $1 < r \leq p$ and $w_{\pi_1} = 1$.
 Tensor elements of the $\pi_1$-th mode are contiguously stored in memory.
-Their location is given by the layout function $\lambda_{\mbw}$ which maps a multi-index $\mbi$ to a scalar index such that $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_{r} (i_{r}-1)$, see also \cite{bassoy:2018:fast}.
+Their location is given by the layout function $\lambda_{\mbw}$ which maps a multi-index $\mbi$ to a scalar index such that $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_{r} (i_{r}-1)$ \cite{bassoy:2018:fast}.
 %For a given tensor layout $\mbpi$ and stride tuple $\mbw$, a layout function $\lambda_{\mbw}$ maps a multi-index $\mbi$ to a scalar index such that $\lambda_{\mbw}(\mbi) = \sum_{r=1}^p w_{\pi_r} (i_{\pi_r}-1)$.
 %, see \cite{bassoy:2018:fast,pawlowski:2019:morton.tensor.computations}.
 %Index $j = \lambda_{\mbw} (\mbi)$ is called the relative memory position of an element.

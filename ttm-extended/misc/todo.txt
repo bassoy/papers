@@ -46,6 +46,8 @@ Major concerns:
 
 Minor concerns:
 [] It would be better to make a table or something to explain , etc, and also not to use the same label for subtensors and tensor slices, for example, in Figure 2.
-[] Line 226: tensor-times-matrix -> tensor-matrix
-[] What is the "see [17, 14]" in line 204 for?
+[x] Line 226: tensor-times-matrix -> tensor-matrix
+    * This has been corrected.
+[x] What is the "see [17, 14]" in line 204 for?
+    * This has been corrected.
 [] Please cite more papers if the author write "many", for example, in lines 2 and 32.

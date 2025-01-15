@@ -2,7 +2,7 @@
 \label{sec:design}
 \subsection{Baseline Algorithm with Contiguous Memory Access}
 \label{sec:design:modified.baseline.algorithm}
-The tensor-times-matrix multiplication (TTM) in equation \ref{equ:tensor.matrix.multplication} can be implemented with a single algorithm that uses nested recursion.
+The tensor-matrix multiplication (TTM) in equation \ref{equ:tensor.matrix.multplication} can be implemented with a single algorithm that uses nested recursion.
 Similar the algorithm design presented in \cite{bassoy:2018:fast}, it consists of \ttt{if} statements with recursive calls and an \ttt{else} branch which is the base case of the algorithm.
 A naive implementation recursively selects fibers of the input and output tensor for the base case that computes a fiber-matrix product.
 The outer loop iterates over the dimension $m$ and selects an element of $\mubC$'s fiber and a row of $\mbB$. 
