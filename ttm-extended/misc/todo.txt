@@ -45,7 +45,9 @@ Major concerns:
      * starting at line 895, the following paragraphs describe cases where TLIB and the proposed algorithm is slower.
 
 Minor concerns:
-[] It would be better to make a table or something to explain , etc, and also not to use the same label for subtensors and tensor slices, for example, in Figure 2.
+[x] It would be better to make a table or something to explain , etc, and also not to use the same label for subtensors and tensor slices, for example, in Figure 2.
+    * different labels are now used for functions with subtensors and tensor slices
+    
 [x] Line 226: tensor-times-matrix -> tensor-matrix
     * This has been corrected.
 [x] What is the "see [17, 14]" in line 204 for?

@@ -139,7 +139,7 @@ The speedup of the \ttt{<subtensor>} version can be explained by the smaller loo
 %TODO: we could say something about the peak performance and how much is achievable and how much is achieved.
 
 \subsection{Parallelization Methods}
-This section discusses the performance results of the two parallelization methods \ttt{<par-gemm>} and \ttt{<par-loop>} using the same Figure \ref{fig:performance.tlib.contour}.
+This section discusses the performance results of the two parallelization methods \ttt{<par-gemm>} and \ttt{<par-loop>} in Fig \ref{fig:performance.tlib.contour}.
 
 % Asymmetrically shaped tensors
 With asymmetrically shaped tensors, both \ttt{<par-gemm>} functions with subtensors and tensor slices compute the tensor-matrix product on average with $36$ GFLOPS/core and outperform function \ttt{<par-loop,subtensor>} on average by a factor of $2.31$.
@@ -172,14 +172,14 @@ Please note that the four plots on the right, plots (c) and (d), have a logarith
 
 \subsubsection{Combined Algorithm and Batched GEMM}
 Given a row-major matrix ordering, the combined function \ttt{<combined>} achieves on the Intel processor a median throughput of $36.15$ and $4.28$ GFLOPS/core with asymmetrically and symmetrically shaped tensors.
-Reaching up to $46.96$ and $45.68$ GFLOPS/core, it is on par with \ttt{<par-gemm>} with subtensors and \ttt{<par-loop>} with tensor slices and outperforms them for some tensor instances.
+Reaching up to $46.96$ and $45.68$ GFLOPS/core, it is on par with \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>} and outperforms them for some tensor instances.
 Note that both functions run significantly slower either with asymmetrically or symmetrically shaped tensors.
 The observable superior performance distribution of \ttt{<combined>} can be attributed to the heuristic which switches between \ttt{<par-loop>} and \ttt{<par-gemm>} depending on the inner and outer loop count.
 
-Function \ttt{<batched-gemm>} of the BLAS-like extension library has a performance distribution that is akin to the \ttt{<par-loop>} with subtensors.
-In case of asymmetrically shaped tensors, all functions except \ttt{<par-loop>} with subtensors outperform \ttt{<batched-gemm>} on average by a factor of $2.57$ and up to a factor $4$ for $2 \leq q\leq5$ with $q+2 \leq p \leq q+5$. %q+2=p and q+5=p 
-In contrast, \ttt{<par-loop>} with subtensors and \ttt{<batched-gemm>} show a similar performance behavior in the plot (1c) and (1d) for symmetrically shaped tensors, running on average $3.55$ and $8.38$ times faster than \ttt{<par-gemm>} with subtensors and tensor slices, respectively.
-Function \ttt{<par-loop>} with tensor slices underperforms for $p>3$, i.e. when the tensor dimensions are less than $64$.
+Function \ttt{<batched-gemm>} of the BLAS-like extension library has a performance distribution that is akin to the \ttt{<par-loop,subtensor>}.
+In case of asymmetrically shaped tensors, all functions except \ttt{<par-loop,subtensor>} outperform \ttt{<batched-gemm>} on average by a factor of $2.57$ and up to a factor $4$ for $2 \leq q\leq5$ with $q+2 \leq p \leq q+5$. %q+2=p and q+5=p 
+In contrast, \ttt{<par-loop,subtensor>} and \ttt{<batched-gemm>} show a similar performance behavior in the plot (1c) and (1d) for symmetrically shaped tensors, running on average $3.55$ and $8.38$ times faster than \ttt{<par-gemm>} with subtensors and tensor slices, respectively.
+Function \ttt{<par-loop,slice>} underperforms for $p>3$, i.e. when the tensor dimensions are less than $64$.
 These observations have also been mentioned in \cite{bassoy:2024:ttm}.
 
 %We have also observed no performance improvement if \tf{par-gemm} was used with \tf{par-loop} which is why their distribution functions are not shown in Figure \ref{fig:performance.tlib.case8}.
@@ -208,8 +208,8 @@ In general, MKL-based functions achieve a speedup of at least $1.76$ and $1.71$ 
 Figure \ref{fig:performance.tlib.format} contains four subfigures with box plots summarizing the performance distribution of the \ttt{<combined>} function using the AOCL and MKL.
 %visualizing double-precision performance statics in double-precision TFLOPS of \tf{<gemm\_batch>} (left subfigure) and \tf{<par-loops,seq-gemm>} with subtensors (right subfigure).
 Every $k$th box plot has been computed from benchmark data with symmetrically shaped order-$7$ tensors that has a $k$-order tensor layout.
-The $1$-order and $7$-order layout, for instance, are the first-order and last-order storage formats of an order-$7$ tensor\footnote{The $k$-order tensor layout definition is given in section \ref{sec:preliminaries:layout}}.
-Note that \ttt{<combined>} only calls \ttt{<par-loop>} with subtensors.
+The $1$-order and $7$-order layout, for instance, are the first-order and last-order storage formats of an order-$7$ tensor.
+%Note that function \ttt{<combined>} only calls \ttt{<par-loop,subtensor>}.
 
 The reduced performance of around $1$ and $2$ GFLOPS can be attributed to the fact that contraction and leading dimensions of symmetrically shaped subtensors are at most $48$ and $8$, respectively.
 When \ttt{<combined>} is used with MKL, the relative standard deviations (RSD) of its median performances are $2.51$\% and $0.74$\%, with respect to the row-major and column-major formats.
@@ -218,7 +218,7 @@ Using \ttt{<combined>} with AOCL, the RSD of its median performances for the row
 The RSD of its respective IQRs are $10.83$\% and $4.31$\%, indicating a similar performance distributions.
 %TODO: The median performances and the interquartile ranges are much narrower distributed in this work than in the original paper, as we have used static scheduling for the omp distribution
 
-A similar performance behavior can be observed also for other \ttt{ttm} variants such as \ttt{par-loop} with tensor slices or \ttt{par-gemm}.
+A similar performance behavior can be observed also for other \ttt{ttm} variants such as \ttt{<par-loop,slice>}.
 The runtime results demonstrate that the function performances stay within an acceptable range independent for different $k$-order tensor layouts and show that our proposed algorithms are not designed for a specific tensor layout.
 
 \subsection{Other Approaches}
@@ -227,7 +227,7 @@ This subsection compares our best performing algorithm with libraries that do no
 \tbf{TBLIS} (v1.2.0) implements the GETT approach that is akin to BLIS' algorithm design for the matrix multiplication \cite{matthews:2018:high}.
 %TODO: add footnote that is required to enable support for zen4 and skx-2 
 The tensor extension of \tbf{Eigen} (v3.4.9) is used by the Tensorflow framework.
-Library \tbf{LibTorch} (v2.4.0) is the \tf{C++} distribution of PyTorch \cite{paszke:2019:pytorch}.
+Library \tbf{LibTorch} (v2.4.0) is the C++ distribution of PyTorch \cite{paszke:2019:pytorch}.
 \tbf{TLIB} denotes our library which only calls the previously presented algorithm \tf{<combined>}.
 We will use performance or percentage tuples of the form (TCL, TBLIS, LibTorch, Eigen) where each tuple element denotes the performance or runtime percentage of a particular library.
 
