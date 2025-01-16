@@ -1,32 +1,31 @@
 \begin{tikzpicture}
 \begin{axis}
-[
+[%
 width=0.25\textwidth,
 height=0.25\textwidth,
 style={font=\footnotesize},
 grid=major,
 grid style={dotted},
 align=center,
-%xlabel={tensor order},
 ylabel={contr. mode $q$},
 title={(1a)\\\tss{<par-loop><slice>}}, %  ompfor<slice>, asymmetric, row-major
 title style={yshift=-1ex},
 scaled ticks=false,
 zlabel={GFlops/core},
-view={0}{90}, 
-%view={-45}{45}, 
+view={0}{90},
 ytick={1,4,7,10},
 xtick={2,4,6,8,10},
 xmin=1, xmax=11,
 ymin=0, ymax=11,
 try min ticks=8,
-zmin=0, zmax=55,
-point meta min=0, point meta max=55,
-colormap/hot,
-samples=55
+zmin=0, 
+zmax=55,
+point meta min=0,
+point meta max=55,
+colormap/hot%
 ]
-\addplot3[contour filled={number=100},scatter,shader=flat]
-coordinates{
+\addplot3[contour filled={number=100},scatter,shader=flat]%
+coordinates{%
 (2.000,1.000,46.205) (2.000,2.000,48.432) (2.000,3.000,46.757) (2.000,4.000,46.289) (2.000,5.000,45.849) (2.000,6.000,45.967) (2.000,7.000,44.204) (2.000,8.000,46.356) (2.000,9.000,45.926) (2.000,10.000,44.107)
 
 (3.000,1.000,44.709) (3.000,2.000,3.490) (3.000,3.000,45.092) (3.000,4.000,39.661) (3.000,5.000,43.650) (3.000,6.000,42.987) (3.000,7.000,45.255) (3.000,8.000,44.199) (3.000,9.000,45.386) (3.000,10.000,43.884)
@@ -50,15 +49,13 @@ coordinates{
 \hfill
 \begin{tikzpicture}
 \begin{axis}
-[
+[%
 width=0.25\textwidth,
 height=0.25\textwidth,
 style={font=\footnotesize},
 grid=major,
 grid style={dotted},
 align=center,
-%xlabel={tensor order},
-%ylabel={contr. mode (q)},
 title={(1b)\\\tss{<par-loop><subtensor>}}, %  ompfor<subtensor>, asymmetric, mkl, row.major
 title style={yshift=-1ex},
 scaled ticks=false,
@@ -66,27 +63,29 @@ zlabel={GFlops},
 view={0}{90}, 
 ytick={1,4,7,10},
 xtick={2,4,6,8,10},
-xmin=1, xmax=11,
-ymin=0, ymax=11,
+xmin=1,
+xmax=11,
+ymin=0,
+ymax=11,
 try min ticks=8,
-zmin=0, zmax=55,
-point meta min=0, point meta max=55,
+zmin=0,
+zmax=55,
+point meta min=0,
+point meta max=55,
 colormap/hot, 
-samples=55,
 colorbar sampled,
 colorbar/width=0.2cm,
 colorbar style={
-	point meta min=0, point meta max=55,
-	samples=55,
-	font=\footnotesize,
-	ytick={0,30,55},
-	yticklabels={0,30,55},
-	%title={\scriptsize Gflops},
-	%ylabel={\scriptsize Gflops},
+point meta min=0, 
+point meta max=55,
+samples=55,
+font=\footnotesize,
+ytick={0,30,55},
+yticklabels={0,30,55}
 }
 ]
-\addplot3[contour filled={number=100},scatter,shader=flat]
-coordinates{
+\addplot3[contour filled={number=100},scatter,shader=flat]%
+coordinates{%
 (2.000,1.000,42.701) (2.000,2.000,48.025) (2.000,3.000,46.960) (2.000,4.000,46.462) (2.000,5.000,44.445) (2.000,6.000,45.870) (2.000,7.000,47.088) (2.000,8.000,44.348) (2.000,9.000,48.456) (2.000,10.000,46.026)
 
 (3.000,1.000,46.781) (3.000,2.000,3.490) (3.000,3.000,42.650) (3.000,4.000,44.094) (3.000,5.000,43.649) (3.000,6.000,43.013) (3.000,7.000,45.421) (3.000,8.000,44.471) (3.000,9.000,44.445) (3.000,10.000,43.995)
@@ -131,11 +130,10 @@ ymin=0, ymax=8,
 try min ticks=8,
 zmin=0, zmax=55,
 point meta min=0, point meta max=55,
-colormap/hot, 
-samples=55,
+colormap/hot
 ]
-\addplot3[contour filled={number=100}, scatter, shader=flat]
-coordinates{
+\addplot3[contour filled={number=100},scatter,shader=flat]
+coordinates{%
 (2.000,1.000,54.129) (2.000,2.000,54.324) (2.000,3.000,53.906) (2.000,4.000,54.242) (2.000,5.000,53.858) (2.000,6.000,54.180) (2.000,7.000,54.829)
 
 (3.000,1.000,28.630) (3.000,2.000,42.238) (3.000,3.000,22.607) (3.000,4.000,21.517) (3.000,5.000,22.772) (3.000,6.000,23.844) (3.000,7.000,23.517)
@@ -153,38 +151,36 @@ coordinates{
 \hfill
 \begin{tikzpicture}
 \begin{axis}
-[
+[%
 width=0.25\textwidth,
 height=0.25\textwidth,
 style={font=\footnotesize},
 grid=major,
 grid style={dotted},
 align=center,
-%xlabel={tensor order},
-%ylabel={contr. mode (q)},
-title={(1d)\\\tss{<par-loop><subtensor>}}, %  ompfor<subtensor>, symmetric, row-major
+title={(1d)\\\tss{<par-loop><subtensor>}},%  ompfor<subtensor>, symmetric, row-major
 title style={yshift=-1ex},
 scaled ticks=false,
 zlabel={GFlops},
 view={0}{90}, 
-%view={-45}{45}, 
 ytick={1,4,7,10},
 xtick={2,4,6,8},
 xmin=1, xmax=8,
 ymin=0, ymax=8,
 try min ticks=8,
 zmin=0, zmax=55,
-point meta min=0, point meta max=55,
-colormap/hot, 
-samples=55,
+point meta min=0, 
+point meta max=55,
+colormap/hot,
 colorbar sampled,
 colorbar/width=0.2cm,
 colorbar style={
-	point meta min=0, point meta max=55,
-	samples=55,
-	font=\footnotesize,
-	ytick={0,30,55},
-	yticklabels={0,30,55}
+point meta min=0, 
+point meta max=55,
+samples=55,
+font=\footnotesize,
+ytick={0,30,55},
+yticklabels={0,30,55}
 }
 ]
 \addplot3[contour filled={number=100}, scatter, shader=flat]

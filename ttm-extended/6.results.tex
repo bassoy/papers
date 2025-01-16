@@ -1,9 +1,37 @@
 \section{Results and Discussion}
 \label{sec:results}
+
+\begin{comment}
+\begin{table*}[t]
+\caption%
+{%
+\footnotesize
+Combinable and non-combinable function tags for the eighth TTM case.
+%Function tag \tf{combined} and \tf{gemm-batch} are not combinable with the other tags.
+}
+\centering
+\footnotesize
+\begin{tabular}{ll}% 
+\toprule
+Tag & Explanation \\
+\midrule
+\tf{<par-gemm> }  & \tf{ttm} sequentially executes multi-threaded gemm (section 4.4.1) \\
+\tf{<par-loop> }  & \tf{ttm} executes single-threaded \tf{gemm}s in parallel (section 4.4.2) \\
+\tf{<slice>}      & \tf{ttm} executes single- or multi-threaded gemm operates with tensor slices \\
+\tf{<subtensor>}  & \tf{ttm} executes single- or multi-threaded gemm operates with subtensors  \\  
+\tf{<combined>}   & \tf{ttm} calls one of the above functions w.r.t processor core count and tensor dimensions (section 4.4.3) \\
+\tf{<gemm-batch>} & \tf{ttm} calls function \tf{gemm\_batch} function of the MKL (section 4.4.4) \\
+\bottomrule
+\end{tabular}
+%\vspace{0.2cm}
+\label{tab:function_tags}
+\end{table*}
+\end{comment}
+
+
 \begin{figure*}[t]
-\input{fig.performance.tlib.contour-mkl-parloop}  %parloop
-\input{fig.performance.tlib.contour-mkl-pargemm}  
-%\input{fig.performance.tlib.contour-aocl}
+\input{fig.performance.tlib.contour-mkl-parloop}
+\input{fig.performance.tlib.contour-mkl-pargemm} 
 \caption{%
 \footnotesize %
 Performance contour plots in double-precision GFLOPS/core of the proposed TTM algorithms \tf{<par-loop>} and \tf{<par-gemm>} with varying tensor orders $p$ and contraction modes $q$. 
@@ -23,12 +51,12 @@ All functions have been measured on an Intel Xeon Gold 5318Y.
 \footnotesize%
 Cumulative performance distributions in double-precision GFLOPS/core of the proposed algorithms for the eighth case.
 Each distribution belongs to one algorithm:
-\tf{<mkl-batch-gemm>} (\ref{coord:gemm_batch}), %
+\tf{<batch-gemm>} (\ref{coord:gemm_batch}), %
 \tf{<combined>} (\ref{coord:optimized}),
-\tf{<par-gemm>} (\ref{coord:seq_loops_par_gemm_slice}) and
-\tf{<par-loop>} (\ref{coord:par_loops_seq_gemm_slice}) using tensor slices,
-\tf{<par-gemm>} (\ref{coord:seq_loops_par_gemm_subtensor}) and
-\tf{<par-loop>} (\ref{coord:par_loops_seq_gemm_subtensor}) using subtensors.
+\tf{<par-gemm>}\tf{<slice>} (\ref{coord:seq_loops_par_gemm_slice}) and
+\tf{<par-loop>}\tf{<slice>} (\ref{coord:par_loops_seq_gemm_slice}) using tensor slices,
+\tf{<par-gemm>}\tf{<subtensor>} (\ref{coord:seq_loops_par_gemm_subtensor}) and
+\tf{<par-loop>}\tf{<subtensor>} (\ref{coord:par_loops_seq_gemm_subtensor}) using subtensors.
 The top row of maps (1x) depict measurements performed on an Intel Xeon Gold 5318Y with the MKL while the bottom row of maps with number (2x) contain measurements performed on an AMD EPYC 9354 with the AOCL.
 Tensors are asymmetrically shaped in (a) and (b) and symmetrically shaped in (c) and (d).
 Input matrix has the row-major ordering (rm) in (a) and (c) and column-major ordering (cm) in (b) and (d).
