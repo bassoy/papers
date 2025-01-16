@@ -20,6 +20,9 @@ todo [after submission]:
 [x] rename `optimized` to `combined` 
 
 
+
+-------------------------------------------
+
 todo [review1]:
 
 Major concerns:
@@ -32,8 +35,9 @@ Major concerns:
     * This is correct. A matrix-matrix multiplication can be memory-bound. Line 156 has been updated accordingly.
 
 [x] What is the essential difference between Algorithm 2 and TTGT? Is it true that both are the same if we put all \underbar{A'}_{i,j} matrices in a continuous memory space and interpret it as a large matrix?
-    * TTGT flattens tensors into matrices with respect to the contraction mode (function x in x) while LoG, with algorithm 2 including table 1 does not flatten any of the tensors. The word flatten in this paper is a non-copy operation as defined in subsection 3.5 and in the explanation of algorithm 2 in line 463. 
-    * However, I think the reviewer is understandably confused and misguided by the word "flatten". Hence, I renamed function "flatten" to "reshape" to clarify the operation and avoid confusion. 
+    * TTGT flattens tensors into matrices with respect to the contraction mode and therefore needs to allocate additional memory and copy tensor elements. 
+    * In contrast, with our LoG-approach no copy operation is performed. Hence, here "flatten" is a non-copy operation as defined in subsection 3.5 and explained in line 463. 
+    * However, I think the reviewer is understandably confused and misguided. Hence, "flatten" is renamed to "reshape" to avoid confusion. 
 
 [x] There are some undefined words, such as TTV and TTM.
     * This is correct and has been corrected. "TTM" is now first mentioned in the introduction section and additionally defined in section.
@@ -44,12 +48,15 @@ Major concerns:
      * line 877 mentions TBLIS
      * starting at line 895, the following paragraphs describe cases where TLIB and the proposed algorithm is slower.
 
+--------------------------------
 Minor concerns:
 [x] It would be better to make a table or something to explain , etc, and also not to use the same label for subtensors and tensor slices, for example, in Figure 2.
     * different labels are now used for functions with subtensors and tensor slices
     
 [x] Line 226: tensor-times-matrix -> tensor-matrix
-    * This has been corrected.
+    * corrected.
+    
 [x] What is the "see [17, 14]" in line 204 for?
     * This has been corrected.
+    
 [] Please cite more papers if the author write "many", for example, in lines 2 and 32.
