@@ -96,10 +96,15 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 \end{figure*}
 
 
+
+
+
+
 \subsection{Slicing Methods}
 This section analyzes the performance of the two proposed slicing methods \ttt{<slice>} and \ttt{<subtensor>} that have been discussed in section \ref{subsec:parallel.multi-loops}.
 %Note that this analysis is equal to minimizing or maximizing the input parameter $M_C$.
-Fig. \ref{fig:performance.tlib.contour} contains eight performance contour plots of four \ttt{ttm} functions \ttt{<par-loop>} and \ttt{<par-gemm>} that either compute the slice-matrix product with subtensors \ttt{<subtensor>} or tensor slices \ttt{<slice>}.
+Fig. \ref{fig:performance.tlib.contour} contains eight performance contour plots of four \ttt{ttm} functions \ttt{<par-loop>} and \ttt{<par-gemm>}.
+Both functinos either compute the slice-matrix product with subtensors \ttt{<subtensor>} or tensor slices \ttt{<slice>} on the Intel Xeon Gold 5318Y CPU.
 Each contour level within the plots represents a mean GFLOPS/core value that is averaged across tensor sizes.
 
 Every contour plot contains all applicable TTM cases listed in Table \ref{tab:mapping_rm_cm}.
@@ -113,40 +118,39 @@ TTM case $8$ with multiple \ttt{gemm} calls is represented by the triangular reg
 % With <par-loop,seq-gemm>
 % Asymmetrically Shaped Tensors
 Function \ttt{<par-loop,slice>} runs on average with $34.96$ GFLOPS/core ($1.67$ TFLOPS) with asymmetrically shaped tensors.
-With a maximum performance of $57.805$ GFLOPS/core ($2.77$ TFLOPS), it performs on average $89.64$\% faster than function \ttt{<par-loop,subtensor>}.
+With a maximum performance of $57.805$ GFLOPS/core ($2.77$ TFLOPS), it performs on average $89.64$\% faster than \ttt{<par-loop,subtensor>}.
 The slowdown with subtensors at $q=p-1$ or $q=p-2$ can be explained by the small loop count of the function that are $2$ and $4$, respectively.
 While function \ttt{<par-loop,slice>} is affected by the tensor shapes for dimensions $p=3$ and $p=4$ as well, its performance improves with increasing order due to the increasing loop count.
-The performance drops and their corresponding locations on the performance plots have also been mentioned in \cite{bassoy:2024:ttm}.
-
-
+%The performance drops and their corresponding locations on the performance plots have also been mentioned in \cite{bassoy:2024:ttm}.
 %Symmetrically Shaped Tensors
 Function \ttt{<par-loop,slice>} achieves on average $17.34$ GFLOPS/core ($832.42$ GFLOPS) if symmetrically shaped tensors are used.
-Here, function \ttt{<par-loop,subtensor>} achieves a mean throughput of $17.62$ GFLOPS/core ($846.16$ GFLOPS) and is on average $9.89$\% faster than function \ttt{<par-loop,slice>}.
+If subtensors are used, function \ttt{<par-loop,subtensor>} achieves a mean throughput of $17.62$ GFLOPS/core ($846.16$ GFLOPS) and is on average $9.89$\% faster than \ttt{<par-loop,slice>}.
 The performances of both functions are monotonically decreasing with increasing tensor order, see plots (1.c) and (1.d) in Fig. \ref{fig:performance.tlib.contour}.
-The average performance decrease of both functions can be approximated by a cubic polynomial with the coefficients $-35$, $640$, $-3848$ and $8011$.
-The decreasing performance behavior for symmetrically shaped tensors has also been described in \cite{bassoy:2024:ttm}.
+%The average performance decrease of both functions can be approximated by a cubic polynomial with the coefficients $-35$, $640$, $-3848$ and $8011$.
+%The performance behavior with symmetrically shaped tensors has also been described in \cite{bassoy:2024:ttm}.
+
 
 % With <seq-loop,par-gemm>
 % Asymmetrically Shaped Tensors
 Function \ttt{<par-gemm,slice>} averages $36.42$ GFLOPS/core ($1.74$ TFLOPS) and achieves up to $57.91$ GFLOPS/core ($2.77$ TFLOPS) with asymmetrically shaped tensors.
-With subtensors, function \ttt{<par-gemm,subtensor>} exhibits almost identical performance characteristics and is on average only $3.42$\% slower than its counterpart with tensor slices.
-
+Using subtensors, function \ttt{<par-gemm,subtensor>} exhibits almost identical performance characteristics and is on average $3.42$\% slower than its counterpart with tensor slices.
 % Symmetrically Shaped Tensors
 For symmetrically shaped tensors, \ttt{<par-gemm>} with subtensors and tensor slices achieve a mean throughput $15.98$ GFLOPS/core ($767.31$ GFLOPS) and $15.43$ GFLOPS/core ($740.67$ GFLOPS), respectively.
 However, function \ttt{<par-gemm,subtensor>} is on average $87.74$\% faster than \ttt{<par-gemm,slice>} which is hardly visible due to small performance values around $5$ GFLOPS/core or less whenever $q<p$ and the dimensions are smaller than $256$.
 The speedup of the \ttt{<subtensor>} version can be explained by the smaller loop count and slice-matrix multiplications with larger tensor slices.
 
-%TODO: we could say something about the peak performance and how much is achievable and how much is achieved.
+Our findings indicate that, regardless of the parallelization method employed, subtensors are most effective with symmetrically shaped tensors, whereas tensor slices are preferable with asymmetrically shaped tensors when both the contraction mode and leading dimension are large.
+
+
 
 \subsection{Parallelization Methods}
-This section discusses the performance results of the two parallelization methods \ttt{<par-gemm>} and \ttt{<par-loop>} in Fig \ref{fig:performance.tlib.contour}.
+This subsection compares the performance results of the two parallelization methods, \ttt{<par-gemm>} and \ttt{<par-loop>}, as introduced in Section \ref{subsec:parallel.multi-loops} and illustrated in Fig. \ref{fig:performance.tlib.contour}.
 
 % Asymmetrically shaped tensors
-With asymmetrically shaped tensors, both \ttt{<par-gemm>} functions with subtensors and tensor slices compute the tensor-matrix product on average with $36$ GFLOPS/core and outperform function \ttt{<par-loop,subtensor>} on average by a factor of $2.31$.
+With asymmetrically shaped tensors, both \ttt{<par-gemm>} functions with subtensors and tensor slices compute the tensor-matrix product on average with ca. $36$ GFLOPS/core and outperform function \ttt{<par-loop,subtensor>} on average by a factor of $2.31$.
 The speedup can be explained by the performance drop of function \ttt{<par-loop,subtensor>} to $3.49$ GFLOPS/core at $q=p-1$ while both versions of \ttt{<par-gemm>} operate around $39$ GFLOPS/core.
 Function \ttt{<par-loop,slice>} performs better for reasons explained in the previous subsection.
-It is on average $30.57$\% slower than function \ttt{<par-gemm,slice>} due to the aforementioned performance drops.
-%TODO: This is different.
+However, it is on average $30.57$\% slower than function \ttt{<par-gemm,slice>} due to the aforementioned performance drops.
 
 % Symmetrically shaped tensors
 In case of symmetrically shaped tensors, \ttt{<par-loop>} with subtensors and tensor slices outperform their corresponding \ttt{<par-gemm>} counterparts by $23.3$\% and $32.9$\%, respectively.
@@ -154,13 +158,14 @@ The speedup mostly occurs when $1<q<p$ where the performance gain is a factor of
 This performance behavior can be expected as the tensor slice sizes decreases for the eighth case with increasing tensor order causing the parallel slice-matrix multiplication to perform on smaller matrices.
 In contrast, \ttt{<par-loop>} can execute small single-threaded slice-matrix multiplications in parallel.
 
-%TODO: Summarizing: * use par-loop with subtensors on symmetrically shaped tensors where the leading and contraction dimensions are relatively small. * use par-gemm with tensor slices or subtensors if your leading and contraction dimensions are large compared to the other dimensions.
+In summary, function \ttt<par-loop,subtensor> with symmetrically shaped tensors performs best.
+If the leading and contraction dimensions are large, both versions of \ttt{<par-gemm>} outperform \ttt{<par-loop>} with any type of slicing. 
 
 \subsection{Loops Over Gemm}
 The contour plots in Fig. \ref{fig:performance.tlib.contour} contain performance data that are generated by all applicable TTM cases of each \ttt{ttm} function.
-Yet, the presented slicing or parallelization methods only affect the eighth case, while all other TTM cases apply a single multi-threaded \ttt{gemm}.
+Yet, the presented slicing or parallelization methods only affect the eighth case, while all other TTM cases apply a single multi-threaded \ttt{gemm} with the same configuration.
 The following analysis will consider performance values of the eighth case in order to have a more fine grained visualization and discussion of the loops over \ttt{gemm} implementations.
-Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions of all the proposed algorithms including the  \ttt{<batched-gemm>} and \ttt{<combined>} functions for case 8 only.
+Fig. \ref{fig:performance.tlib.case8} contains cumulative performance distributions of all the proposed algorithms including the functions \ttt{<batched-gemm>} and \ttt{<combined>} for the eighth TTM case only.
 Moreover, the experiments have been additionally executed on the AMD EPYC processor and with the column-major ordering of the input matrix as well.
 
 %Explain what cumulate performance distribution means.
@@ -171,25 +176,24 @@ Please note that the four plots on the right, plots (c) and (d), have a logarith
 
 
 \subsubsection{Combined Algorithm and Batched GEMM}
+% can you refer to what figure you are referring to ?
+This subsection compares the runtime performance of the functions \ttt{<batched-gemm>} and \ttt{<combined>} against \ttt{<par-loop>} and \ttt{<par-gemm>} for the eighth TTM case.
+
 Given a row-major matrix ordering, the combined function \ttt{<combined>} achieves on the Intel processor a median throughput of $36.15$ and $4.28$ GFLOPS/core with asymmetrically and symmetrically shaped tensors.
 Reaching up to $46.96$ and $45.68$ GFLOPS/core, it is on par with \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>} and outperforms them for some tensor instances.
 Note that both functions run significantly slower either with asymmetrically or symmetrically shaped tensors.
-The observable superior performance distribution of \ttt{<combined>} can be attributed to the heuristic which switches between \ttt{<par-loop>} and \ttt{<par-gemm>} depending on the inner and outer loop count.
+The observable superior performance distribution of \ttt{<combined>} can be attributed to the heuristic which switches between \ttt{<par-loop>} and \ttt{<par-gemm>} depending on the inner and outer loop count as explained in section \ref{subsec:parallel.multi-loops}.
 
 Function \ttt{<batched-gemm>} of the BLAS-like extension library has a performance distribution that is akin to the \ttt{<par-loop,subtensor>}.
 In case of asymmetrically shaped tensors, all functions except \ttt{<par-loop,subtensor>} outperform \ttt{<batched-gemm>} on average by a factor of $2.57$ and up to a factor $4$ for $2 \leq q\leq5$ with $q+2 \leq p \leq q+5$. %q+2=p and q+5=p 
 In contrast, \ttt{<par-loop,subtensor>} and \ttt{<batched-gemm>} show a similar performance behavior in the plot (1c) and (1d) for symmetrically shaped tensors, running on average $3.55$ and $8.38$ times faster than \ttt{<par-gemm>} with subtensors and tensor slices, respectively.
-Function \ttt{<par-loop,slice>} underperforms for $p>3$, i.e. when the tensor dimensions are less than $64$.
-These observations have also been mentioned in \cite{bassoy:2024:ttm}.
+%Function \ttt{<par-loop,slice>} underperforms for $p>3$, i.e. when the tensor dimensions are less than $64$. % <- Don't know if I need this.
+%TODO:These observations have also been mentioned in \cite{bassoy:2024:ttm}.
 
-%We have also observed no performance improvement if \tf{par-gemm} was used with \tf{par-loop} which is why their distribution functions are not shown in Fig. \ref{fig:performance.tlib.case8}.
-%TODO: that could be taken up in summary or discussion section.
-%Moreover, in most cases the \tf{par-gemm} implementations are independent of the tensor shape slower than \tf{par-loops}, even for smaller tensor slices.
-%TODO: the above sentence is not true and this can also be seen the original paper
-
+In summary, \ttt{<combined>} performs as fast as, or faster than, \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape. Conversely, the function \ttt{<batched-gemm>} underperforms for asymmetrically shaped tensors with large contraction modes and leading dimensions.
 
 \subsubsection{Matrix Formats}
-%how does the matrix-ordering affect the runtime?
+This subsection discusses if the input matrix storage formats have any affect on the runtime performance of the proposed functions.
 The cumulative performance distributions in Fig. \ref{fig:performance.tlib.case8} suggest that the storage format of the input matrix has only a minor impact on the performance.
 The Euclidean distance between normalized row-major and column-major performance values is around $5$ or less with a maximum dissimilarity of $11.61$ or $16.97$, indicating a moderate similarity between the corresponding row-major and column-major data sets.
 Moreover, their respective median values with their first and third quartiles differ by less than $5$\% with three exceptions where the difference of the median values is between $10$\% and $15$\%.
@@ -217,7 +221,6 @@ The RSD of its respective interquartile ranges (IQR) are $4.29$\% and $6.9$\%, i
 Using \ttt{<combined>} with AOCL, the RSD of its median performances for the row-major and column-major formats are $25.62$\% and $20.66$\%, respectively.
 The RSD of its respective IQRs are $10.83$\% and $4.31$\%, indicating a similar performance distributions.
 %TODO: The median performances and the interquartile ranges are much narrower distributed in this work than in the original paper, as we have used static scheduling for the omp distribution
-
 A similar performance behavior can be observed also for other \ttt{ttm} variants such as \ttt{<par-loop,slice>}.
 The runtime results demonstrate that the function performances stay within an acceptable range independent for different $k$-order tensor layouts and show that our proposed algorithms are not designed for a specific tensor layout.
 
@@ -232,10 +235,13 @@ Library \tbf{LibTorch} (v2.4.0) is the C++ distribution of PyTorch \cite{paszke:
 We will use performance or percentage tuples of the form (TCL, TBLIS, LibTorch, Eigen) where each tuple element denotes the performance or runtime percentage of a particular library.
 
 
+
+
+
 Fig. \ref{fig:performance.tlib.case8} compares the performance distribution of our implementation with the previously mentioned libraries.
 Using MKL on the Intel CPU, our implementation (TLIB) achieves a median performance of $38.21$ GFLOPS/core ($1.83$ TFLOPS) and reaches a maximum performance of $51.65$ GFLOPS/core ($2.47$ TFLOPS) with asymmetrically shaped tensors.
 It outperforms the competing libraries for almost every tensor instance within the test set.
-The median library performances are ($24.16$, $29.85$, $28.66$, $14.86$) GFLOPS/core reaching on average ($84.68$, $80.61$, $78.00$, $36.94$) percent of TLIB's throughputs.
+The median library performances are ($24.16$, $29.85$, $28.66$, $14.86$) GFLOPS/core reaching on average ($84.68$, $80.61$, $78.00$, $36.94$) percent of TLIB's throughputs. 
 In case of symmetrically shaped tensors other libraries on the right plot in Fig. \ref{fig:performance.tlib.case8} run at least 2 times slower than TLIB except for TBLIS.
 TLIB's median performance is $8.99$ GFLOPS/core, other libraries achieve a median performances of ($2.70$, $9.84$, $3.52$, $3.80$) GFLOPS/core.
 On average their performances constitute ($44.65$, $98.63$, $53.32$, $31.59$) percent of TLIB's throughputs.
@@ -272,3 +278,60 @@ TBLIS and TLIB perform equally well in the $8$th TTM case, while other libraries
 
 %Comparing \tf{TCL} performance, \tf{TLIB-SB-PN} achieves an average speedup of $6$x and more than $8$x for $42$\% of the test cases with asymmetrically shaped tensors and executes on average $5$x faster with symmetrically shaped tensors.
 %In comparison with \tf{TBLIS}, \tf{TLIB-SB-PN} computes the tensor-vector product on average $4$x and $3.5$x faster for asymmetrically and symmetrically shaped tensors, respectively.
+
+\begin{table*}[h]
+\centering
+\footnotesize
+
+\begin{tabular} { l l l }
+	\toprule
+	Library & Performance & Comparison \\
+	& (min/mean/median/max) & (mean/median) [\%] \\
+	\midrule
+	TLIB      & $(9.39 / 37.27 / 38.42 / 57.87)$& \\
+	TCL       & $(0.98 / 21.96 / 24.16 / 56.34)$& $(59.38 / 84.69)$\\
+	TBLIS     & $(8.33 / 29.23 / 29.85 / 47.28)$& $(83.66 / 80.62)$\\
+	LibTorch  & $(1.05 / 24.15 / 28.68 / 46.56)$& $(70.51 / 78.00)$\\
+	Eigen     & $(5.85 / 14.06 / 14.89 / 15.67)$& $(39.88 / 36.94)$\\
+	\midrule
+	TLIB      & $(0.14 / 18.16 / 8.99 / 58.14)$ & \\
+	TCL       & $(0.04 /  9.38 / 2.71 / 56.63)$  & $(59.89 / 44.66)$\\ 
+	TBLIS     & $(1.11 / 15.37 / 9.84 / 45.03)$ & $(134.71 / 98.63)$\\
+	LibTorch  & $(0.07 / 11.07 / 3.52 / 62.20)$ & $(74.56 / 53.32)$\\
+	Eigen     & $(0.21 /  6.26 / 3.80 / 16.06)$  & $(42.59 / 31.59)$\\	
+	\bottomrule
+\end{tabular}
+%\caption%
+%{%
+%\footnotesize
+%}
+%\label{tab:comparison}
+%\end{table}
+%
+\hfill
+%\begin{table}[h]
+%\centering
+%\footnotesize
+\begin{tabular}{llll}% 
+\toprule
+Library  & Performance (Max/Min/Avg) & Comparison \\
+\midrule
+TLIB     & $24.28$    & $100.00$\% \\
+TCL      & $8.07$     & $27.97$ \% \\
+TBLIS    & $26.81$    & ??? \\
+LibTorch & $16.04$    & $62.97$ \\
+Eigen    & $11.49$    & $54.64$ \\
+\midrule
+TLIB     & $7.52$     & $100.00$\\
+TCL      & $2.03$     & $44.94$ \\
+TBLIS    & $6.18$     & $86.67$ \\
+LibTorch & $2.64$     & $57.33$ \\
+Eigen    & $5.58$     & $69.72$ \\
+\bottomrule
+\end{tabular}
+\caption%
+{%
+\footnotesize
+}
+\label{tab:comparison}
+\end{table*}

@@ -16,7 +16,7 @@ todo [before submission]:
 
 todo [after submission]:
 
-[] merge ttm back to master
+[x] merge ttm back to master
 [x] rename `optimized` to `combined` 
 
 
@@ -48,8 +48,7 @@ Major concerns:
      * line 877 mentions TBLIS
      * starting at line 895, the following paragraphs describe cases where TLIB and the proposed algorithm is slower.
 
---------------------------------
-Minor concerns:
+# Minor concerns:
 [x] It would be better to make a table or something to explain , etc, and also not to use the same label for subtensors and tensor slices, for example, in Figure 2.
     * different labels are now used for functions with subtensors and tensor slices
     

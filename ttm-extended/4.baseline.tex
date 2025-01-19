@@ -234,15 +234,6 @@ The \ttt{gemm} function in the base case is called with almost identical argumen
 Note that neither the selection of the subtensor nor the reshaping operation copy tensor elements.
 This description supports all linear tensor layouts and generalizes lemma 4.2 in \cite{li:2015:input} without copying tensor elements, see section \ref{sec:preliminaries:flattening.reshaping}.
 
-%\tf{rm} & 
-% -      & $m$ & $n_{\pi_1}$ & $n_q$ & $\mbB$  & $n_q$ & $\mubA$ & $w_q$ & $w_q$ \\
-
-%\tf{cm}
-% $\mbB$ & $n_{\pi_1}$ & $m$ & $n_q$ & $\mubA$ & $w_q$ & $\mbB$  & $m$   & $w_q$ \\
-
-
-% It is not possible to write out the new layout and shape tuples as the layout elements are adjusted depending on the layout elements ($s_k$) and the layout element index ($j_k$).
-
  
 \subsection{Parallel BLAS-based Algorithms}
 \label{subsec:parallel.multi-loops}
