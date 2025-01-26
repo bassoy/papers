@@ -211,7 +211,7 @@ In general, MKL-based functions achieve a speedup of at least $1.76$ and $1.71$ 
 \subsection{Layout-Oblivious Algorithms}
 Fig. \ref{fig:performance.tlib.format} contains four box plots summarizing the performance distribution of the \ttt{<combined>} function using the AOCL and MKL.
 %visualizing double-precision performance statics in double-precision TFLOPS of \tf{<gemm\_batch>} (left subfigure) and \tf{<par-loops,seq-gemm>} with subtensors (right subfigure).
-Every $k$th box plot has been computed from benchmark data with symmetrically shaped order-$7$ tensors that has a $k$-order tensor layout.
+Every $k$-th box plot has been computed from benchmark data with symmetrically shaped order-$7$ tensors that has a $k$-order tensor layout.
 The $1$-order and $7$-order layout, for instance, are the first-order and last-order storage formats of an order-$7$ tensor.
 %Note that function \ttt{<combined>} only calls \ttt{<par-loop,subtensor>}.
 
@@ -241,23 +241,28 @@ We will use performance or percentage tuples of the form (TCL, TBLIS, LibTorch, 
 Fig. \ref{fig:performance.tlib.case8} compares the performance distribution of our implementation with the previously mentioned libraries.
 Using MKL on the Intel CPU, our implementation (TLIB) achieves a median performance of $38.21$ GFLOPS/core ($1.83$ TFLOPS) and reaches a maximum performance of $51.65$ GFLOPS/core ($2.47$ TFLOPS) with asymmetrically shaped tensors.
 It outperforms the competing libraries for almost every tensor instance within the test set.
-The median library performances are ($24.16$, $29.85$, $28.66$, $14.86$) GFLOPS/core reaching on average ($84.68$, $80.61$, $78.00$, $36.94$) percent of TLIB's throughputs. 
-In case of symmetrically shaped tensors other libraries on the right plot in Fig. \ref{fig:performance.tlib.case8} run at least 2 times slower than TLIB except for TBLIS.
-TLIB's median performance is $8.99$ GFLOPS/core, other libraries achieve a median performances of ($2.70$, $9.84$, $3.52$, $3.80$) GFLOPS/core.
-On average their performances constitute ($44.65$, $98.63$, $53.32$, $31.59$) percent of TLIB's throughputs.
+The median library performances are up to $29.85$ GFLOPS/core reaching at most $84.68$\% of TLIB's throughputs. %($24.16$, $29.85$, $28.66$, $14.86$) 
+In case of symmetrically shaped tensors, TLIB's median performance is $8.99$ GFLOPS/core.
+Other libraries except for TBLIS run at least 2 times slower than TLIB.
+TBLIS computes the product with $9.84$ GFLOPS/core and reaches in median $98.63$\% of TLIB's throughput.
 
-On the AMD CPU, our implementation with AOCL computes the tensor-times-matrix product on average with $24.28$ GFLOPS/core ($1.55$ TFLOPS) and reaches a maximum performance of $45.84$ GFLOPS/core ($2.93$ TFLOPS) with asymmetrically shaped tensors.
+%on the right plot in Fig. \ref{fig:performance.tlib.case8}
+%TLIB's median performance is $8.99$ GFLOPS/core, other libraries achieve a median performances of ($2.70$, $9.84$, $3.52$, $3.80$) GFLOPS/core.
+%On average their performances constitute ($44.65$, $98.63$, $53.32$, $31.59$) percent of TLIB's throughputs.
+
+On the AMD CPU, our implementation with AOCL computes the tensor-times-matrix product in median with $24.28$ GFLOPS/core ($1.55$ TFLOPS), reaching a maximum performance of $50.18$ GFLOPS/core ($3.21$ TFLOPS) with asymmetrically shaped tensors.
 TBLIS reaches $26.81$ GFLOPS/core ($1.71$ TFLOPS) and is slightly faster than TLIB. 
-However, TLIB's upper performance quartile with $30.82$ GFLOPS/core is slightly larger. 
-TLIB outperforms other competing libraries that have a median performance of ($8.07$, $16.04$, $11.49$) GFLOPS/core reaching on average ($27.97$, $62.97$, $54.64$) percent TLIB's throughputs.
-In case of symmetrically shaped tensors, TLIB outperforms all other libraries with $7.52$ GFLOPS/core ($481.39$ GFLOPS) and a maximum performance of $47.78$ GFLOPS/core ($3.05$ TFLOPS).
-Other libraries perform with ($2.03$, $6.18$, $2.64$, $5.58$) GFLOPS/core and reach ($44.94$, $86.67$, $57.33$, $69.72$) percent of TLIB's throughputs.
+However, TLIB's upper performance quartile with $30.82$ GFLOPS/core is slightly larger.
+TLIB outperforms the remaining libraries reaching at most $62.97$\% percent of TLIB's throughputs.
+%that have a median performance of ($8.07$, $16.04$, $11.49$) GFLOPS/core reaching on average ($27.97$, $62.97$, $54.64$) percent TLIB's throughputs.
+In case of symmetrically shaped tensors, TLIB has a median performance of $7.52$ GFLOPS/core ($481.39$ GFLOPS)
+It outperforms all other libraries which reach at most $86.67$\% of TLIB's throughputs.
 We have observed that TCL and LibTorch have a median performance of less than $2$ GFLOPS/core in the $3$rd and $8$th TTM case which is less than $6$\% and $10$\% of TLIB's median performance with asymmetrically and symmetrically shaped tensors, respectively.
 
-While all libraries run on average $25$\% slower than TLIB across all TTM cases, there are few exceptions.
+In most instances, TLIB is able to outperform the competing libraries across all TTM cases.
+However, there are few exceptions.
 On the AMD CPU, TBLIS reaches $101$\% of TLIB's performance for the $6$th TTM case and LibTorch performs as fast as TLIB for the $7$th TTM case for asymmetrically shaped tensors.
 One unexpected finding is that LibTorch achieves $96$\% of TLIB's performance with asymmetrically shaped tensors and only $28$\% in case of symmetrically shaped tensors.
-
 %A similar runtime ratio can be observed with asymmetrically shaped tensors on the Intel Xeon Gold 5318Y.
 %The competing libraries run on average with less than or equal to $85$\% of TLIB's average performance for all TTM cases independent of the tensor shape with few exceptions.
 On the Intel CPU, LibTorch is on average $9.63$\% faster than TLIB in the $7$th TTM case.
@@ -266,43 +271,31 @@ The performances of TLIB and TBLIS are in the $8$th TTM case almost on par, TLIB
 In case of symmetrically shaped tensors, all libraries except Eigen outperform TLIB by about $13$\%, $42$\% and $65$\% in the $7$th TTM case.
 TBLIS and TLIB perform equally well in the $8$th TTM case, while other libraries only reach on average $30$\% of TLIB's performance.
 
-
-%All libraries operate with $801.68$ or less GFLOPS for the cases 2 and 3 which is almost half of tlib's performance with $1579$ GFLOPS.
-%TODO: This is a bit less 
-%The median performance and the interquartile range of tblis and tlib for the cases 6 and 7 are almost the same.
-%Their respective median GFLOPS are $255.23$ and $263.94$ for the sixth case and $121.17$ and $144.27$ for the seventh case.
-%This explains the similar performance distributions when their performance is less than $400$ GFLOPS.
-%Libtorch and eigen compute the tensor-matrix product, in median, with $17.11$ and $9.64$ Gfops/s, respectively.
-%Our library tlib has a median performance of $102.11$ GFLOPS and outperforms tblis with $79.35$ GFLOPS for the eighth case.
-
-
-%Comparing \tf{TCL} performance, \tf{TLIB-SB-PN} achieves an average speedup of $6$x and more than $8$x for $42$\% of the test cases with asymmetrically shaped tensors and executes on average $5$x faster with symmetrically shaped tensors.
-%In comparison with \tf{TBLIS}, \tf{TLIB-SB-PN} computes the tensor-vector product on average $4$x and $3.5$x faster for asymmetrically and symmetrically shaped tensors, respectively.
-
 \begin{table*}[h]
 \centering
 \footnotesize
 
 \begin{tabular} { l l l }
 	\toprule
-	Library & Performance & Comparison \\
-	& (min/mean/median/max) & (mean/median) [\%] \\
+	Library & Performance [GFLOPS/core] & Ratio [\%] \\
+	& (min/median/max) & (median) \\
 	\midrule
-	TLIB      & $(9.39 / 37.27 / 38.42 / 57.87)$& \\
-	TCL       & $(0.98 / 21.96 / 24.16 / 56.34)$& $(59.38 / 84.69)$\\
-	TBLIS     & $(8.33 / 29.23 / 29.85 / 47.28)$& $(83.66 / 80.62)$\\
-	LibTorch  & $(1.05 / 24.15 / 28.68 / 46.56)$& $(70.51 / 78.00)$\\
-	Eigen     & $(5.85 / 14.06 / 14.89 / 15.67)$& $(39.88 / 36.94)$\\
+	TLIB      & $(\mathbf{9.39} / \mathbf{38.42} / \mathbf{57.87})$ & \\
+	TCL       & $(0.98 / 24.16 / 56.34)$ & $84.69$\\
+	TBLIS     & $(8.33 / 29.85 / 47.28)$ & $80.62$\\
+	LibTorch  & $(1.05 / 28.68 / 46.56)$ & $78.00$\\
+	Eigen     & $(5.85 / 14.89 / 15.67)$ & $36.94$\\
 	\midrule
-	TLIB      & $(0.14 / 18.16 / 8.99 / 58.14)$ & \\
-	TCL       & $(0.04 /  9.38 / 2.71 / 56.63)$  & $(59.89 / 44.66)$\\ 
-	TBLIS     & $(1.11 / 15.37 / 9.84 / 45.03)$ & $(134.71 / 98.63)$\\
-	LibTorch  & $(0.07 / 11.07 / 3.52 / 62.20)$ & $(74.56 / 53.32)$\\
-	Eigen     & $(0.21 /  6.26 / 3.80 / 16.06)$  & $(42.59 / 31.59)$\\	
+	TLIB      & $(0.14 / 8.99 / 58.14)$ & \\
+	TCL       & $(0.04 / 2.71 / 56.63)$ & $44.66$\\ 
+	TBLIS     & $(\mathbf{1.11} / \mathbf{9.84} / 45.03)$ & $98.63$\\
+	LibTorch  & $(0.07 / 3.52 / \mathbf{62.20})$ & $53.32$\\
+	Eigen     & $(0.21 / 3.80 / 16.06)$ & $31.59$\\	
 	\bottomrule
 \end{tabular}
 %\caption%
 %{%
+%Intel Xeon Gold top/bottom equals asymmetric/symmetric
 %\footnotesize
 %}
 %\label{tab:comparison}
@@ -312,26 +305,29 @@ TBLIS and TLIB perform equally well in the $8$th TTM case, while other libraries
 %\begin{table}[h]
 %\centering
 %\footnotesize
-\begin{tabular}{llll}% 
-\toprule
-Library  & Performance (Max/Min/Avg) & Comparison \\
-\midrule
-TLIB     & $24.28$    & $100.00$\% \\
-TCL      & $8.07$     & $27.97$ \% \\
-TBLIS    & $26.81$    & ??? \\
-LibTorch & $16.04$    & $62.97$ \\
-Eigen    & $11.49$    & $54.64$ \\
-\midrule
-TLIB     & $7.52$     & $100.00$\\
-TCL      & $2.03$     & $44.94$ \\
-TBLIS    & $6.18$     & $86.67$ \\
-LibTorch & $2.64$     & $57.33$ \\
-Eigen    & $5.58$     & $69.72$ \\
-\bottomrule
+\begin{tabular} { l l l }
+	\toprule
+	Library & Performance [GFLOPS/core] & Ratio [\%] \\
+	& (min/median/max) & (median) \\
+	\midrule
+	TLIB     & $(2.71 / 24.28 / \mathbf{50.18})$ & \\
+	TCL      & $(0.61 / 8.08  / 41.82)$ & $27.97$ \\
+	TBLIS    & $(\mathbf{9.06} / \mathbf{26.81} / 43.83)$ & $94.19$ \\
+	LibTorch & $(0.63 / 16.04 / 50.84)$ & $62.97$ \\
+	Eigen    & $(4.06 / 11.49 / 35.08)$ & $54.65$ \\
+	\midrule
+	TLIB     & $(0.02 / \mathbf{7.52} / \mathbf{54.16})$ & \\
+	TCL      & $(0.03 / 2.03 / 42.47)$ & $44.94$ \\
+	TBLIS    & $(\mathbf{0.39} / 6.19 / 41.11)$ & $86.67$ \\
+	LibTorch & $(0.05 / 2.64 / 46.65)$ & $57.33$ \\
+	Eigen    & $(0.10 / 5.58 / 36.76)$ & $69.72$ \\
+	\bottomrule
 \end{tabular}
 \caption%
 {%
 \footnotesize
+Performance comparison of TLIB with other tensor libraries.
+The performance tests are run on the Intel Xeon Gold (left) and AMD EPYC CPU (right) where the upper/lower parts are tested with asymmetrically/symmetrically shaped tensors.
 }
 \label{tab:comparison}
 \end{table*}
