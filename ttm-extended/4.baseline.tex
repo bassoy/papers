@@ -13,14 +13,16 @@ if it elements are stored contiguously along its rows.
 %However, copy operations reduce the overall throughput of the operation, see \cite{shi:2016:tensor.contraction}.
 
 A better approach is illustrated in algorithm \ref{alg:ttm.sequential.coalesced} where the loop order is adjusted to the tensor layout $\mbpi$ and memory is accessed contiguously for $\pi_1 \neq q$ and $p > 1$.
-The rearrangement of the loop order is accomplished in line 5 which uses the layout tuple $\mbpi$ to select a multi-index element $i_{\pi_r}$ and to increment it with the corresponding stride $w_{\pi_r}$.
-Hence, with increasing recursion level and decreasing $r$, indices are incremented with smaller strides as $w_{\pi_r} \leq w_{\pi_{r+1}}$.
+The algorithm takes the input order-$p$ tensor $\mubA$, input matrix $\mbB$, order-$p$ output tensor $\mubC$, the shape tuple $\mbn$ of $\mubA$, the layout tuple $\mbpi$ of both tensors, an index tuple $\mbpi$ of length $p$, the first dimension $m$ of $\mbB$, the contraction mode $q$ with $1 \leq q \leq p$ and $\mhq=\mbpi^{-1}(q)$.
+The algorithm is initially called with $\mbi = \mathbf{0}$ and $r=p$.
+With increasing recursion level and decreasing $r$, the algorithm increments indices with smaller strides as $w_{\pi_r} \leq w_{\pi_{r+1}}$.
+This is accomplished in line 5 which uses the layout tuple $\mbpi$ to select a multi-index element $i_{\pi_r}$ and to increment it with the corresponding stride $w_{\pi_r}$.
 %The condition of the second \ttt{if} statement in line 4 is changed from $r \geq 1$ to $r > 1$.
-The second \ttt{if} statement in line number 4 allows the loop over mode $\pi_1$ to be placed into the base case which contains three loops performing a slice-matrix multiplication.
+The two \ttt{if} statements in line number 2 and 4 allow the loops over modes $q$ and $\pi_1$ to be placed into the base case in which a slice-matrix multiplication is performed.
 %the minimum stride $w_{\pi_1}$ to be included in the base case.
 %The latter now contains three loops performing a slice-matrix multiplication. 
 %The loop ordering are adjusted according to the tensor and matrix layout.
-In this way, the inner-most loop is able to increment $i_{\pi_1}$ with a unit stride and contiguously accesses tensor elements of $\mubA$ and $\mubC$.
+The inner-most loop of the base case increments $i_{\pi_1}$ with a unit stride and contiguously accesses tensor elements of $\mubA$ and $\mubC$.
 The second loop increments $i_q$ with which elements of $\mbB$ are contiguously accessed if $\mbB$ is stored in the row-major format.
 The third loop increments $j$ and could be placed as the second loop if $\mbB$ is stored in the column-major format.
 %The loop ordering are adjusted according to the tensor and matrix layout.
@@ -70,7 +72,7 @@ The third loop increments $j$ and could be placed as the second loop if $\mbB$ i
 Modified baseline algorithm for TTM with contiguous memory access.
 The tensor order $p$ must be greater than $1$ and the contraction mode $q$ must satisfy $1 \leq q \leq p$ and $\pi_1 \neq q$.
 The initial call must happen with $r=p$ where $\mbn$ is the shape tuple of $\mubA$ and $m$ is the $q$-th dimension of $\mubC$. 
-%Iteration along mode $q$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
+Iteration along mode $q$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most recursion level.
 \label{alg:ttm.sequential.coalesced}
 }
 \end{algorithm}
