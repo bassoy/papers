@@ -61,7 +61,7 @@ Major concerns:
 [x] I don’t think the author needs to describe how to switch from row to column-major order for the matrix in TTM (sections 4.2.2 and 4.2.3), since this is well-known.
     * section 4.2.2. describes the adaption of table 1 for a column-major matrix
     * section 4.2.3. describes the adaption of table 1 if the multiplication format differs from the one of the input matrix
-    * In both cases, the adaptions can be cumbersome (multiple arguments must be adjusted) which is why I would like to leave the brief description
+    * In both cases, the adaptions can be cumbersome (multiple arguments must be adjusted) which is why I would like to leave the brief description.
 
 [] I think the paper would be well-served by including numerical comparisons on some real data set, to make the contributions of the paper more concrete. My suggestion would be the SP data set which was used in some of the above papers, and is available publicly at https://sdrbench.github.io/ (under the title of S3D).
 
