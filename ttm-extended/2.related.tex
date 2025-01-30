@@ -34,6 +34,20 @@ Their algorithm iterate over blocked tensors and perform tensor-vector multiplic
 They are able to achieve high performance and mode-oblivious computations.
 
 
+In \cite{ballard:2020:tuckermpi} the authors present a C++ software package (TuckerMPI) for large-scale data compression using tensor tucker decomposition.
+The library provides a parallel C++ function of the latter containing distributed functions with MPI for the Gram computation and tensor-matrix multiplication.
+Th latter invokes a local version that contains a multi-threaded \ttt{gemm} computing the tensor-matrix product with submatrices according to the LoG approach.
+The presented local TTM corresponds to our \ttt{<par-gemm,subtensor>} version.
+\begin{comment}
+ which is used 
+The local version is used in the global version of the TTM.
+* the parallel/global version distributes the tensor in blockwise fashion (algorithm 2) 
+* the product sizes in TuckerMPI (sec. 2.1) are called strides in our TTM paper (sec 3.4).
+* the index to linear and its inverse transformation idx2lin/lin2indx transformation is genearlized in our TTM paper (sec.3.4)
+* algorithm 3 (sec. 5.3) corresponds to function `<par-gemm,subtensor>` version in our TTM paper (sec 4.4.1)
+\end{comment}
+
+
 %Our work is inspired by \cite{li:2015:input} and \cite{bassoy:2019:ttv}.
 %We use lemmas for tensor slicing in \cite{li:2015:input} and generalize them for tensors with any linear tensor layouts. 
 %We have adapted the eight cases in \cite{bassoy:2019:ttv} for tensor-matrix multiplication and derived the slicing and parallezation method.

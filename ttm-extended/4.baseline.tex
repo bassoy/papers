@@ -235,7 +235,7 @@ Both tensor slices can be interpreted either as row-major or column-major matric
 The \ttt{gemm} function in the base case is called with almost identical arguments except for the parameter $M$ or $N$ which is set to $\bar{n}_q$ for a column-major or row-major multiplication, respectively.
 Note that neither the selection of the subtensor nor the reshaping operation copy tensor elements.
 This description supports all linear tensor layouts and generalizes lemma 4.2 in \cite{li:2015:input} without copying tensor elements, see section \ref{sec:preliminaries:flattening.reshaping}.
-
+The division in large subtensors has also been described in \cite{ballard:2020:tuckermpi} for tensors with a first-order layout.
  
 \subsection{Parallel BLAS-based Algorithms}
 \label{subsec:parallel.multi-loops}

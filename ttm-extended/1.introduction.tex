@@ -15,12 +15,12 @@ Implementations of the LoG and TTGT approaches are in general easier to maintain
 %todo: Compiler-based approaches like as described in \cite{gareev:2018:high} 
 
 
-In this work, we present high-performance algorithms for the tensor-matrix multiplication (TTM) which is used in important numerical methods such as the higher-order singular value decomposition \citep{lathauwer:2000:hosvd, kolda:2009:decompositions, lee:2018:fundamental}.
+In this work, we present high-performance algorithms for the tensor-matrix multiplication (TTM) which is used in important numerical methods such as the higher-order singular value decomposition and higher-order orthogonal iteration \citep{lathauwer:2000:hosvd, kolda:2009:decompositions, lee:2018:fundamental} .
 TTM is a compute-bound tensor operation and has the same arithmetic intensity as a matrix-matrix multiplication which can almost reach the practical peak performance of a computing machine.
 %%with free tensor indices, most implementations of the above mentioned approaches reach near peak performance of the computing machine\cite{springer:2018:design, matthews:2018:high,shi:2016:tensor.contraction}. 
 To our best knowledge, we are the first to combine the LoG-approach described in \citep{bassoy:2019:ttv, pawlowski:2019:morton.tensor.computations} for tensor-vector multiplications with the findings on tensor slicing for the tensor-matrix multiplication in \citep{li:2015:input}.
 Our algorithms support dense tensors with any order, dimensions and any linear tensor layout including the first- and the last-order storage formats for any contraction mode all of which can be runtime variable.
-This enables other frameworks non-column-major storage formats to easily integrate our library without tensor reformatting and unnecessary copy operations. 
+Supporting arbitrary tensor layouts enables other frameworks non-column-major storage formats to easily integrate our library without tensor reformatting and unnecessary copy operations%
 \footnote{For example, Tensorly \citep{kossaifi:2019:tensorly} requires tensors to be stored in the last-order storage format (row-major).}.
 Our implementation compute the tensor-matrix product in parallel using efficient GEMM without transposing or flattening tensors.
 In addition to their high performance, all algorithms are layout-oblivious and provide a sustained performance independent of the tensor layout and without tuning.
