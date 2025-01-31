@@ -16,7 +16,9 @@ In case of large tensor slices, our best-performing algorithm achieves a median 
 %
 Furthermore, it outperforms batched GEMM implementation of Intel MKL by a factor of $2.57$ with large tensor slices.
 %
-For the majority of the test cases, our best implementation is on average $17.98$\% faster than other state-of-the-art approaches, including actively developed libraries like Libtorch and Eigen.
+Our runtime tests show that TLIB'S function \ttt{<combined>} is, in median, between $15.38$\% and $257.58$\% faster than most state-of-the-art approaches, including actively developed libraries like Libtorch and Eigen.
+%
+It is on par with TBLIS for many tensor shapes which uses optimized kernels for the TTM computation.
 %
 This work is an extended version of the article "Fast and Layout-Oblivious Tensor-Matrix Multiplication with BLAS" (Bassoy, 2024)\cite{bassoy:2024:ttm}.
 \end{abstract}

@@ -337,8 +337,8 @@ If the leading and contraction dimensions are large, functions with a multi-thre
 We have also shown that our \ttt{<combined>} performs in most cases as fast as \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape.
 Function \ttt{<batched-gemm>} is less efficient in case of asymmetrically shaped tensors with large contraction and leading dimensions.
 While matrix storage formats have only a minor impact on TTM performance, runtime measurements show that a TTM using MKL on the Intel Xeon Gold 5318Y CPU achieves higher per-core performance than a TTM with AOCL on the AMD EPYC 9354 processor.
-Our runtime measurements also reveal that our algorithms perform consistently well across different $k$-order tensor layouts, indicating that they are layout-oblivious and do not depend on a specific tensor format.
-Our runtime tests with other competing libraries reveal that algorithm \ttt{<combined>} has a median performance speedup of $15.38$\%.
-It is on par with TBLIS which uses optimized kernels for the multiplication.
+We have also demonstrated that our algorithms perform consistently well across different $k$-order tensor layouts, indicating that they are layout-oblivious and do not depend on a specific tensor format.
+Our runtime tests show that TLIB'S function \ttt{<combined>} is, in median, between $15.38$\% and $257.58$\% faster than other competing libraries, except for TBLIS.
+TLIB is either on par with or slightly outperforms TBLIS for many tensor shapes which uses optimized kernels for the TTM computation.
 Table \ref{tab:comparison} contains the minimum, median, and maximum runtime performances including TLIB's speedups for the whole tensor test sets.
 

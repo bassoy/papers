@@ -1,21 +1,23 @@
-\section{Conclusion and Future Work}
-\label{sec:conclusion}
+\section{Summary}
+\label{sec:summary}
 We have presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication that is essential for many tensor methods.
 Our approach is based on the LOG-method and computes the tensor-matrix product in-place without transposing tensors.
 It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input} for linear tensor layouts.
 The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
 
 The base algorithm has been divided into eight different TTM cases where seven of them perform a single \ttt{cblas\_gemm}.
-We have presented multiple algorithm variants for the general TTM case which either calls a single- or multi-threaded \ttt{cblas\_gemm} with small or large tensor slices in parallel or sequentially.
-We have developed a simple heuristic that selects one of the variants based on the performance evaluation in the original work \cite{bassoy:2024:ttm}.
+We have presented multiple algorithm variants for the general (eighth) TTM case which either calls a single- or multi-threaded \ttt{cblas\_gemm} with small or large tensor slices in parallel or sequentially.
+We have applied a simple heuristic that selects one of the variants based on the performance evaluation in the original work \cite{bassoy:2024:ttm}.
 With a large set of tensor instances of different shapes, we have evaluated the proposed variants on an Intel Xeon Gold 5318Y and an AMD EPYC 9354 CPUs.
 
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
 Our performance tests show that our algorithms are layout-oblivious and do not need layout-specific optimizations, even for different storage ordering of the input matrix.
 Despite the flexible design, our best-performing algorithm is able to outperform Intel's BLAS-like extension function \ttt{cblas\_gemm\_batch} by a factor of $2.57$ in case of asymmetrically shaped tensors.
-Moreover, the presented performance results show that TLIB is able to compute the tensor-matrix product on average $25$\% faster than other state-of-the-art implementations for a majority of tensor instances.
+Moreover, the presented performance results show that TLIB is able to compute the tensor-matrix product in median $15.38$\% faster than most state-of-the-art implementations.
 
 Our findings show that the LoG-based approach is a viable solution for the general tensor-matrix multiplication which can be as fast as or even outperform efficient GETT-based implementations.
-Hence, other actively developed libraries such as LibTorch and Eigen might benefit from implementing the proposed algorithms.
+Hence, other actively developed libraries such as LibTorch, TuckerMPI and Eigen might benefit from implementing the proposed algorithms.
 Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 
 In the near future, we intend to incorporate our implementations in TensorLy, a widely-used framework for tensor computations \cite{cohen:2022:tensor.computations, kossaifi:2019:tensorly}.

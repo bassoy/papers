@@ -52,7 +52,7 @@ Major concerns:
 [x] The author needs to describe how this work contrasts with the well-known TuckerMPI approach, described in “TuckerMPI: A Parallel C++/MPI Software Package for Large-scale Data Compression via the Tucker Tensor Decomposition,” [...] There is also a thread-parallel implementation that is relevant, described in De et al, “Hybrid Parallel Tucker Decomposition of Streaming Data”, in PASC’23, https://doi.org/10.1145/3659914.36599.
     * The TuckerMPI approach has now been described and referenced in section 2 Previous Work. 
     * It has also been referenced in the algorithm section in our TTM paper (Section 4.3). Algorithm 3 in Section 5.3 in the TuckerMPI paper corresponds to function `<par-gemm,subtensor>` version in our TTM paper (Section 4.4.1).
-    * We have measured the local TTM version of TuckerMPI and included the performance results in Section 6.5, Figure 4, Table 2. [todo] <-continue
+    * We have measured the local TTM version of TuckerMPI and included the performance results in Section 6.5, Figure 4, Table 2.
     * The global function with MPI in TuckerMPI computes TTM on multiple CPU nodes. This topic is not covered by our paper as it measures only the single-node performance. 
 
 [x] One contribution claimed by the author is ability to do an in-place TTM, inwhich case the author should also contrast this work with “FIST-HOSVD: fused in-place sequentially truncated higher order singular value decomposition”. I think the author should then include memory usage in the numerical comparisons instead of focusing purely on compute time/throughput.
