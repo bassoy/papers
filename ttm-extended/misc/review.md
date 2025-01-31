@@ -53,7 +53,7 @@ Major concerns:
     * The TuckerMPI approach has now been described and referenced in section 2 Previous Work. 
     * It has also been referenced in the algorithm section in our TTM paper (Section 4.3). Algorithm 3 in Section 5.3 in the TuckerMPI paper corresponds to function `<par-gemm,subtensor>` version in our TTM paper (Section 4.4.1).
     * We have measured the local TTM version of TuckerMPI and included the performance results in Section 6.5, Figure 4, Table 2. [todo] <-continue
-    * The global function with MPI computes TTM on multiple CPU nodes which is not covered by our paper.
+    * The global function with MPI in TuckerMPI computes TTM on multiple CPU nodes. This topic is not covered by our paper as it measures only the single-node performance. 
 
 [x] One contribution claimed by the author is ability to do an in-place TTM, inwhich case the author should also contrast this work with “FIST-HOSVD: fused in-place sequentially truncated higher order singular value decomposition”. I think the author should then include memory usage in the numerical comparisons instead of focusing purely on compute time/throughput.
     * FIST-HOSVD focuses on combining TTM and Gram kernels within the context of the ST-HOSVD algorithm. It also proposes an in-place
