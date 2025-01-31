@@ -45,9 +45,17 @@ In summary, the main findings of our work are:
 	\item 
 	Our best-performing algorithm is a factor of $2.57$ faster than Intel's batched GEMM implementation for large tensor slices.
 	\item
-	Our best-performing algorithm is on average $25.05$\% faster than other state-of-the art library implementations, including LibTorch and Eigen.
+	Our best-performing algorithm has a median performance speedup between $15.38$\% and $257.58$\% compared to other state-of-the art library implementations, including LibTorch and Eigen.
 	% state-of-the-art approaches and actively developed libraries.
 \end{itemize}
+
+
+This work is an extended version of the article "Fast and Layout-Oblivious Tensor-Matrix Multiplication with BLAS" \cite{bassoy:2024:ttm}. 
+Compared to our previous publication, we have made several significant additions. 
+We conducted runtime tests on a more recent Intel Xeon Gold 5318Y CPU and expanded our study to include AMD's AOCL, running additional benchmarks on an AMD EPYC 9354 CPU. 
+We incorporated a newer version of TBLIS while also testing the TuckerMPI TTM implementation. 
+Furthermore, we extended our implementations to support the column-major matrix storage format and benchmarked our algorithms for both row-major and column-major layouts, analyzing the runtime results in detail. 
+Lastly, we introduced a heuristic that enables the use of a single TTM algorithm, ensuring efficiency across different storage formats and a wide range of tensor shapes.
 
 The remainder of the paper is organized as follows. 
 Section~\ref{sec:related} presents related work.

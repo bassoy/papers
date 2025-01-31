@@ -1,3 +1,6 @@
+[] recheck all line numbers in this file 
+[] check for todos in the paper
+
 -----------------------------
 --------- [review1] ---------
 -----------------------------
@@ -5,8 +8,8 @@
 Major concerns:
 [x] This paper is not self-contained, e.g., lines 228 and 632. Please write important things in this paper and do not refer to other papers to omit the explanation. Otherwise, readers will have to open the referred papers to read this paper.
     * line 228: the algorithm description has been updated and is now self-contained. it has been made clear that the following algorithm design is similar to one that has been previously described. 
-    *  line 632: the tensor setup description has been updated and is now self-contained. [todo] should I add the dimension tables?
-    *  line 204: layout function description improved.
+    * line 632: the tensor setup description has been updated and is now self-contained. [todo] should I add the dimension tables?
+    * line 204: layout function description improved.
 
 [o] The author mentions that the performance of matrix multiplication is not memory-bound in line 156, but it is not always true, for example, a multiplication of two tall-skinny matrices and bached small matrix multiplications. For better performance analysis, it would be better to use a roofline model in the evaluation section.
     * This is correct. A matrix-matrix multiplication can be memory-bound. Line 156 has been updated accordingly.
@@ -46,7 +49,7 @@ Major concerns:
 -----------------------------
 
 [x] The author needs to motivate why designing a TTM operation for an arbitrary tensor layout is important. Prior works have generally focused on choosing some fixed layout (usually row or column oriented), and then argued that for tensors that don’t satisfy this assumption, the tensor dimension order can always be permuted to match the assumed ordering. Why not just fix a layout but develop TTM operations for an arbitrary mode in that ordering?
-    * motivation is added in the introduction section.
+    * motivation is added in the introduction section. [todo] add line numbers. 
     * while it is true that tensors can always transformed into a specific tensor layout, it is very inconvenient for the user of our library. The user would need to explicitly call functions and think of their correct application within their program to prevent additional memory and runtime costs.
 
 [x] The author needs to describe how this work contrasts with the well-known TuckerMPI approach, described in “TuckerMPI: A Parallel C++/MPI Software Package for Large-scale Data Compression via the Tucker Tensor Decomposition,” [...] There is also a thread-parallel implementation that is relevant, described in De et al, “Hybrid Parallel Tucker Decomposition of Streaming Data”, in PASC’23, https://doi.org/10.1145/3659914.36599.
@@ -59,7 +62,7 @@ Major concerns:
     * FIST-HOSVD focuses on combining TTM and Gram kernels within the context of the ST-HOSVD algorithm. It also proposes an in-place
 transpose algorithm in order to avoid allocating intermediate TTM results.
     * Hence, the scope of FIST-HOSVD and our paper does not overlap. 
-    * Benchmarking memory usage is not required as no additional memory is allocated. All our proposed algorithms perform in-place multiplications. 
+    * Benchmarking memory usage is not required as no additional memory is allocated in any of our proposed in-place algorithms. 
 
     
 [x] What is the point of including Cases 1-5 on page 4 and Table 1, since those are for order 1 or 2 tensors (i.e., vectors or matrices) and fall into standard linear algebra use-cases?
@@ -79,6 +82,7 @@ transpose algorithm in order to avoid allocating intermediate TTM results.
 --------- [review3] ---------
 -----------------------------
 
-[] My only concern is that the author should clearly highlight the differences between this submission and the previously accepted conference paper [1], particularly in terms of contributions.
-
+[x] My only concern is that the author should clearly highlight the differences between this submission and the previously accepted conference paper [1], particularly in terms of contributions.
+    * The differences and major additional contributions compared to the previous publication have been added in the first section (Introduction), specifically in the second-to-last paragraph, starting at line 91.
+ 
 
