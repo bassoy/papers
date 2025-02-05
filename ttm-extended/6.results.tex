@@ -241,14 +241,14 @@ The runtime results demonstrate that the function performances stay within an ac
 		& Min   & Median  & Max & Median \\ 
 		\midrule
 		TLIB       & $\mathbf{9.39}$  & $\mathbf{38.42}$   & $\mathbf{57.87}$ &  - \\
-		TCL        & $0.98$  & $24.16$   & $56.34$ & $17.98$     \\
+		TCL        & $7.14$  & $30.46$   & $56.81$ & $6.36$     \\
 		TBLIS      & $8.33$  & $29.85$   & $47.28$ & $23.96$     \\
 		LibTorch   & $1.05$  & $28.68$   & $46.56$ & $28.21$     \\
 		Eigen      & $5.85$  & $14.89$   & $15.67$ & $170.77$     \\
 		TuckerMPI  & $8.79$  & $35.98$   & $53.21$ & $6.97$ \\
 		\midrule
-		TLIB       & $0.14$  & $8.99$    & $58.14$ &  - \\
-		TCL        & $0.04$  & $2.71$    & $56.63$ & $123.92$     \\
+		TLIB       & $0.14$  & $8.99$    & $58.14$ &  -     \\
+		TCL        & $0.36$  & $5.64$    & $57.35$ & $3.08$ \\
 		TBLIS      & $\mathbf{1.11}$  & $\mathbf{9.84}$  & $45.03$ & $1.38$     \\
 		LibTorch   & $0.07$  & $3.52$    & $\mathbf{62.20}$ & $87.52$     \\
 		Eigen      & $0.21$  & $3.80$    & $16.06$ & $216.69$     \\
@@ -351,6 +351,6 @@ Table \ref{tab:comparison} contains the minimum, median, and maximum runtime per
 
 \begin{figure*}[ht]
 	\input{fig.performance-sdr.comparison-mkl}
-	%\input{fig.performance.tlib.case8-cdf-aocl}
+	\input{fig.performance-sdr.comparison-aocl}
 	\label{fig:performance-sdr.comparison}
 \end{figure*}
