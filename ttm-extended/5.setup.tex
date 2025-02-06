@@ -1,5 +1,64 @@
 \section{Experimental Setup}
 \label{sec:experimental.setup}
+
+\begin{figure*}[t]
+\begin{footnotesize}¸
+\begin{alignat*}{3}
+\mbN_1 &=
+\begin{bmatrix}
+(16384,1024 )          & \cdots & (131072, 1024) \\
+(8192,1024, 2)         & \cdots & (65536, 1024, 2) \\
+\vdots                 & \ddots & \vdots \\
+(64,1024, 2,\dots,2)   & \cdots & (512, 1024, 2,\dots,2) \\
+\end{bmatrix}
+\quad
+\quad
+&\mbN_{10} &= &&
+\begin{bmatrix}
+(1024, 16384)          & \cdots & (1024, 131072) \\
+(1024, 2,8192)         & \cdots & (1024,2,65536) \\
+\vdots                 & \ddots & \vdots \\
+(1024, 2,\dots,2,64)   & \cdots & (1024,2,\dots,2, 512) \\
+\end{bmatrix}\\[0.5cm]
+\mbM &=
+\begin{bmatrix}
+(4096,4096)           & \cdots & (8192, 8192) \\
+(256,256,256)         & \cdots & (512, 512, 512) \\
+(64,64,64,64)         & \cdots & (128, 128, 128,128) \\
+(32,32,32,32,32)      & \cdots & (64,  64,  64, 64, 64) \\
+(16,16,16,16,16,16)   & \cdots & (32,  32,  32, 32, 32, 32) \\
+(8, 8, 8,  8, 8, 8,8) & \cdots & (16,  16,  16, 16, 16, 16, 16) \\
+\end{bmatrix}
+\quad
+\quad
+&\mbQ &=&& 
+%utl::Range {utl::Dim{ 26,1800,3600    },  utl::Dim{0,0,1  },   utl::Dim{ 26,1800,3600    }},   // CESM-ATM
+%utl::Range {utl::Dim{100, 500, 500, 13},  utl::Dim{0,0,0,1},   utl::Dim{100, 500, 500, 13}},   // Hurricane ISABEL
+%utl::Range {utl::Dim{512, 512, 512,  6},  utl::Dim{0,0,0,1},   utl::Dim{512, 512, 512,  6}},   // NYX
+%utl::Range {utl::Dim{ 98,1200,1200, 13},  utl::Dim{0,0,0,1},   utl::Dim{ 98,1200,1200, 13}},   // SCALE-LETKF        
+%utl::Range {utl::Dim{ 69,  69, 115,288},  utl::Dim{0,0,0,1},   utl::Dim{ 69,  69, 115,288}},   // QMCPACK
+%utl::Range {utl::Dim{256, 384, 384,  7},  utl::Dim{0,0,0,1},   utl::Dim{256, 384, 384,  7}},   // Miranda
+%utl::Range {utl::Dim{500, 500, 500, 11},  utl::Dim{0,0,0,1},   utl::Dim{500, 500, 500, 11}},   // S3D
+%utl::Range {utl::Dim{986,  32, 185,388},  utl::Dim{0,0,0,1},   utl::Dim{986,  32, 185,388}},   // EXAFEL
+\begin{bmatrix}
+(26,1800,3600)\\
+(100, 500, 500, 13)\\
+(512, 512, 512,  6)\\
+(98,1200,1200, 13) \\
+(69,  69, 115,288)\\
+(256, 384, 384,  7)\\
+(500, 500, 500, 11)\\
+(986,  32, 185,388)
+\end{bmatrix}
+\end{alignat*}
+\end{footnotesize}
+\caption[Shape Matrix]
+{
+Four shape tuple matrices $\mbN_1$, and $\mbN_{10}$ that have been used for the runtime measurements.
+Each shape creates asymmetrically-shaped tensor or subtensor. 
+}
+\label{fig:tensor.shapes}
+\end{figure*}
 \subsection{Computing System} 
 The experiments have been carried out on a dual socket Intel Xeon Gold 5318Y CPU with an Ice Lake architecture and a dual socket AMD EPYC 9354 CPU with a Zen4 architecture.
 With two NUMA domains, the Intel CPU consists of $2\times24$ cores which run at a base frequency of $2.1$ GHz.
@@ -26,7 +85,7 @@ We also had to enable nested parallelism using \ttt{omp\_set\_nested} to toggle 
 The \ttt{num\_threads(ncores)} clause specifies the number of threads within a team where \ttt{ncores} is equal to the number of processor cores. 
 Hence, each OpenMP thread is responsible for computing $\bar{n}' / \text{\ttt{ncores}}$ independent slice-matrix products where $\bar{n}' = n_2' \cdot n_4'$ for tensor slices and $\bar{n}' = n_4'$ for mode-$\mhq$ subtensors.
 
-The \ttt{schedule(static)} instructs the OpenMP runtime to divide the iteration space into almost equally sized chunks.
+The \ttt{schedule(static)} instructs the OpenMP runtime to divide the iteration space into equally sized chunks, except for the last chunk.
 Each thread sequentially computes $ \bar{n}' / \text{\ttt{ncores}}$ slice-matrix products.
 We have decided to use this scheduling kind as all slice-matrix multiplications exhibit the same number of floating-point operations with a regular workload where one can assume negligible load imbalance.
 Moreover, we wanted to prevent scheduling overheads for small slice-matrix products were data locality can be an important factor for achieving higher throughput.
@@ -41,14 +100,48 @@ Moreover, with the \ttt{spread} thread affinity policy, consecutive OpenMP threa
  
 
 \subsection{Tensor Shapes} 
-We evaluated the performance of our algorithms with both asymmetrically and symmetrically shaped tensors to account for a wide range of use cases. 
-The dimensions of these tensors are organized in two sets. 
-The first set consists of $720 = 9\times 8 \times 10$ dimension tuples each of which has differing elements.
-This set covers $10$ contraction modes ranging from $1$ to $10$.
-For each contraction mode, the tensor order increases from $2$ to $10$ and for a given tensor order, $8$ tensor instances with increasing tensor size are generated.
-Given the $k$-th contraction mode, the corresponding dimension array $\mbN_k$ consists of $9 \times 8$ dimension tuples $\mbn_{r,c}^k$ of length $r+1$ with $r = 1,2,\dots,9$ and $c = 1,2,\dots,8$.
-Elements $\mbn_{r,c}^k(i)$ of a dimension tuple are either $1024$ for $i = 1 \wedge k \neq 1$ or $i = 2 \wedge k = 1$, or $c \cdot 2^{15-r}$ for $i = \min(r+1,k)$ or $2$ otherwise, where $i = 1,2,\dots,r+1$.
+We have evaluated the performance of our algorithms with asymmetrically and symmetrically shaped tensors to account for a wide range of use cases.
+All tensors are initialized with random double-precision floating-point data.
+The dimensions of these tensors are organized in two tensors sets $N$ and $M$. 
+Tensors of the first set $N$ are created with $720 = 9\times 8 \times 10$ different tensor shapes which are organized within $10$ two-dimensional tensor shape arrays $\mbN_k$ of size $9 \times 8$ with $k=1,\dots,10$.
+Each tensor shape $\mbn_{r,c}^k$ is of length $r+1$ with $r = 1,2,\dots,9$ and $c = 1,2,\dots,8$ and each element $\mbn_{r,c}^k(i)$ is either $1024$ for $i = 1 \wedge k \neq 1$ or $i = 2 \wedge k = 1$, or $c \cdot 2^{15-r}$ for $i = \min(r+1,k)$ or $2$ otherwise, where $i = 1,2,\dots,r+1$.
+For each tensor shape matrix $\mbN_k$, our benchmark suite generates $9\times 8$ input tensors with their respective shapes, performing a mode-$k$ TTM with each input tensor.
 A special feature of this test set is that the contraction dimension and the leading dimension are disproportionately large.
-The second set consists of $336 = 6\times8\times 7$ dimensions tuples where the tensor order ranges from $2$ to $7$ and has $8$ dimension tuples for each order.
-Each tensor dimension within the second set is $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$.
+
+%This set covers $10$ contraction modes ranging from $1$ to $10$.
+%For each contraction mode, the tensor order increases from $2$ to $10$ and for a given tensor order, $8$ tensor instances with increasing tensor size are generated.
+The second tensor set is generated with $336 = 6\times8\times 7$ tensor shapes.
+Here, the tensor order ranges from $2$ to $7$ and has $8$ dimension tuples for each order.
+Each tensor dimension within the second set $M$ is $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$.
+%TODO: hier weiter.
 A similar setup has been used in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
+
+%artifical tensors 
+We have also benchmarked our best performing algorithm and TTM implementations of other libraries with tensors from the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
+The scientific datasets in SDRBench mainly consist of order-$3$ tensors with different tensor shapes and number of data fields, originating from various types applications such as climate simulation (CESM-ATM) or turbulence simulation (Miranda).
+Similar to \cite{ballard:2020:tuckermpi}, we perform the tests with order-$4$ tensors of which the first three dimensions correspond to the respective ones mentioned in the original data sets and the last dimension to the number of data fields.
+More precisely, the third tensor set $Q$ consists of eight randomly initialized tensors with tensor shapes.
+Ascending the array $\mbQ$ in Fig. \ref{fig:tensor.shapes}, the eight tensors with the respective dimensions have been used in CESM-ATM, Hurricane-ISABEL, NYX, SCALE-LETKF, QMCPACK, Miranda, S3D and EXAFEL.
+
+
+
+%They describe 10+ scientific datasets across 6+ domains to support a fair, comprehensive assessment of lossy compressors. 
+%All the datasets are provided with information including description, shape, data type, and data size. 
+%In addition, some datasets are provided with physical information of the application and specific user requirements on compression errors (such as absolute error bounds and point-wise relative error bounds).
+%Each of the corresponding simulations/applications may potentially produce extremely large volume of data.
+
+%Hence, CESM-ATM, ISABEL and SCALE-LETKF, from cosmology simulation NYX
+%The datasets are as follows:
+%The first data set consists of order-3 tensors with different number of data fields that originate from climate simulation projects called CESM-ATM, ISABEL and SCALE-LETKF.
+%The second data set consists of an order-3 tensor NYX, originates from cosmology simulation.
+
+%We consider two large-scale simulation datasets which were produced by S3D [9], a massively parallel direct numerical simulation of compressible reacting flows, developed at Sandia National Laboratories. 
+
+
+
+%Community Earth System Model (CESM). CESM-ATM involves 60+ snapshots(timesteps), each containing 100+ fields with different dimensions.
+%The second dataset, Hurricane-ISABEL, is from IEEE Visualization 2004 contest [27]. 
+%The dataset simulates the ISABEL hurricane - the strongest hurricane in the 2003 Atlantic hurricane season. 
+%The dataset contains 13 floating-point fields in single-precision, and each field is a 3D array with the shape of 100 × 500 × 500.
+
+

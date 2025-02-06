@@ -153,7 +153,7 @@ Please note that the four plots on the right, plots (c) and (d), have a logarith
 
 \subsubsection{Combined Algorithm and Batched GEMM}
 % can you refer to what figure you are referring to ?
-This subsection discusses the performance of \ttt{<batched-gemm>} and \ttt{<combined>} against those of \ttt{<par-loop>} and \ttt{<par-gemm>} for the eighth TTM case.
+This subsection discusses the performance of function \ttt{<batched-gemm>} and \ttt{<combined>} against those of \ttt{<par-loop>} and \ttt{<par-gemm>} for the eighth TTM case.
 
 Given a row-major matrix ordering, the combined function \ttt{<combined>} achieves on the Intel processor a median throughput of $36.15$ and $4.28$ GFLOPS/core with asymmetrically and symmetrically shaped tensors.
 Reaching up to $46.96$ and $45.68$ GFLOPS/core, it is on par with \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>} and outperforms them for some tensor instances.
@@ -262,47 +262,6 @@ In case of symmetrically shaped tensors, all libraries except Eigen outperform T
 TBLIS and TuckerMPI reach $91.78$\% and $96.87$\% of TLIB'S performance in the $8$th TTM case, while other libraries only reach at most $39.29$\% of TLIB's median performance.
 
 
-\subsection{Summary}
-We have evaluated the impact of performing the \ttt{gemm} function with subtensors and tensor slices.
-Our findings indicate that, subtensors are most effective with symmetrically shaped tensors independent of the parallelization method. 
-Tensor slices are preferable with asymmetrically shaped tensors when both the contraction mode and leading dimension are large.
-Our runtime results show that parallel executed single-threaded \ttt{gemm} performs best with symmetrically shaped tensors.
-If the leading and contraction dimensions are large, functions with a multi-threaded \ttt{gemm} outperforms those with a single-threaded \ttt{gemm} for any type of slicing.
-We have also shown that our \ttt{<combined>} performs in most cases as fast as \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape.
-Function \ttt{<batched-gemm>} is less efficient in case of asymmetrically shaped tensors with large contraction and leading dimensions.
-While matrix storage formats have only a minor impact on TTM performance, runtime measurements show that a TTM using MKL on the Intel Xeon Gold 5318Y CPU achieves higher per-core performance than a TTM with AOCL on the AMD EPYC 9354 processor.
-We have also demonstrated that our algorithms perform consistently well across different $k$-order tensor layouts, indicating that they are layout-oblivious and do not depend on a specific tensor format.
-Our runtime tests show that TLIB'S function \ttt{<combined>} is, in median, between $15.38$\% and $257.58$\% faster than other competing libraries, except for TBLIS.
-TLIB is either on par with or slightly outperforms TBLIS for many tensor shapes which uses optimized kernels for the TTM computation.
-Table \ref{tab:comparison} contains the minimum, median, and maximum runtime performances including TLIB's speedups for the whole tensor test sets.
-
-
-%artifical tensors 
-We have also benchmarked our and other libraries with tensors that have the same shape as used in the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
-The scientific datasets in SDRBench mainly consist of order-$3$ tensors with different tensor shapes and number of data fields, originating from various types applications such as climate, molecular dynamics simulations, molecular %TODO continue.
-Similar to \cite{ballard:2020:tuckermpi}, we execute the TTM with order-4 tensors of which the first three dimensions correspond to the respective ones mentioned in the original data sets and the last dimension to the number of data fields.
-More precisely, we 
-%such as CESM-ATM, ISABEL, NYX, SCALE-LETKF, QMCPACK, Miranda, S3D and EXAFEL. 
-
-%They describe 10+ scientific datasets across 6+ domains to support a fair, comprehensive assessment of lossy compressors. 
-%All the datasets are provided with information including description, shape, data type, and data size. 
-%In addition, some datasets are provided with physical information of the application and specific user requirements on compression errors (such as absolute error bounds and point-wise relative error bounds).
-%Each of the corresponding simulations/applications may potentially produce extremely large volume of data.
-
-%Hence, CESM-ATM, ISABEL and SCALE-LETKF, from cosmology simulation NYX
-%The datasets are as follows:
-%The first data set consists of order-3 tensors with different number of data fields that originate from climate simulation projects called CESM-ATM, ISABEL and SCALE-LETKF.
-%The second data set consists of an order-3 tensor NYX, originates from cosmology simulation.
-
-%We consider two large-scale simulation datasets which were produced by S3D [9], a massively parallel direct numerical simulation of compressible reacting flows, developed at Sandia National Laboratories. 
-
-
-
-%Community Earth System Model (CESM). CESM-ATM involves 60+ snapshots(timesteps), each containing 100+ fields with different dimensions.
-%The second dataset, Hurricane-ISABEL, is from IEEE Visualization 2004 contest [27]. 
-%The dataset simulates the ISABEL hurricane - the strongest hurricane in the 2003 Atlantic hurricane season. 
-%The dataset contains 13 floating-point fields in single-precision, and each field is a 3D array with the shape of 100 × 500 × 500.
-
 
 
 \begin{figure*}[ht]
@@ -323,3 +282,20 @@ The tests were conducted on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9
 }
 \label{fig:performance-sdr.comparison}
 \end{figure*}
+
+
+
+\subsection{Summary}
+We have evaluated the impact of performing the \ttt{gemm} function with subtensors and tensor slices.
+Our findings indicate that, subtensors are most effective with symmetrically shaped tensors independent of the parallelization method. 
+Tensor slices are preferable with asymmetrically shaped tensors when both the contraction mode and leading dimension are large.
+Our runtime results show that parallel executed single-threaded \ttt{gemm} performs best with symmetrically shaped tensors.
+If the leading and contraction dimensions are large, functions with a multi-threaded \ttt{gemm} outperforms those with a single-threaded \ttt{gemm} for any type of slicing.
+We have also shown that our \ttt{<combined>} performs in most cases as fast as \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape.
+Function \ttt{<batched-gemm>} is less efficient in case of asymmetrically shaped tensors with large contraction and leading dimensions.
+While matrix storage formats have only a minor impact on TTM performance, runtime measurements show that a TTM using MKL on the Intel Xeon Gold 5318Y CPU achieves higher per-core performance than a TTM with AOCL on the AMD EPYC 9354 processor.
+We have also demonstrated that our algorithms perform consistently well across different $k$-order tensor layouts, indicating that they are layout-oblivious and do not depend on a specific tensor format.
+Our runtime tests show that TLIB'S function \ttt{<combined>} is, in median, between $15.38$\% and $257.58$\% faster than other competing libraries, except for TBLIS.
+TLIB is either on par with or slightly outperforms TBLIS for many tensor shapes which uses optimized kernels for the TTM computation.
+Table \ref{tab:comparison} contains the minimum, median, and maximum runtime performances including TLIB's speedups for the whole tensor test sets.
+
