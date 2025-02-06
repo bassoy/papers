@@ -1,0 +1,43 @@
+\centering
+\footnotesize
+\begin{tabular}{lccc c}
+	\toprule
+	Library    & \multicolumn{3}{c}{Performance [GFLOPS/core]} & Speedup [\%] \\ 
+	\cmidrule(lr){2-4} \cmidrule(lr){5-5}
+	& Min   & Median  & Max & Median \\ 
+	\midrule
+	TLIB       & $\mathbf{9.39}$  & $\mathbf{38.42}$   & $\mathbf{57.87}$ &  - \\
+	TCL        & $7.14$  & $30.46$   & $56.81$ & $6.36$     \\
+	TBLIS      & $8.33$  & $29.85$   & $47.28$ & $23.96$     \\
+	LibTorch   & $1.05$  & $28.68$   & $46.56$ & $28.21$     \\
+	Eigen      & $5.85$  & $14.89$   & $15.67$ & $170.77$     \\
+	TuckerMPI  & $8.79$  & $35.98$   & $53.21$ & $6.97$ \\
+	\midrule
+	TLIB       & $0.14$  & $8.99$    & $58.14$ &  -     \\
+	TCL        & $0.36$  & $5.64$    & $57.35$ & $3.08$ \\
+	TBLIS      & $\mathbf{1.11}$  & $\mathbf{9.84}$  & $45.03$ & $1.38$     \\
+	LibTorch   & $0.07$  & $3.52$    & $\mathbf{62.20}$ & $87.52$     \\
+	Eigen      & $0.21$  & $3.80$    & $16.06$ & $216.69$     \\
+	TuckerMPI  & $0.12$  & $7.91$    & $52.57$ & $6.23$ \\
+	\bottomrule
+\end{tabular}
+\hspace{5em}
+\begin{tabular}{lccc c}
+	\toprule
+	Library    & \multicolumn{3}{c}{Performance [GFLOPS/core]} & Speedup [\%] \\ 
+	\cmidrule(lr){2-4} \cmidrule(lr){5-5}
+	& Min   & Median  & Max  & Median \\ 
+	\midrule
+	TLIB       & $2.71$  & $24.28$   & $\mathbf{50.18}$ &   -   \\
+	TCL        & $0.61$  & $8.08$    & $41.82$ & $257.58$     \\
+	TBLIS      & $\mathbf{9.06}$  & $\mathbf{26.81}$    & $43.83$ & $6.18$     \\
+	LibTorch   & $0.63$  & $16.04$   & $50.84$ & $58.84$     \\
+	Eigen      & $4.06$  & $11.49$   & $35.08$ & $83.05$     \\
+	\midrule
+	TLIB       & $0.02$  & $\mathbf{7.52}$  & $\mathbf{54.16}$ &  -  \\
+	TCL        & $0.03$  & $2.03$    & $42.47$ & $122.45$     \\
+	TBLIS      & $\mathbf{0.39}$  & $6.19$    & $41.11$ & $15.38$     \\
+	LibTorch   & $0.05$  & $2.64$    & $46.65$ & $74.37$     \\
+	Eigen      & $0.10$  & $5.58$    & $36.76$ & $43.45$     \\
+	\bottomrule
+\end{tabular}

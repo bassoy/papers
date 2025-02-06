@@ -23,68 +23,68 @@ xtick=data,
 ]
   
 \nextgroupplot[symbolic x coords={CESM-ATM},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(CESM-ATM,0.672)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(CESM-ATM,0.657)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(CESM-ATM,1.066)};  % tblis
-\addplot[fill=green!30!white] coordinates {(CESM-ATM,0.708)};  % torch
-\addplot[fill=orange!40!white] coordinates {(CESM-ATM,6.039)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(CESM-ATM,0.458)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(CESM-ATM,0.672)};  \label{coord:bar.tlib_optimized.mkl} % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(CESM-ATM,0.657)};  \label{coord:bar.tcl.mkl} % tcl
+\addplot[fill=yellow!40!white] coordinates {(CESM-ATM,1.066)}; \label{coord:bar.tblis.mkl} % tblis
+\addplot[fill=green!40!white] coordinates {(CESM-ATM,0.708)}; \label{coord:bar.torch.mkl} % torch
+\addplot[fill=brown!40!white] coordinates {(CESM-ATM,6.039)}; \label{coord:bar.eigen.mkl} % eigen
+\addplot[fill=blue!40!white] coordinates {(CESM-ATM,0.458)}; \label{coord:bar.tucker.mkl} % tucker_ttm
 
 \nextgroupplot[symbolic x coords={ISABEL},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(ISABEL,0.305)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(ISABEL,0.450)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(ISABEL,0.456)};  % tblis
-\addplot[fill=green!30!white] coordinates {(ISABEL,0.465)};  % torch
-\addplot[fill=orange!40!white] coordinates {(ISABEL,1.659)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(ISABEL,0.365)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(ISABEL,0.305)};  % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(ISABEL,0.450)};  % tcl
+\addplot[fill=yellow!40!white] coordinates {(ISABEL,0.456)};  % tblis
+\addplot[fill=green!40!white] coordinates {(ISABEL,0.465)};  % torch
+\addplot[fill=brown!40!white] coordinates {(ISABEL,1.659)};  % eigen
+\addplot[fill=blue!40!white] coordinates {(ISABEL,0.365)};  % tucker_ttm
 
 \nextgroupplot[symbolic x coords={NYX},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(NYX,3.519)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(NYX,5.527)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(NYX,7.067)};  % tblis
-\addplot[fill=green!30!white] coordinates {(NYX,3.855)};  % torch
-\addplot[fill=orange!40!white] coordinates {(NYX,3.936)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(NYX,3.687)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(NYX,3.519)};  % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(NYX,5.527)};  % tcl
+\addplot[fill=yellow!40!white] coordinates {(NYX,7.067)};  % tblis
+\addplot[fill=green!40!white] coordinates {(NYX,3.855)};  % torch
+\addplot[fill=brown!40!white] coordinates {(NYX,3.936)};  % eigen
+\addplot[fill=blue!40!white] coordinates {(NYX,3.687)};  % tucker_ttm
 
 \nextgroupplot[symbolic x coords={SCALE-LETKF},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(SCALE-LETKF,2.823)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(SCALE-LETKF,3.542)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(SCALE-LETKF,3.415)};  % tblis
-\addplot[fill=green!30!white] coordinates {(SCALE-LETKF,2.838)};  % torch
-\addplot[fill=orange!40!white] coordinates {(SCALE-LETKF,21.576)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(SCALE-LETKF,2.580)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(SCALE-LETKF,2.823)};  % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(SCALE-LETKF,3.542)};  % tcl
+\addplot[fill=yellow!40!white] coordinates {(SCALE-LETKF,3.415)};  % tblis
+\addplot[fill=green!40!white] coordinates {(SCALE-LETKF,2.838)};  % torch
+\addplot[fill=brown!40!white] coordinates {(SCALE-LETKF,21.576)};  % eigen
+\addplot[fill=blue!40!white] coordinates {(SCALE-LETKF,2.580)};  % tucker_ttm
 
 \nextgroupplot[symbolic x coords={QMCPACK},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(QMCPACK,0.052)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(QMCPACK,0.123)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(QMCPACK,0.070)};  % tblis
-\addplot[fill=green!30!white] coordinates {(QMCPACK,0.161)};  % torch
-\addplot[fill=orange!40!white] coordinates {(QMCPACK,0.367)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(QMCPACK,0.353)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(QMCPACK,0.052)};  % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(QMCPACK,0.123)};  % tcl
+\addplot[fill=yellow!40!white] coordinates {(QMCPACK,0.070)};  % tblis
+\addplot[fill=green!40!white] coordinates {(QMCPACK,0.161)};  % torch
+\addplot[fill=brown!40!white] coordinates {(QMCPACK,0.367)};  % eigen
+\addplot[fill=blue!40!white] coordinates {(QMCPACK,0.353)};  % tucker_ttm
 
 \nextgroupplot[symbolic x coords={Miranda},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(Miranda,0.729)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(Miranda,1.113)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(Miranda,1.109)};  % tblis
-\addplot[fill=green!30!white] coordinates {(Miranda,0.758)};  % torch
-\addplot[fill=orange!40!white] coordinates {(Miranda,1.112)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(Miranda,0.641)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(Miranda,0.729)};  % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(Miranda,1.113)};  % tcl
+\addplot[fill=yellow!40!white] coordinates {(Miranda,1.109)};  % tblis
+\addplot[fill=green!40!white] coordinates {(Miranda,0.758)};  % torch
+\addplot[fill=brown!40!white] coordinates {(Miranda,1.112)};  % eigen
+\addplot[fill=blue!40!white] coordinates {(Miranda,0.641)};  % tucker_ttm
 
 \nextgroupplot[symbolic x coords={S3D},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(S3D,4.211)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(S3D,5.431)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(S3D,6.267)};  % tblis
-\addplot[fill=green!30!white] coordinates {(S3D,4.476)};  % torch
-\addplot[fill=orange!40!white] coordinates {(S3D,6.158)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(S3D,4.321)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(S3D,4.211)};  % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(S3D,5.431)};  % tcl
+\addplot[fill=yellow!40!white] coordinates {(S3D,6.267)};  % tblis
+\addplot[fill=green!40!white] coordinates {(S3D,4.476)};  % torch
+\addplot[fill=brown!40!white] coordinates {(S3D,6.158)};  % eigen
+\addplot[fill=blue!40!white] coordinates {(S3D,4.321)};  % tucker_ttm
 
 \nextgroupplot[symbolic x coords={EXAFEL},bar width=4pt,font=\scriptsize,ymin=0]
-\addplot[fill=black!30!white] coordinates {(EXAFEL,5.015)};  % tlib_optimized
-\addplot[fill=red!30!white] coordinates {(EXAFEL,4.888)};  % tcl
-\addplot[fill=yellow!30!white] coordinates {(EXAFEL,7.886)};  % tblis
-\addplot[fill=green!30!white] coordinates {(EXAFEL,6.673)};  % torch
-\addplot[fill=orange!40!white] coordinates {(EXAFEL,5.222)};  % eigen
-\addplot[fill=cyan!40!white] coordinates {(EXAFEL,11.469)};  % tucker_ttm
+\addplot[fill=black!40!white] coordinates {(EXAFEL,5.015)};  % tlib_optimized
+\addplot[fill=red!40!white] coordinates {(EXAFEL,0)};  % tcl
+\addplot[fill=yellow!40!white] coordinates {(EXAFEL,7.886)};  % tblis
+\addplot[fill=green!40!white] coordinates {(EXAFEL,6.673)};  % torch
+\addplot[fill=brown!40!white] coordinates {(EXAFEL,5.222)};  % eigen
+\addplot[fill=blue!40!white] coordinates {(EXAFEL,11.469)};  % tucker_ttm
 
 
 \end{groupplot}

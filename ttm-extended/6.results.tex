@@ -1,34 +1,6 @@
 \section{Results and Discussion}
 \label{sec:results}
 
-\begin{comment}
-\begin{table*}[t]
-\caption%
-{%
-\footnotesize
-Combinable and non-combinable function tags for the eighth TTM case.
-%Function tag \tf{combined} and \tf{gemm-batch} are not combinable with the other tags.
-}
-\centering
-\footnotesize
-\begin{tabular}{ll}% 
-\toprule
-Tag & Explanation \\
-\midrule
-\tf{<par-gemm> }    & \tf{ttm} sequentially executes multi-threaded gemm (section 4.4.1) \\
-\tf{<par-loop> }    & \tf{ttm} executes single-threaded \tf{gemm}s in parallel (section 4.4.2) \\
-\tf{<slice>}        & \tf{ttm} executes single- or multi-threaded gemm operates with tensor slices \\
-\tf{<subtensor>}    & \tf{ttm} executes single- or multi-threaded gemm operates with subtensors  \\  
-\tf{<combined>}     & \tf{ttm} calls one of the above functions w.r.t processor core count and tensor dimensions (section 4.4.3) \\
-\tf{<batched-gemm>} & \tf{ttm} calls function \tf{gemm\_batch} function of the MKL (section 4.4.4) \\
-\bottomrule
-\end{tabular}
-%\vspace{0.2cm}
-\label{tab:function_tags}
-\end{table*}
-\end{comment}
-
-
 \begin{figure*}[t]
 \input{fig.performance.tlib.contour-mkl-parloop}
 \input{fig.performance.tlib.contour-mkl-pargemm} 
@@ -181,7 +153,7 @@ Please note that the four plots on the right, plots (c) and (d), have a logarith
 
 \subsubsection{Combined Algorithm and Batched GEMM}
 % can you refer to what figure you are referring to ?
-This subsection compares the runtime performance of the functions \ttt{<batched-gemm>} and \ttt{<combined>} against those of \ttt{<par-loop>} and \ttt{<par-gemm>} for the eighth TTM case.
+This subsection discusses the performance of \ttt{<batched-gemm>} and \ttt{<combined>} against those of \ttt{<par-loop>} and \ttt{<par-gemm>} for the eighth TTM case.
 
 Given a row-major matrix ordering, the combined function \ttt{<combined>} achieves on the Intel processor a median throughput of $36.15$ and $4.28$ GFLOPS/core with asymmetrically and symmetrically shaped tensors.
 Reaching up to $46.96$ and $45.68$ GFLOPS/core, it is on par with \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>} and outperforms them for some tensor instances.
@@ -231,50 +203,10 @@ A similar performance behavior can be observed also for other \ttt{ttm} variants
 The runtime results demonstrate that the function performances stay within an acceptable range independent for different $k$-order tensor layouts and show that our proposed algorithms are not designed for a specific tensor layout.
 
 
+
+
 \begin{table*}[t]
-	\centering
-	\footnotesize
-	\begin{tabular}{lccc c}
-		\toprule
-		Library    & \multicolumn{3}{c}{Performance [GFLOPS/core]} & Speedup [\%] \\ 
-		\cmidrule(lr){2-4} \cmidrule(lr){5-5}
-		& Min   & Median  & Max & Median \\ 
-		\midrule
-		TLIB       & $\mathbf{9.39}$  & $\mathbf{38.42}$   & $\mathbf{57.87}$ &  - \\
-		TCL        & $7.14$  & $30.46$   & $56.81$ & $6.36$     \\
-		TBLIS      & $8.33$  & $29.85$   & $47.28$ & $23.96$     \\
-		LibTorch   & $1.05$  & $28.68$   & $46.56$ & $28.21$     \\
-		Eigen      & $5.85$  & $14.89$   & $15.67$ & $170.77$     \\
-		TuckerMPI  & $8.79$  & $35.98$   & $53.21$ & $6.97$ \\
-		\midrule
-		TLIB       & $0.14$  & $8.99$    & $58.14$ &  -     \\
-		TCL        & $0.36$  & $5.64$    & $57.35$ & $3.08$ \\
-		TBLIS      & $\mathbf{1.11}$  & $\mathbf{9.84}$  & $45.03$ & $1.38$     \\
-		LibTorch   & $0.07$  & $3.52$    & $\mathbf{62.20}$ & $87.52$     \\
-		Eigen      & $0.21$  & $3.80$    & $16.06$ & $216.69$     \\
-		TuckerMPI  & $0.12$  & $7.91$    & $52.57$ & $6.23$ \\
-		\bottomrule
-	\end{tabular}
-	\hspace{5em}
-	\begin{tabular}{lccc c}
-		\toprule
-		Library    & \multicolumn{3}{c}{Performance [GFLOPS/core]} & Speedup [\%] \\ 
-		\cmidrule(lr){2-4} \cmidrule(lr){5-5}
-		& Min   & Median  & Max  & Median \\ 
-		\midrule
-		TLIB       & $2.71$  & $24.28$   & $\mathbf{50.18}$ &   -   \\
-		TCL        & $0.61$  & $8.08$    & $41.82$ & $257.58$     \\
-		TBLIS      & $\mathbf{9.06}$  & $\mathbf{26.81}$    & $43.83$ & $6.18$     \\
-		LibTorch   & $0.63$  & $16.04$   & $50.84$ & $58.84$     \\
-		Eigen      & $4.06$  & $11.49$   & $35.08$ & $83.05$     \\
-		\midrule
-		TLIB       & $0.02$  & $\mathbf{7.52}$  & $\mathbf{54.16}$ &  -  \\
-		TCL        & $0.03$  & $2.03$    & $42.47$ & $122.45$     \\
-		TBLIS      & $\mathbf{0.39}$  & $6.19$    & $41.11$ & $15.38$     \\
-		LibTorch   & $0.05$  & $2.64$    & $46.65$ & $74.37$     \\
-		Eigen      & $0.10$  & $5.58$    & $36.76$ & $43.45$     \\
-		\bottomrule
-	\end{tabular}
+	\input{tab.performance.comparison-mkl-aocl.summary}
 	\caption%
 	{%
 		\footnotesize
@@ -347,10 +279,23 @@ Table \ref{tab:comparison} contains the minimum, median, and maximum runtime per
 
 
 
-
+Scientific Data Reduction Benchmark
 
 \begin{figure*}[ht]
-	\input{fig.performance-sdr.comparison-mkl}
-	\input{fig.performance-sdr.comparison-aocl}
-	\label{fig:performance-sdr.comparison}
+\input{fig.performance-sdr.comparison-mkl}
+\input{fig.performance-sdr.comparison-aocl}
+\caption%
+{%
+\footnotesize
+Bar plots contain median runtime in seconds of %
+\tf{TLIB} (\ref{coord:bar.tlib_optimized.mkl}), %
+\tf{TCL} (\ref{coord:bar.tcl.mkl}), %
+\tf{TBLIS} (\ref{coord:bar.tblis.mkl}), %
+\tf{LibTorch} (\ref{coord:bar.torch.mkl}), %
+\tf{Eigen} (\ref{coord:bar.eigen.mkl}) and %
+\tf{TuckerMPI} (\ref{coord:bar.tucker.mkl}). 
+The tests were conducted on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9354 CPU (bottom) using order-3 and order-4 tensors with shapes that are referenced in the SDRBench \cite{zhao:2020:sdrbench}. 
+%The performance values on the upper and lower rows of one table were evaluated using asymmetrically and symmetrically shaped tensors, respectively. 
+}
+\label{fig:performance-sdr.comparison}
 \end{figure*}
