@@ -101,27 +101,31 @@ Moreover, with the \ttt{spread} thread affinity policy, consecutive OpenMP threa
 
 \subsection{Tensor Shapes} 
 We have evaluated the performance of our algorithms with asymmetrically and symmetrically shaped tensors to account for a wide range of use cases.
-All tensors are initialized with random double-precision floating-point data.
-The dimensions of these tensors are organized in two tensors sets $N$ and $M$. 
-Tensors of the first set $N$ are created with $720 = 9\times 8 \times 10$ different tensor shapes which are organized within $10$ two-dimensional tensor shape arrays $\mbN_k$ of size $9 \times 8$ with $k=1,\dots,10$.
-Each tensor shape $\mbn_{r,c}^k$ is of length $r+1$ with $r = 1,2,\dots,9$ and $c = 1,2,\dots,8$ and each element $\mbn_{r,c}^k(i)$ is either $1024$ for $i = 1 \wedge k \neq 1$ or $i = 2 \wedge k = 1$, or $c \cdot 2^{15-r}$ for $i = \min(r+1,k)$ or $2$ otherwise, where $i = 1,2,\dots,r+1$.
-For each tensor shape matrix $\mbN_k$, our benchmark suite generates $9\times 8$ input tensors with their respective shapes, performing a mode-$k$ TTM with each input tensor.
+Their corresponding tensor shapes are divided into three tensor sets $N$, $M$ and $Q$.
+Examples of the corresponding tensor shape arrays $\mbN_1$ and $\mbN_{10}$, $\mbM$ and $\mbQ$ are shown in Fig. \ref{fig:tensor.shapes}.
+
+Tensors of the first set $N$ are created with $720 = 9\times 8 \times 10$ different tensor shapes which are organized within ten two-dimensional shape arrays $\mbN_k$ of size $9 \times 8$ with $k=1,\dots,10$.
+A dimension tuple $\mbn_{r,c}^k$ is of length $r+1$ with $r = 1,\dots,9$ and $c = 1,\dots,8$.
+With $i = 1,\dots,r+1$ The $i$th element of the tuple is either $1024$ for $i = 1 \wedge k \neq 1$ or $i = 2 \wedge k = 1$, or $c \cdot 2^{15-r}$ for $i = \min(r+1,k)$ or $2$ otherwise.
+For each tensor shape matrix $\mbN_k$, our benchmark suite generates input tensors with their respective shapes and an input matrix with dimensions $n_1$ or $n_2$ and $n_q$, and performs a mode-$k$ TTM.
 A special feature of this test set is that the contraction dimension and the leading dimension are disproportionately large.
 
 %This set covers $10$ contraction modes ranging from $1$ to $10$.
 %For each contraction mode, the tensor order increases from $2$ to $10$ and for a given tensor order, $8$ tensor instances with increasing tensor size are generated.
-The second tensor set is generated with $336 = 6\times8\times 7$ tensor shapes.
-Here, the tensor order ranges from $2$ to $7$ and has $8$ dimension tuples for each order.
-Each tensor dimension within the second set $M$ is $2^{12}$, $2^{8}$, $2^{6}$, $2^5$, $2^4$ and $2^3$.
-%TODO: hier weiter.
+The second tensor set $M$ consists of symmetrically shaped tensors which are generated with $48$ tensor shapes which are arranged within a two-dimensional shape array $\mbM$ of size $6 \times 8$.
+Similar to the previous setup, the row number $r$ is equal to the tensor order $r+1$ with $r=1,\dots,6$
+A row of the tensor shape array consists $8$ dimension tuples of the same length $r+1$ where elements of one dimension tuple are equal.
+With eight shapes and the step size of each row $s_r = (m_{r,8}-m_{r,1})/8$, the respective intermediate dimensions $m_{r,c}$ are given by $m_{r,c} = m_{r,1} + (c-1) s_r$ with $c=1,\dots,8$.
+Our benchmark suite generates input tensors with their respective shapes and an input matrix with dimensions $n_1$ or $n_0$ and $n_q$, and performs a mode-$q$ TTM for all possible contraction modes $q$ with $q=1,\dots,7$.
 A similar setup has been used in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
 
 %artifical tensors 
-We have also benchmarked our best performing algorithm and TTM implementations of other libraries with tensors from the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
-The scientific datasets in SDRBench mainly consist of order-$3$ tensors with different tensor shapes and number of data fields, originating from various types applications such as climate simulation (CESM-ATM) or turbulence simulation (Miranda).
-Similar to \cite{ballard:2020:tuckermpi}, we perform the tests with order-$4$ tensors of which the first three dimensions correspond to the respective ones mentioned in the original data sets and the last dimension to the number of data fields.
-More precisely, the third tensor set $Q$ consists of eight randomly initialized tensors with tensor shapes.
-Ascending the array $\mbQ$ in Fig. \ref{fig:tensor.shapes}, the eight tensors with the respective dimensions have been used in CESM-ATM, Hurricane-ISABEL, NYX, SCALE-LETKF, QMCPACK, Miranda, S3D and EXAFEL.
+We have also benchmarked TTM implementations with eight tensors that are part of the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
+The scientific datasets in SDRBench mainly consist of order-$3$ tensors with different tensor shapes and number of data fields, originating from various types real-world applications and simulations such as CESM-ATM or Miranda.
+We perform runtime tests with order-$4$ tensors which belong to the tensor set $Q$.
+Their first three dimensions correspond to the respective ones mentioned in the original data sets and the last dimension to the number of data fields.
+The respective tensor shapes are arranged within a one-dimensional array $\mbQ$, see Fig. \ref{fig:tensor.shapes}.
+Starting from the top first tensor shape of $\mbQ$, the respective tensor dimensions have been used in CESM-ATM, Hurricane-ISABEL, NYX, SCALE-LETKF, QMCPACK, Miranda, S3D and EXAFEL.
 
 
 
