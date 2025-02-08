@@ -243,22 +243,26 @@ The runtime results demonstrate that the function performances stay within an ac
 \subsection{Other Approaches}
 This subsection compares our best performing algorithm with libraries that do not use the LoG approach.
 \tbf{TCL} implements the TTGT approach with a high-perform tensor-transpose library \tbf{HPTT} which is discussed in \cite{springer:2018:design}.
+TCL has been used with the same BLAS libraries as TLIB to ensure a fair comparison.
 \tbf{TBLIS} (v1.2.0) implements the GETT approach that is akin to BLIS' algorithm design for the matrix multiplication \cite{matthews:2018:high}.
+The library has been compiled with the \ttt{zen4} and \ttt{skx-2} to enable architecture specific optimization.
 %TODO: add footnote that is required to enable support for zen4 and skx-2 
-The tensor extension of \tbf{Eigen} (v3.4.9) is used by the Tensorflow framework.
+The tensor extension of \tbf{Eigen} (v3.4.90) is used by the Tensorflow framework.
 Library \tbf{LibTorch} (v2.5.0) is the C++ distribution of PyTorch \cite{paszke:2019:pytorch}.
 The \tbf{TuckerMPI} library is a parallel C++ software package for large-scale data compression which provides a local and distributed TTM function \cite{ballard:2020:tuckermpi}.
-The local version implements the LoG approach and computes the TTM product similar to our function \ttt{<par-gemm,subtensor>}.
-\tbf{TLIB} denotes our library which only calls the previously presented algorithm \tf{<combined>}.
-All of the following provided performance and comparison values are the median values.
+The local version implements the LoG approach using a BLAS implementation and computes the TTM product similar to our function \ttt{<par-gemm,subtensor>}.
+Note that we were able to link the current version of TuckerMPI only with Intel MKL, which is why TuckerMPI's TTM has only been executed on the Intel CPU.
+\tbf{TLIB} denotes our library and the previously discussed \tf{<combined>} algorithm.
+%All of the following provided performance and comparison values are median values.
 %We will use performance or percentage tuples of the form (TCL, TBLIS, LibTorch, Eigen) where each tuple element denotes the performance or runtime percentage of a particular library.
 
 Fig. \ref{fig:performance.tlib.case8} compares the performance distribution of our implementation with the previously mentioned libraries.
-Using MKL on the Intel CPU, our implementation (TLIB) achieves a median performance of $38.21$ GFLOPS/core ($1.83$ TFLOPS) and reaches a maximum performance of $51.65$ GFLOPS/core ($2.47$ TFLOPS) with asymmetrically shaped tensors.
-It outperforms the competing libraries for almost every tensor instance within the test set.
-The median library performances are up to $29.85$ GFLOPS/core and are thus at least $18.09$\% slower than TLIB except for TuckerMPI.
-The latter reaches a median performance of $35.98$ GFLOPS/core ($1.72$ TFLOPS) reaching about $92.03$\% of TLIB's performance.
-In case of symmetrically shaped tensors, TLIB's median performance is $8.99$ GFLOPS/core.
+Using MKL on the Intel CPU, TLIB achieves a median performance of $38.21$ GFLOPS/core ($1.83$ TFLOPS) and reaches a maximum performance of $57.68$ GFLOPS/core ($2.76$ TFLOPS) with asymmetrically shaped tensors from the shape set $N$.
+TLIB is many tensor instances faster than other libraries and therefore achieves a speedup of at least $6.36$\%.
+LibTorch and TuckerMPI have almost the same median performance of $38.17$ and $35.98$ GFLOPS/core, yet only reach a peak performance $50.48$ and $53.21$ GFLOPS/core.
+Both are in median $17.47$\% and $6.97$\% slower than TLIB.
+In case of symmetrically shaped tensors, TLIB's median performance is $8.99$ GFLOPS/core ($431.52$ GFLOPS).
+%TODO: hier weiter.
 Except for TBLIS and TuckerMPI, TLIB outperforms other libraries by at least $87.52$\%.
 TBLIS and TuckerMPI compute the TTM with $9.84$ and $7.91$ GFLOPS/core which is only $1.38$\% and $6.23$\% slower than TLIB, respectively.
 
@@ -326,3 +330,6 @@ Our runtime tests show that TLIB'S function \ttt{<combined>} is, in median, betw
 TLIB is either on par with or slightly outperforms TBLIS for many tensor shapes which uses optimized kernels for the TTM computation.
 Table \ref{tab:comparison} contains the minimum, median, and maximum runtime performances including TLIB's speedups for the whole tensor test sets.
 
+%TODO: explain the shortcommings of the comparisons.
+%TODO: correct the summary depending on the output of the previous section
+%TODO: integrate the SDRBench.
