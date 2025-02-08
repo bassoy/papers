@@ -1,0 +1,39 @@
+\centering
+\footnotesize
+\begin{tabular}{ccc}
+	\toprule
+	Dataset    & Tensor Shape Ex.  & Matrix Shape Ex. \\ 
+	\midrule
+	$N_1$      & $65536\times1024\times2$               & $65536\times1024$ \\
+	           & $2048\times1024\times2\times2\times2$  & $2048\times1024$ \\
+	$N_2$      & $1024\times65536\times2$               & $65536\times1024$ \\
+               & $1024\times2048\times2\times2\times2$  & $2048\times1024$ \\
+	$N_3$      & $1024\times2\times65536$               & $65536\times1024$ \\
+               & $1024\times2\times2048\times2\times2$  & $2048\times1024$ \\
+    $\cdots$   & $\cdots$                               & $\cdots$ \\           
+	$N_{10}$   & $1024\times2\times65536$               & $65536\times1024$ \\
+               & $1024\times2\times2\times2\times2048$  & $2048\times1024$ \\
+    \midrule
+	$M$        & $256\times256\times256$                & $256\times256$ \\
+               & $32\times32\times32\times32\times32$   & $32\times32$ \\
+	\bottomrule
+\end{tabular}
+\hfill
+\begin{tabular}{lcc}
+	\toprule
+	Dataset $Q$ (orig. Name)   & Tensor Shape & Matrix Shape Ex. \\ 
+	\midrule
+	CESM ATM   & $26\times1800\times3600$               & $1800\times26$ \\
+	ISABEL     & $100\times 500\times 500\times 13$     & $500\times100$ \\
+	NYX        & $512\times 512\times 512\times  6$     & $512\times512$ \\
+	SCALE-LETK & $98\times1200\times1200\times 13$      & $1200\times98$ \\
+	QMCPACK    & $69\times  69\times 115\times288$      & $69\times69$ \\
+	Miranda    & $256\times 384\times 384\times  7$     & $384\times256$ \\
+	SP         & $500\times 500\times 500\times 11$     & $500\times500$ \\
+	EXAFEL     &  $986\times  32\times 185\times388$    & $32\times986$ \\
+	           &&\\
+	           &&\\
+	           &&\\
+	\midrule 
+	\bottomrule
+\end{tabular}

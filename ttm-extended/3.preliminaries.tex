@@ -12,6 +12,7 @@ For convenience, we will also use square brackets to concatenate index tuples su
 $[\mbi,\mbj] = (i_1,i_2,\dots,i_r,\allowbreak j_1,j_2,\dots,j_q)$ where $\mbi$ and $\mbj$ are multi-indices of length $r$ and $q$, respectively.
 
 \subsection{Tensor-Matrix Multiplication (TTM)}
+\label{subsec:ttm}
 Let $\mubA$ and $\mubC$ be order-$p$ tensors with shapes $\mbn_a = ([\mbn_1,n_q,\mbn_2])$ and $\mbn_c =([\mbn_1,m,\mbn_2])$ where $\mbn_1 = (n_1,n_2,\allowbreak\dots,n_{q-1})$ and $\mbn_2 = (n_{q+1},n_{q+2},\allowbreak\dots,n_p)$.
 Let $\mbB$ be a matrix of shape $\mbn_b = (m,n_q)$.
 A $q$-mode tensor-matrix product is denoted by $\mubC = \mubA \times_q \mbB$. 
