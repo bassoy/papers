@@ -288,6 +288,9 @@ TBLIS and TuckerMPI reach $91.78$\% and $96.87$\% of TLIB'S performance in the $
 We have additionally conducted performance tests with an order-$3$ and seven order-$4$ tensors that have also been used in SDRBench \cite{zhao:2020:sdrbench}.
 The corresponding tensor shape set $Q$ and the tensor shapes are given in Table \ref{tab:dataset}.
 With a maximum tensor order of $4$, every tensor is multiplied with a matrix along every mode using a TTM implementation.
+Note that the multiplication over the first and fourth mode corresponds to the sixth and seventh TTM case in Table \ref{tab:mapping_rm_cm}.
+TLIB will call a single \ttt{gemm} for both cases.
+The multiplication over the second and third mode corresponds to the eighth TTM case.
 Fig. \ref{fig:performance-sdr.comparison} contains bar plots for all tensor shapes of set $Q$.
 The size of each bar is the total running time of the respective TTM implementation that is executed on an Intel Xeon Gold 5318Y CPU and an AMD EPYC 9354 CPU.
 Note that TCL was not able to compute the TTM for the EXAFEL data set which is why the runtime is set to zero.
@@ -295,15 +298,16 @@ Note that TCL was not able to compute the TTM for the EXAFEL data set which is w
 On the Intel Xeon Gold 5318Y CPU, TLIB is in most cases faster than other libraries and outperforms them by at most $137.32$\% (TCL), $100.80$\% (TBLIS), $210.71$\% (LibTorch), $798.91$\% (Eigen), $581.73$\% (TuckerMPI).
 TCL is on par with TLIB for the CESM-ATM data set.
 TuckerMPI is $46.8$\% (CESM-ATM) and $13.7$\% (Miranda) faster than TLIB.
+More precisely, the TTMs of TuckerMPI and LibTorch over the fourth mode is faster than TLIB's TTM for almost all tensor instances.
+
 On the AMD EPYC 9354 CPU, TLIB performs better than most other libraries except for TCL and LibTorch in some instances.
 TLIB is at most $33.36$\% (TCL), $117.22$\% (TBLIS), $221.25$\% (LibTorch), $205.80$\% (Eigen) faster.
 TCL outerperforms TLIB by $16.22$\% (NYX) and $71.65$\% (Miranda).
-For the CESM-ATM data set, LibTorch is $42.02$\% faster than TLIB.
+In this case, TCL's TTM over the fourth mode outperforms TLIB's TTM for almost all tensor instances and is in case of the SCALE-LETKF data set $3.4$x faster.
+LibTorch outperforms TLIB for the CESM-ATM data set by $42.02$\%.
+In that case, LibTorch is outperforming $67$\% when computing the tensor product over mode one.
 
-%TODO: can you say what went wrong for which mode for instance?
-
-The runtime tests with tensors from the SDRBench illustrates that TLIB is in most cases faster than competing libraries with only few exceptions.
-
+The runtime tests with tensors from the SDRBench illustrates that TLIB is able to compute the TTM faster than other libraries for most tensor shapes.
 
 
 
