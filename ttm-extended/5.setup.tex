@@ -6,11 +6,11 @@
 \caption%
 {%
 \footnotesize
-%TODO: finalize the description.
-Tensor data sets used in 
-The table presents the minimum, median, and maximum runtime performances in GFLOPS/core alongside the median speedup of TLIB compared to other libraries.
-The tests were conducted on an Intel Xeon Gold 5318Y CPU (left) and an AMD EPYC 9354 CPU (right). 
-The performance values on the upper and lower rows of one table were evaluated using asymmetrically and symmetrically shaped tensors, respectively. 
+Tensor shape sets and example dimension tuples that are used in our runtime benchmarking.
+The first $4$ shape sets $N_1$, $N_2$, $N_3$ and $N_{10}$ are used to generate asymmetrically shaped tensors, each consisting of $72$ dimension tuples.
+Shape set $M$ contains $48$ tensor shapes that are used to generate symmetrically shaped tensors.
+Shape set $Q$ contains $8$ tensor shapes that are part of SDRBench \cite{zhao:2020:sdrbench}.
+Note that all matrix shapes depend on the input tensor shapes and contraction mode.
 }
 \label{tab:dataset}
 \end{table*}
@@ -18,21 +18,22 @@ The performance values on the upper and lower rows of one table were evaluated u
 
 
 \subsection{Computing System} 
-The experiments have been carried out on a dual socket Intel Xeon Gold 5318Y CPU with an Ice Lake architecture and a dual socket AMD EPYC 9354 CPU with a Zen4 architecture.
+The runtime benchmark have been executed on a dual socket Intel Xeon Gold 5318Y CPU with an Ice Lake architecture and a dual socket AMD EPYC 9354 CPU with a Zen4 architecture.
 With two NUMA domains, the Intel CPU consists of $2\times24$ cores which run at a base frequency of $2.1$ GHz.
 Assuming a peak AVX-512 Turbo frequency of $2.5$ GHz, the CPU is able to process $3.84$ TFLOPS in double precision.
 %$2.5$ GHz x $2$ FMA units / cores x $16$ OPS / FMA unit x $48$ cores = $3.84$ Tflops.
-We measured a peak double-precision floating-point performance of $3.8043$ TFLOPS ($79.25$ GFLOPS/core) and a peak memory throughput of $288.68$ GB/s using the Likwid performance tool.
+We have measured a peak double-precision floating-point performance of $3.8043$ TFLOPS ($79.25$ GFLOPS/core) and a peak memory throughput of $288.68$ GB/s using the Likwid performance tool.
 %3328
 The AMD EPYC 9354 CPU consists of $2\times32$ cores running at a base frequency of $3.25$ GHz.
 Assuming an all-core boost frequency of $3.75$ GHz, the CPU is theoretically capable of performing $3.84$ TFLOPS in double precision.
 %$3.25$ GHz x $1$ FMA units / cores x $16$ OPS / FMA unit x $64$ cores = $3.84$ Tflops.
 We measured a peak double-precision floating-point performance of $3.87$ TFLOPS ($60.5$ GFLOPS/core) and a peak memory throughput of $788.71$ GB/s.
  
-We have used the GNU compiler v11.2.0 with the highest optimization level \ttt{-O3} together with the \ttt{-fopenmp} and \ttt{-std=c++17} flags. 
+All libraries have been compiled with the GNU compiler v11.2.0 using the highest optimization level \ttt{-O3} together with the \ttt{-fopenmp} and \ttt{-std=c++17} flags. 
 Loops within the eighth case have been parallelized using GCC's OpenMP v4.5 implementation.
-In case of the Intel CPU, the 2022 Intel Math Kernel Library (MKL) and its threading library \ttt{mkl\_intel\_thread} together with the threading runtime library \ttt{libiomp5} has been used for the three BLAS functions \ttt{gemv}, \ttt{gemm} and \ttt{gemm\_batch}.
-For the AMD CPU, we have compiled AMD AOCL v4.2.0 together with set the \ttt{zen4} architecture configuration option and enabled OpenMP threading.
+In case of the Intel CPU, the Intel Math Kernel Library 2022 (MKL) and its threading library \ttt{mkl\_intel\_thread}, threading runtime library \ttt{libiomp5} has been used for the three BLAS functions \ttt{gemv}, \ttt{gemm} and \ttt{gemm\_batch}.
+For the AMD CPU, the AMD library AOCL v4.2.0 has been used.
+It has been compiled with the \ttt{zen4} architecture configuration option and OpenMP threading.
 
 
 \subsection{OpenMP Parallelization}
@@ -67,7 +68,7 @@ The first shape $10$ sets $N_1$ to $N_{10}$ contain $9 \times 8$ tensor shapes a
 Within one set $N_k$, dimension tuples are arranged within $10$ two-dimensional shape arrays $\mbN_k$ of size $9 \times 8$ with $1 \leq k \leq 10$.
 A dimension tuple $\mbn_{r,c}$ within $\mbN_k$ is of length $r+1$ with $1 \leq r \leq 9$ and $1 \leq c \leq 8$.
 %With $1 \leq i \leq r+1$, 
-The $i$-th element of the tuple is either $1024$ for $i = 1 \wedge k \neq 1$ or $i = 2 \wedge k = 1$, or $c \cdot 2^{15-r}$ for $i = \min(r+1,k)$ or $2$ otherwise.
+Its $i$-th element is either $1024$ for $i = 1 \wedge k \neq 1$ or $i = 2 \wedge k = 1$, or $c \cdot 2^{15-r}$ for $i = \min(r+1,k)$ or $2$ otherwise.
 A special feature of this test set is that the contraction dimension and the leading dimension are disproportionately large.
 
 %This set covers $10$ contraction modes ranging from $1$ to $10$.
@@ -80,7 +81,7 @@ With eight shapes and the step size of each row $s_r = (m_{r,8}-m_{r,1})/8$, the
 Symmetrically and asymmetrically shaped tensors have also been used in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
 
 %artifical tensors 
-We have also benchmarked TTM implementations with eight tensors that are part of the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
+We have also benchmarked with eight tensors that are part of the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
 The scientific datasets in SDRBench mainly consist of order-$3$ tensors with different tensor shapes and number of data fields, originating from various real-world simulations.
 Tensors from the SP dataset for instance has been used for benchmarking the truncated Tucker decomposition in \cite{ballard:2020:tuckermpi}
 We perform runtime tests with order-$4$ tensors that are generated with dimension tuples of the tensor shape set $Q$.
@@ -88,15 +89,20 @@ Their first three dimensions correspond to the respective ones mentioned in the 
 All tensor shapes are provided in Table \ref{tab:dataset}.
 
 
-\subsection{Profiling} 
+\subsection{Profiling setup} 
 Our benchmark suite iterates through one of tensor shape sets for one contraction mode $q$ with $1 \leq q \leq \max_p$ where $\max_p$ is the maximum tensor order within the shape set.
 Tensor and matrix elements are randomly generated single-precision floating-point numbers in case of the data set $Q$.
 In all other cases double-precision is used.
-Our profiler first sweeps through the tensor shapes belonging to one tensor order $p$\footnote{It should be noted that if $q>p$, $q$ is set to $p$.} and then iteratively selects one larger tensor order for the next sweep.
-Given a dimension tuple of length $p$, two tensors and a matrix is generated.
-After initialization, our profiler executes $20$x a mode-$q$ TTM implementation and computes the median runtime of the function.
+The profiler first sweeps through tensor shapes belonging to one tensor order and then iteratively selects one larger tensor order for the next sweep.
+It should be noted that if $q>p$, the contraction mode $q$ is set to $p$.
+Given a dimension tuple of length, the profiler generates two tensors and a matrix, executes a mode-$q$ TTM implementation $20$ times and finally computes the median runtime of the benchmarked TTM implementation.
 To prevent caching of the output tensor, we invalidate caches which is excluded from the timing.
  
 The runtime results for one contraction mode and one TTM implementation are stored in a two-dimensional array with shape $\max_p \times k$ where $k$ is either $8$ in case of asymmetrically and symmetrically shaped tensors or $1$ in case of the set $Q$.
-%TODO: continue.
+Hence, our profiler generates $10$ runtime arrays of shape $9\times 8$ with asymmetrically shaped tensors for $10$ contraction modes using the shape sets $N_1$, $N_2$, \dots, $N_{10}$.
+Generating symmetrically shaped tensors with the shape set $M$, the profiler returns $7$ runtime arrays of shape $6 \times 8$ for $7$ contraction modes.
+Using the shape set $Q$, $4$ one-dimensional runtime arrays for $4$ contraction modes are computed.
 
+The three-dimensional runtime data generated with the data sets $N$ and $M$ can be used to create two dimensional performance maps, as it is done in the following section \ref{sec:results}.
+Each value in a performance map corresponds to a mean or median value over tensor sizes (i.e. dimension tuples with the same length), over tensor orders or contraction modes.
+The accumulated mode can be selected depending on the runtime variance.
