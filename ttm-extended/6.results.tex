@@ -67,6 +67,39 @@ Libraries have been tested with asymmetrically-shaped (left plot) and symmetrica
 \label{fig:performance.comparison}
 \end{figure*}
 
+\begin{table*}[t]
+\input{tab.performance.comparison-mkl-aocl.summary}
+\caption%
+{%
+\footnotesize
+The table presents the minimum, median, and maximum runtime performances in GFLOPS/core alongside the median speedup of TLIB compared to other libraries.
+The tests were conducted on an Intel Xeon Gold 5318Y CPU (left) and an AMD EPYC 9354 CPU (right). 
+The performance values on the upper and lower rows of one table were evaluated using asymmetrically and symmetrically shaped tensors, respectively. 
+}
+\label{tab:comparison}
+\end{table*}
+
+
+
+\begin{figure*}[t]
+\input{fig.performance-sdr.comparison-mkl}
+\input{fig.performance-sdr.comparison-aocl}
+\caption%
+{%
+\footnotesize
+Bar plots contain median runtime in seconds of %
+\tf{TLIB} (\ref{coord:bar.tlib_optimized.mkl}), %
+\tf{TCL} (\ref{coord:bar.tcl.mkl}), %
+\tf{TBLIS} (\ref{coord:bar.tblis.mkl}), %
+\tf{LibTorch} (\ref{coord:bar.torch.mkl}), %
+\tf{Eigen} (\ref{coord:bar.eigen.mkl}) and %
+\tf{TuckerMPI} (\ref{coord:bar.tucker.mkl}). 
+The tests were conducted on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9354 CPU (bottom) using order-3 and order-4 tensors with shapes that are described in Table \ref{tab:dataset}. 
+%The performance values on the upper and lower rows of one table were evaluated using asymmetrically and symmetrically shaped tensors, respectively. 
+}
+\label{fig:performance-sdr.comparison}
+\end{figure*}
+
 
 
 \section{Results and Discussion}
@@ -205,17 +238,7 @@ The runtime results demonstrate that the function performances stay within an ac
 
 
 
-\begin{table*}[t]
-	\input{tab.performance.comparison-mkl-aocl.summary}
-	\caption%
-	{%
-		\footnotesize
-		The table presents the minimum, median, and maximum runtime performances in GFLOPS/core alongside the median speedup of TLIB compared to other libraries.
-		The tests were conducted on an Intel Xeon Gold 5318Y CPU (left) and an AMD EPYC 9354 CPU (right). 
-		The performance values on the upper and lower rows of one table were evaluated using asymmetrically and symmetrically shaped tensors, respectively. 
-	}
-	\label{tab:comparison}
-\end{table*}
+
 
 \subsection{Other Approaches}
 This subsection compares our best performing algorithm with libraries that do not use the LoG approach.
@@ -223,7 +246,7 @@ This subsection compares our best performing algorithm with libraries that do no
 \tbf{TBLIS} (v1.2.0) implements the GETT approach that is akin to BLIS' algorithm design for the matrix multiplication \cite{matthews:2018:high}.
 %TODO: add footnote that is required to enable support for zen4 and skx-2 
 The tensor extension of \tbf{Eigen} (v3.4.9) is used by the Tensorflow framework.
-Library \tbf{LibTorch} (v2.4.0) is the C++ distribution of PyTorch \cite{paszke:2019:pytorch}.
+Library \tbf{LibTorch} (v2.5.0) is the C++ distribution of PyTorch \cite{paszke:2019:pytorch}.
 The \tbf{TuckerMPI} library is a parallel C++ software package for large-scale data compression which provides a local and distributed TTM function \cite{ballard:2020:tuckermpi}.
 The local version implements the LoG approach and computes the TTM product similar to our function \ttt{<par-gemm,subtensor>}.
 \tbf{TLIB} denotes our library which only calls the previously presented algorithm \tf{<combined>}.
@@ -262,26 +285,26 @@ In case of symmetrically shaped tensors, all libraries except Eigen outperform T
 TBLIS and TuckerMPI reach $91.78$\% and $96.87$\% of TLIB'S performance in the $8$th TTM case, while other libraries only reach at most $39.29$\% of TLIB's median performance.
 
 
+We have additionally conducted performance tests with an order-$3$ and seven order-$4$ tensors that have also been used in SDRBench \cite{zhao:2020:sdrbench}.
+The corresponding tensor shape set $Q$ and the tensor shapes are given in Table \ref{tab:dataset}.
+With a maximum tensor order of $4$, every tensor is multiplied with a matrix along every mode using a TTM implementation.
+Fig. \ref{fig:performance-sdr.comparison} contains bar plots for all tensor shapes of set $Q$.
+The size of each bar is the total running time of the respective TTM implementation that is executed on an Intel Xeon Gold 5318Y CPU and an AMD EPYC 9354 CPU.
+Note that TCL was not able to compute the TTM for the EXAFEL data set which is why the runtime is set to zero.
+
+On the Intel Xeon Gold 5318Y CPU, TLIB is in most cases faster than other libraries and outperforms them by at most $137.32$\% (TCL), $100.80$\% (TBLIS), $210.71$\% (LibTorch), $798.91$\% (Eigen), $581.73$\% (TuckerMPI).
+TCL is on par with TLIB for the CESM-ATM data set.
+TuckerMPI is $46.8$\% (CESM-ATM) and $13.7$\% (Miranda) faster than TLIB.
+On the AMD EPYC 9354 CPU, TLIB performs better than most other libraries except for TCL and LibTorch in some instances.
+TLIB is at most $33.36$\% (TCL), $117.22$\% (TBLIS), $221.25$\% (LibTorch), $205.80$\% (Eigen) faster.
+TCL outerperforms TLIB by $16.22$\% (NYX) and $71.65$\% (Miranda).
+For the CESM-ATM data set, LibTorch is $42.02$\% faster than TLIB.
+
+%TODO: can you say what went wrong for which mode for instance?
+
+The runtime tests with tensors from the SDRBench illustrates that TLIB is in most cases faster than competing libraries with only few exceptions.
 
 
-\begin{figure*}[ht]
-\input{fig.performance-sdr.comparison-mkl}
-\input{fig.performance-sdr.comparison-aocl}
-\caption%
-{%
-\footnotesize
-Bar plots contain median runtime in seconds of %
-\tf{TLIB} (\ref{coord:bar.tlib_optimized.mkl}), %
-\tf{TCL} (\ref{coord:bar.tcl.mkl}), %
-\tf{TBLIS} (\ref{coord:bar.tblis.mkl}), %
-\tf{LibTorch} (\ref{coord:bar.torch.mkl}), %
-\tf{Eigen} (\ref{coord:bar.eigen.mkl}) and %
-\tf{TuckerMPI} (\ref{coord:bar.tucker.mkl}). 
-The tests were conducted on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9354 CPU (bottom) using order-3 and order-4 tensors with shapes that are referenced in the SDRBench \cite{zhao:2020:sdrbench}. 
-%The performance values on the upper and lower rows of one table were evaluated using asymmetrically and symmetrically shaped tensors, respectively. 
-}
-\label{fig:performance-sdr.comparison}
-\end{figure*}
 
 
 
