@@ -4,11 +4,11 @@ The tensor-matrix multiplication is a basic tensor operation required by various
 %
 This paper presents flexible high-performance algorithms that compute the tensor-matrix product according to the Loops-over-GEMM (LOG) approach.
 %
-Our algorithms are able to process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
+Our algorithms can process dense tensors with any linear tensor layout, arbitrary tensor order and dimensions all of which can be runtime variable.
 %
-We discuss two slicing methods with orthogonal parallelization strategies and propose four algorithms that call BLAS with subtensors or tensor slices.
+The paper discusses two slicing methods with orthogonal parallelization strategies and propose four algorithms that call BLAS with subtensors or tensor slices.
 %
-We provide a simple heuristic which selects one of the four proposed algorithms at runtime.
+It also provides a simple heuristic which selects one of the four proposed algorithms at runtime.
 %
 All algorithms have been evaluated on a large set of tensors with various tensor shapes and linear tensor layouts.
 %
@@ -16,11 +16,11 @@ In case of large tensor slices, our best-performing algorithm achieves a median 
 %
 Furthermore, it outperforms batched GEMM implementation of Intel MKL by a factor of $2.57$ with large tensor slices.
 %
-Our runtime tests show that our best-performing algorithm is, on average, at least $6.21$\% and up to $334.31$\% faster than frameworks implementing state-of-the-art approaches, including actively developed libraries like Libtorch and Eigen.
+Our runtime tests show that our best-performing algorithm is, on average, at least $6.21$\% and up to $334.31$\% faster than frameworks implementing state-of-the-art approaches, including actively developed libraries such as Libtorch and Eigen.
 %
 For the majority of tensor shapes, it is on par with TBLIS which uses optimized kernels for the TTM computation.
 %
-Our algorithm performs better than all other competing implementations for the majority of real world tensors of SDRBench, reaching a maximum speedup of $100.80$\% or more in some tensor instances.
+Our algorithm performs better than all other competing implementations for the majority of real world tensors from the SDRBench, reaching a maximum speedup of $100.80$\% or more in some tensor instances.
 %
 This work is an extended version of the article "Fast and Layout-Oblivious Tensor-Matrix Multiplication with BLAS" (Bassoy, 2024)\cite{bassoy:2024:ttm}.
 \end{abstract}
