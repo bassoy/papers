@@ -26,7 +26,7 @@ TBLIS and TCL achieve a median throughput that is comparable with TLIB when run 
 We observed that most libraries are slower than TLIB for the eighth TTM case across the majority of tensor instances, indicating that our proposed heuristic is efficient.
 In case of tensors with real-world tensor shapes, TLIB performs better than all libraries for the majority of tensor shapes, reaching a maximum speedup of at least $100.80$\% in some tensor instances.
 Exceptions are the CESM-ATM and Miranda data sets where TuckerMPI is $46.8$\% and $13.7$\% faster than TLIB on the Intel CPU.
-Another exception are the NYX and Miranda data sets where TCL is $16.22$\% and $71.65$\% faster than TLIB on the AMD CPU.
+Also TCL is $16.22$\% and $71.65$\% faster than TLIB when using the NYX and Miranda data sets on the AMD CPU, respectively.
 
 
 \section{Conclusion and Future Work}

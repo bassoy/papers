@@ -104,7 +104,9 @@ The tests were conducted on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9
 
 \section{Experimental Results and Discussion}
 \label{sec:results}
-
+The runtime results within the following subsections are executed with asymmetrically and symmetrically shaped tensors.
+The last subsection also considers tensors with real-world tensor shapes.
+The corresponding tensor shapes and their shape sets have been described in the previous section \ref{sec:experimental.setup}.
 
 \subsection{Slicing Methods}
 \label{subsec:results.slicing-methods}
@@ -257,6 +259,9 @@ If not otherwise stated, all of the following performance and comparisons number
 %We will use performance or percentage tuples of the form (TCL, TBLIS, LibTorch, Eigen) where each tuple element denotes the performance or runtime percentage of a particular library.
 \subsubsection{Artificial Tensor Shapes}
 Fig. \ref{fig:performance.tlib.case8} compares the performance distribution of our implementation with the previously mentioned libraries.
+The benchmark is executed with asymmetrically and symmetrically shaped tensors.
+The corresponding tensor shapes and their shape sets have been described in subsection \ref{sec:experimental.setup}.
+
 Using MKL on the Intel CPU, TLIB achieves a performance of $38.21$ GFLOPS/core ($1.83$ TFLOPS) and reaches with asymmetrically shaped tensors at most $57.68$ GFLOPS/core ($2.76$ TFLOPS), given the the shape sets $N_k$ with $1 \leq k \leq 10$.
 TLIB is in at least $2.03$x as many tensor instances faster than other libraries and achieves a speedup of at least $6.36$\%.
 LibTorch and TuckerMPI have almost the same performance of $38.17$ and $35.98$ GFLOPS/core, yet only reach a peak performance $50.48$ and $53.21$ GFLOPS/core.
@@ -272,9 +277,9 @@ Moreover, TLIB is faster than TBLIS and TCL in the same number of tensor instanc
 The three libraries are $29.68$\% and a factor of $2.17$ faster than LibTorch and Eigen, respectively.
 In case of symmetrically shaped tensors, TLIB has a median performance of $7.52$ GFLOPS/core ($481.39$ GFLOPS).
 Compared to the second-fastest library TCL, TLIB speeds up the computation by $6.10$\% and is in $43.66$\% more tensor instances faster than TCL.
-TBLIS, LibTorch and Eigen are outperformed by TLIB by at least $12.37$\%.
+TBLIS, LibTorch and Eigen are slower than TLIB by at least $12.37$\%.
 
-In most instances, TLIB is able to outperform other libraries across all TTM cases with few exceptions.
+In most instances, TLIB is faster than other libraries across all TTM cases with few exceptions.
 On the AMD CPU, TCL achieves a higher throughput of about $9$\% for the second and third TTM cases when asymmetrically shaped tensors are used.
 TBLIS is $12.63$\% faster than TLIB for the eighth TTM case with the same tensor set.
 On the Intel CPU, LibTorch is in the $7$th TTM case $16.94$\% faster than TLIB.
