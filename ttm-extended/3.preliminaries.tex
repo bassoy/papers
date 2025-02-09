@@ -26,7 +26,6 @@ with $\mbi_1 = (i_1,\dots,i_{q-1})$, $\mbi_2 = (i_{q+1},\dots,i_p)$ where $1 \le
 The mode $q$ is called the contraction mode with $1 \leq q \leq p$.
 TTM generalizes the computational aspect of the two-dimensional case $\mbC = \mbB \cdot \mbA$ if $p=2$ and $q=1$.
 Its arithmetic intensity is equal to that of a matrix-matrix multiplication which is compute-bound for large dense matrices.
-%TODO: %Categorized in \cite{dinapoli:2014:towards.efficient.use} as an operation of the tensor contraction class 2, its computation is likely to be limited by the memory bandwidth.
 
 In the following, we assume that the tensors $\mubA$ and $\mubC$ have the same tensor layout $\mbpi$. 
 Elements of matrix $\mubB$ can be stored either in the column-major or row-major format.
@@ -44,7 +43,7 @@ The number of non-unit modes determine the order $p'$ of subtensor where $1 \leq
 In the above example, the subtensor $\mubA_{u,v,w}'$ has three non-unit modes and is thus of order $3$.
 For convenience, we might also use an dimension tuple $\mbm$ of length $p'$ with $\mbm = (m_1,m_2,\dots,m_{p'})$ to specify a mode-$p'$ subtensor $\mubA_{\mbm}'$.
 An order-$2$ subtensor of $\mubA'$ is a tensor slice $\mbA_{u,v}'$ and an order-$1$ subtensor of $\mubA'$ is a fiber $\mba_u'$.
-%TODO: sollte man das doch nicht lieber umkehren um das eindeutig zu machen?
+% sollte man das doch nicht lieber umkehren um das eindeutig zu machen?
 
 \subsection{Linear Tensor Layouts}
 \label{sec:preliminaries:layout}

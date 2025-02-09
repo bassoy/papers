@@ -33,7 +33,6 @@ Also TCL is $16.22$\% and $71.65$\% faster than TLIB when using the NYX and Mira
 The performance tests show that our algorithms are layout-oblivious and do not need layout-specific optimizations, even for different storage ordering of the input matrix.
 Despite the flexible design, our best-performing algorithm is able to outperform Intel's BLAS-like extension function \ttt{cblas\_gemm\_batch} by a factor of up to $2.57$ in case of asymmetrically shaped tensors.
 Furthermore, the performance results demonstrate that TLIB computes the tensor-matrix product with asymmetrically shaped tensors on average at least $6.21$\% and up to $334.31$\% faster than TuckerMPI, LibTorch and Eigen.
-%TODO: how much faster and how many tensor instances:
 % Icelake (nonsymm): TLIB is faster for at least 67\% and up to 100.00\% test cases  has a median speedup of at least 6.21\% and up to 334.31\% 
 % Icelake (symm): Except for TBLIS, TLIB is faster for at least 57\% and up to 99.07\% test cases and has a median speedup of at least 3.05\% and up to 262.28\%.
 % Genoa (nonsymm): TLIB is faster for 74.54\% and 94.75\% the test cases and has a median speedup of at 29.69\% and 117.50\% for LibTorch and Eigen. %TLIB is on average as fast as TBLIS and TCL.
