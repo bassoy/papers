@@ -303,27 +303,9 @@ On the AMD EPYC 9354 CPU, TLIB performs better than most other libraries except 
 TLIB reaches a maximum speedup of $33.36$\% (TCL), $117.22$\% (TBLIS), $221.25$\% (LibTorch), $205.80$\% (Eigen).
 TCL outerperforms TLIB by $16.22$\% (NYX) and $71.65$\% (Miranda).
 In this case, TCL computes the tensor product over the fourth mode for almost all tensor instances faster than TLIB.
-In case of the SCALE-LETKF data set TCL is $3.4$x faster.
+In that case of the SCALE-LETKF data set TCL is $3.4$x faster.
 LibTorch outperforms TLIB for the CESM-ATM data set by $42.02$\%.
 %In that case, LibTorch is outperforming $67$\% when computing the tensor product over mode one.
 
 The runtime tests with tensors from the SDRBench demonstrates that for most tensor instances with real-world tensor shapes, TLIB is able to compute the tensor product faster than other libraries.
 
-
-\subsection{Summary}
-We have evaluated the impact of performing the \ttt{gemm} function with subtensors and tensor slices.
-Our findings indicate that, subtensors are most effective with symmetrically shaped tensors independent of the parallelization method. 
-Tensor slices are preferable with asymmetrically shaped tensors when both the contraction mode and leading dimension are large.
-Our runtime results show that parallel executed single-threaded \ttt{gemm} performs best with symmetrically shaped tensors.
-If the leading and contraction dimensions are large, functions with a multi-threaded \ttt{gemm} outperforms those with a single-threaded \ttt{gemm} for any type of slicing.
-We have also shown that our \ttt{<combined>} performs in most cases as fast as \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape.
-Function \ttt{<batched-gemm>} is less efficient in case of asymmetrically shaped tensors with large contraction and leading dimensions.
-While matrix storage formats have only a minor impact on TTM performance, runtime measurements show that a TTM using MKL on the Intel Xeon Gold 5318Y CPU achieves higher per-core performance than a TTM with AOCL on the AMD EPYC 9354 processor.
-We have also demonstrated that our algorithms perform consistently well across different $k$-order tensor layouts, indicating that they are layout-oblivious and do not depend on a specific tensor format.
-Our runtime tests show that TLIB'S function \ttt{<combined>} is, in median, between $15.38$\% and $257.58$\% faster than other competing libraries, except for TBLIS.
-TLIB is either on par with or slightly outperforms TBLIS for many tensor shapes which uses optimized kernels for the TTM computation.
-Table \ref{tab:comparison} contains the minimum, median, and maximum runtime performances including TLIB's speedups for the whole tensor test sets.
-
-%TODO: explain the shortcommings of the comparisons.
-%TODO: correct the summary depending on the output of the previous section
-%TODO: integrate the SDRBench.
