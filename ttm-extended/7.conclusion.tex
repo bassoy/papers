@@ -1,26 +1,25 @@
 \section{Summary}
 \label{sec:summary}
 We have presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication that is essential for many tensor methods.
-Our approach is based on the LOG method and computes the tensor-matrix product in-place without transposing tensors.
+Our approach makes use of the LOG method and computes the tensor-matrix product in-place without transposing tensors.
 It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input} for linear tensor layouts.
-The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
+The resulting algorithms are capable of processing dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
+This degree of flexibility simplifies the integration and application of our library in existing frameworks with different requirements and tensor layouts.
 
-%All algorithms consist of eight different TTM cases where seven of them perform a single \ttt{cblas\_gemm}.
 We have presented multiple algorithm variations of the eighth TTM case which either calls a single- or multi-threaded \ttt{cblas\_gemm} with small or large tensor slices in parallel or sequentially.
-Additionally, we have proposed a simple heuristic that selects one of the variants based on the performance evaluation in the original work \cite{bassoy:2024:ttm}.
-%With a large set of tensor instances with artificial and real-world tensor shapes, we have evaluated the proposed variants on an Intel Xeon Gold 5318Y and an AMD EPYC 9354 CPUs.
+Additionally, a simple heuristic has been proposed, selecting one of the variants based on the performance evaluation in the original work \cite{bassoy:2024:ttm}. 
 We have evaluated all algorithms using a large set of tensor instances with artificial and real-world tensor shapes on an Intel Xeon Gold 5318Y and an AMD EPYC 9354 CPUs.
 More precisely, we analyzed the impact of performing the \ttt{gemm} function with subtensors and tensor slices.
-Our findings indicate that, subtensors are most effective with symmetrically shaped tensors independent of the parallelization method. 
-Tensor slices are preferable with asymmetrically shaped tensors when both the contraction mode and leading dimension are large.
-Our runtime results show that parallel executed single-threaded \ttt{gemm} performs best with symmetrically shaped tensors.
+Our findings indicate that, subtensors are most effective with symmetrically shaped tensors, irrespective of the parallelization method. 
+Conversely, tensor slices are more advantageous when dealing with asymmetrically shaped tensors, particularly when both the contraction mode and leading dimension are large.
+Our runtime results demonstrate that parallel executed single-threaded \ttt{gemm} performs best with symmetrically shaped tensors.
 If the leading and contraction dimensions are large, functions with a multi-threaded \ttt{gemm} outperforms those with a single-threaded \ttt{gemm} for any type of slicing.
-We have also shown that our \ttt{<combined>} performs in most cases as fast as \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape.
+It can also be observed that function \ttt{<combined>} with a simple heuristic performs in most cases as fast as \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape.
 Function \ttt{<batched-gemm>} is less efficient in case of asymmetrically shaped tensors with large contraction and leading dimensions.
 While matrix storage formats have only a minor impact on TTM performance, runtime measurements show that a TTM using MKL on the Intel Xeon Gold 5318Y CPU achieves higher per-core performance than a TTM with AOCL on the AMD EPYC 9354 processor.
-We have also demonstrated that our algorithms perform consistently well across different $k$-order tensor layouts, indicating that they are layout-oblivious and do not depend on a specific tensor format.
+We have also demonstrated that our algorithms perform consistently well for $k$-order tensor layouts, indicating that they are layout-oblivious and do not depend on a specific tensor format.
 
-Our runtime tests with other libraries show that TLIB's \ttt{<combined>} version of TTM is either on par with or performs better than other libraries for the majority of tensor instances.
+Our runtime tests with other libraries show that TLIB's \ttt{<combined>} version of TTM is either performs equally well or faster than other libraries for the majority of tensor instances.
 In case of tensors with artificial tensor shapes, TLIB computes the tensor product at least $12.37$\% faster than LibTorch and Eigen, independent of the processor.
 TBLIS and TCL achieve a median throughput that is comparable with TLIB when run on the AMD CPU.
 We observed that most libraries are slower than TLIB for the eighth TTM case across the majority of tensor instances, indicating that our proposed heuristic is efficient.
@@ -31,9 +30,9 @@ Also TCL is $16.22$\% and $71.65$\% faster than TLIB when using the NYX and Mira
 
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
-Our performance tests show that our algorithms are layout-oblivious and do not need layout-specific optimizations, even for different storage ordering of the input matrix.
-Despite the flexible design, our best-performing algorithm is able to outperform Intel's BLAS-like extension function \ttt{cblas\_gemm\_batch} by a factor of $2.57$ in case of asymmetrically shaped tensors.
-Moreover, the presented performance results show that TLIB computes the tensor-matrix product with asymmetrically shaped tensors on average at least $6.21$\% and up to $334.31$\% faster than TuckerMPI, LibTorch and Eigen.
+The performance tests show that our algorithms are layout-oblivious and do not need layout-specific optimizations, even for different storage ordering of the input matrix.
+Despite the flexible design, our best-performing algorithm is able to outperform Intel's BLAS-like extension function \ttt{cblas\_gemm\_batch} by a factor of up to $2.57$ in case of asymmetrically shaped tensors.
+Furthermore, the performance results demonstrate that TLIB computes the tensor-matrix product with asymmetrically shaped tensors on average at least $6.21$\% and up to $334.31$\% faster than TuckerMPI, LibTorch and Eigen.
 %TODO: how much faster and how many tensor instances:
 % Icelake (nonsymm): TLIB is faster for at least 67\% and up to 100.00\% test cases  has a median speedup of at least 6.21\% and up to 334.31\% 
 % Icelake (symm): Except for TBLIS, TLIB is faster for at least 57\% and up to 99.07\% test cases and has a median speedup of at least 3.05\% and up to 262.28\%.
@@ -44,7 +43,8 @@ Hence, other actively developed libraries such as LibTorch and Eigen might benef
 Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 
 In the near future, we intend to incorporate our implementations in TensorLy, a widely-used framework for tensor computations \cite{cohen:2022:tensor.computations, kossaifi:2019:tensorly}.
-Using the insights provided in \cite{li:2015:input} could help to further increase the performance.
+We also would like to integrate our solution to the TuckerMPI library \cite{ballard:2020:tuckermpi} and investigate the performance of HOSVD algorithms using our approach.
+Insights provided in \cite{li:2015:input} could help to further increase the performance.
 Additionally, we want to explore to what extend our approach can be applied for the general tensor contractions.
 
 \subsubsection{Source Code Availability}
