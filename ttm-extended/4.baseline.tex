@@ -2,8 +2,8 @@
 \label{sec:design}
 \subsection{Baseline Algorithm with Contiguous Memory Access}
 \label{sec:design:modified.baseline.algorithm}
-The tensor-matrix multiplication (TTM) in equation \ref{equ:tensor.matrix.multplication} can be implemented with a single algorithm using nested recursion.
-Similar the algorithm design presented in \cite{bassoy:2018:fast}, it consists of \ttt{if} statements with recursive calls and an \ttt{else} branch which is the base case of the algorithm.
+The tensor-matrix multiplication (TTM) in equation \ref{equ:tensor.matrix.multplication} can be implemented with a single algorithm using nested recursion \cite{bassoy:2018:fast}.
+Such an algorithm consists of two \ttt{if} statements with recursive calls and an \ttt{else} branch which constitutes the base case.
 A naive implementation recursively selects fibers of the input and output tensor for the base case that computes a fiber-matrix product.
 The outer loop iterates over the dimension $m$ and selects an element of $\mubC$'s fiber and a row of $\mbB$. 
 The inner loop then iterates over dimension $n_q$ and computes the inner product of a fiber of $\mubA$ and the row $\mbB$. 
@@ -12,21 +12,14 @@ if it elements are stored contiguously along its rows.
 %The access pattern can be improved by reordering tensor elements according to the storage format.
 %However, copy operations reduce the overall throughput of the operation, see \cite{shi:2016:tensor.contraction}.
 
-A better approach is illustrated in Algorithm~\ref{alg:ttm.sequential.coalesced} where the loop order is adjusted to the tensor layout $\mbpi$ and memory is accessed contiguously for $\pi_1 \neq q$ and $p > 1$.
+A better approach is illustrated by Algorithm~\ref{alg:ttm.sequential.coalesced} where the loop order is adjusted to the tensor layout $\mbpi$ and memory is accessed contiguously for $\pi_1 \neq q$ and $p > 1$.
 The algorithm takes the input order-$p$ tensor $\mubA$, input matrix $\mbB$, order-$p$ output tensor $\mubC$, the shape tuple $\mbn$ of $\mubA$, the layout tuple $\mbpi$ of both tensors, an index tuple $\mbpi$ of length $p$, the first dimension $m$ of $\mbB$, the contraction mode $q$ with $1 \leq q \leq p$ and $\mhq=\mbpi^{-1}(q)$.
-The algorithm is initially called with $\mbi = \mathbf{0}$ and $r=p$.
-With increasing recursion level and decreasing $r$, the algorithm increments indices with smaller strides as $w_{\pi_r} \leq w_{\pi_{r+1}}$.
+Initially called with $\mbi = \mathbf{0}$ and $r=p$, the algorithm increments indices with smaller strides as $w_{\pi_r} \leq w_{\pi_{r+1}}$ with increasing recursion level and decreasing $r$. 
 This is accomplished in line 5 which uses the layout tuple $\mbpi$ to select a multi-index element $i_{\pi_r}$ and to increment it with the corresponding stride $w_{\pi_r}$.
-%The condition of the second \ttt{if} statement in line 4 is changed from $r \geq 1$ to $r > 1$.
 The two \ttt{if} statements in line number 2 and 4 allow the loops over modes $q$ and $\pi_1$ to be placed into the base case in which a slice-matrix multiplication is performed.
-%the minimum stride $w_{\pi_1}$ to be included in the base case.
-%The latter now contains three loops performing a slice-matrix multiplication. 
-%The loop ordering are adjusted according to the tensor and matrix layout.
 The inner-most loop of the base case increments $i_{\pi_1}$ with a unit stride and contiguously accesses tensor elements of $\mubA$ and $\mubC$.
 The second loop increments $i_q$ with which elements of $\mbB$ are contiguously accessed if $\mbB$ is stored in the row-major format.
 The third loop increments $j$ and could be placed as the second loop if $\mbB$ is stored in the column-major format.
-%The loop ordering are adjusted according to the tensor and matrix layout.
-%The simple ordering of the three loops is discussed in \cite{golub:2013:matrix.computations}.
 
 \begin{algorithm}[t]
 %\SetAlgoNoLine
@@ -78,8 +71,8 @@ Iteration along mode $q$ with $\mhq = \mbpi^{-1}_q$ is moved into the inner-most
 \end{algorithm}
 
 While spatial data locality is improved by adjusting the loop ordering, slices $\mubA_{\pi_1,q}'$, fibers $\mubC_{\pi_1}'$ and elements $\mubB(j,i_q)$ are accessed $m$, $n_q$ and $n_{\pi_1}$ times, respectively.
-The specified fiber of $\mubC$ might fit into first or second level cache, slice elements of $\mubA$ are unlikely to fit in the local caches if the slice size $n_{\pi_1} \times n_q$ is large, leading to higher cache misses and suboptimal performance.
-Instead of attempting to improve the temporal data locality, we make use of existing high-performance BLAS implementations for the base case.
+While the specified fiber of $\mubC$ might fit into first or second level cache, slice elements of $\mubA$ are unlikely to fit in the local caches if the slice size $n_{\pi_1} \times n_q$ is large, leading to higher cache misses and suboptimal performance.
+Instead of attempting to improve the temporal data locality, we call high-performance BLAS implementations in the base case.
 The following subsection explains this approach.
 
 \subsection{BLAS-based Algorithms with Tensor Slices}
@@ -128,8 +121,7 @@ The storage format flag set for \tf{gemm} and \tf{gemv} is determined by the ele
 \label{tab:mapping_rm_cm}
 \end{table*}
 
-%Algorithm \ref{alg:ttm.sequential.coalesced} computes the mode-$q$ tensor-matrix product in a recursive fashion for $p\geq 2$ and $\pi_1 \neq q$ where its base case multiplies different tensor slices of $\mubA$ with the matrix $\mbB$.
-The following approach utilizes the CBLAS \ttt{gemm} function in the base case of Algorithm~\ref{alg:ttm.sequential.coalesced} in order to perform fast slice-matrix multiplications\footnote{CBLAS denotes the C interface to the BLAS.}.
+BLAS-based algorithms for the TTM call CBLAS \ttt{gemm} function in the base case of Algorithm~\ref{alg:ttm.sequential.coalesced} in order to perform fast slice-matrix multiplications\footnote{CBLAS denotes the C interface to the BLAS.}.
 Function \ttt{gemm} denotes a general matrix-matrix multiplication which is defined as \ttt{C:=a*op(A)*op(B)+b*C} where 
 \ttt{a} and \ttt{b} are scalars, 
 \ttt{A}, \ttt{B} and \ttt{C} are matrices,
@@ -153,14 +145,6 @@ Note that Table~\ref{tab:mapping_rm_cm} supports all linear tensor layouts of $\
 The following subsection describes all eight TTM cases when the input matrix $\mbB$ has the row-major ordering.
 
 
-
-%TODO: explain the table for B format (already explained for RM) and CBLAS multiplication (already explained for RM) as on subsubsection and include two other subsection explaining what changes if we take B.format CM and another subsection explaining how the parameters change if it is CM.
-
-%We apply highly optimized routines to fully or partly execute tensor contractions as it is done in \cite{li:2015:input, shi:2016:tensor.contraction}.
-%The function and parameter configurations for the tensor multiplication can be divided into eight cases.
-
-%Table \ref{tab:mapping} extends the finding in \cite{dinapoli:2014:towards.efficient.use} precisely defining the mapping for any storage format. 
-%It also complies with the findings in \cite{li:2015:input}.
 \subsubsection{Row-Major Matrix Multiplication}
 The following paragraphs introduce all TTM cases that are listed in Table~\ref{tab:mapping_rm_cm}.
 

@@ -34,9 +34,9 @@ Their algorithm iterate over blocked tensors and perform tensor-vector multiplic
 They are able to achieve high performance and mode-oblivious computations.
 
 
-In \cite{ballard:2020:tuckermpi} the authors present a C++ software package (TuckerMPI) for large-scale data compression using tensor tucker decomposition.
+In \cite{ballard:2020:tuckermpi} the authors present the C++ software package TuckerMPI for large-scale data compression that is used for the tensor tucker decomposition.
 The library provides a parallel C++ function of the latter containing distributed functions with MPI for the Gram computation and tensor-matrix multiplication.
-Th latter invokes a local version that contains a multi-threaded \ttt{gemm} computing the tensor-matrix product with submatrices according to the LoG approach.
+Th latter invokes a local version that contains a multi-threaded \ttt{gemm} function, computing the tensor-matrix product with submatrices according to the LOG approach.
 The presented local TTM corresponds to our \ttt{<par-gemm,subtensor>} version.
 \begin{comment}
  which is used 

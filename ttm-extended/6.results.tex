@@ -87,14 +87,14 @@ The performance values on the upper and lower rows of one table were evaluated u
 \caption%
 {%
 \footnotesize
-Bar plots contain median runtime in seconds of %
+Bar plots contain median running times in seconds of %
 \tf{TLIB} (\ref{coord:bar.tlib_optimized.mkl}), %
 \tf{TCL} (\ref{coord:bar.tcl.mkl}), %
 \tf{TBLIS} (\ref{coord:bar.tblis.mkl}), %
 \tf{LibTorch} (\ref{coord:bar.torch.mkl}), %
 \tf{Eigen} (\ref{coord:bar.eigen.mkl}) and %
 \tf{TuckerMPI} (\ref{coord:bar.tucker.mkl}). 
-The tests were conducted on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9354 CPU (bottom) using order-3 and order-4 tensors with shapes that are described in Table \ref{tab:dataset}. 
+The tests were performed on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9354 CPU (bottom) using order-3 and order-4 tensors with shapes that are described in Table \ref{tab:dataset}. 
 %The performance values on the upper and lower rows of one table were evaluated using asymmetrically and symmetrically shaped tensors, respectively. 
 }
 \label{fig:performance-sdr.comparison}
@@ -105,7 +105,7 @@ The tests were conducted on an Intel Xeon Gold 5318Y CPU (top) and an AMD EPYC 9
 \section{Experimental Results and Discussion}
 \label{sec:results}
 The runtime results within the following subsections are executed with asymmetrically and symmetrically shaped tensors.
-The last subsection also considers tensors with real-world tensor shapes.
+The last subsection also considers tensors with real-world tensor shapes from SDRBench.
 The corresponding tensor shapes and their shape sets have been described in the previous section \ref{sec:experimental.setup}.
 
 \subsection{Slicing Methods}
@@ -198,8 +198,6 @@ The observable superior performance distribution of \ttt{<combined>} can be attr
 Function \ttt{<batched-gemm>} of the BLAS-like extension library has a performance distribution that is akin to the \ttt{<par-loop,subtensor>}.
 In case of asymmetrically shaped tensors, all functions except \ttt{<par-loop,subtensor>} outperform \ttt{<batched-gemm>} on average by a factor of $2.57$ and up to a factor $4$ for $2 \leq q\leq5$ with $q+2 \leq p \leq q+5$. %q+2=p and q+5=p 
 In contrast, \ttt{<par-loop,subtensor>} and \ttt{<batched-gemm>} show a similar performance behavior in the plot (1c) and (1d) for symmetrically shaped tensors, running on average $3.55$ and $8.38$ times faster than \ttt{<par-gemm>} with subtensors and tensor slices, respectively.
-%Function \ttt{<par-loop,slice>} underperforms for $p>3$, i.e. when the tensor dimensions are less than $64$. % <- Don't know if I need this.
-%TODO:These observations have also been mentioned in \cite{bassoy:2024:ttm}.
 
 In summary, \ttt{<combined>} performs as fast as, or faster than, \ttt{<par-gemm,subtensor>} and \ttt{<par-loop,slice>}, depending on the tensor shape. 
 Conversely, \ttt{<batched-gemm>} underperforms for asymmetrically shaped tensors with large contraction modes and leading dimensions.
@@ -288,28 +286,27 @@ In case of symmetrically shaped tensors, TBLIS and LibTorch outperform TLIB in t
 
 
 \subsubsection{Real-World Tensor Shapes}
-We have additionally conducted performance tests with an order-$3$ and seven order-$4$ tensors that have also been used in SDRBench \cite{zhao:2020:sdrbench}.
-The corresponding tensor shape set $Q$ and the tensor shapes are given in Table \ref{tab:dataset}.
+We have additionally conducted performance tests with an order-$3$ and seven order-$4$ tensors with real-world tensor shapes that are listed in Table \ref{tab:dataset}.
 With a maximum tensor order of $4$, every tensor is multiplied with a matrix along every mode using a TTM implementation.
 Note that the multiplication over the first and fourth mode corresponds to the sixth and seventh TTM case in Table \ref{tab:mapping_rm_cm} for which TLIB will call a single \ttt{gemm}.
 The multiplication over the second and third mode corresponds to the eighth TTM case where a \ttt{gemm} is called multiple times.
 
-Fig.~\ref{fig:performance-sdr.comparison} contains bar plots for all tensor shapes of set $Q$.
+Fig.~\ref{fig:performance-sdr.comparison} contains bar plots for all tensor shapes.
 The size of each bar is the total running time of the respective TTM implementation over all modes that is executed on an Intel Xeon Gold 5318Y CPU and an AMD EPYC 9354 CPU.
 Note that TCL was not able to compute the TTM for the EXAFEL data set which is why the runtime is set to zero.
 
-On the Intel Xeon Gold 5318Y CPU, TLIB is for most tensor instances faster and reaches a maximum speedup of $137.32$\% (TCL), $100.80$\% (TBLIS), $210.71$\% (LibTorch), $798.91$\% (Eigen), $581.73$\% (TuckerMPI).
+On the Intel Xeon Gold 5318Y CPU, TLIB is faster for most tensor shapes and reaches a maximum speedup of $137.32$\% (TCL), $100.80$\% (TBLIS), $210.71$\% (LibTorch), $798.91$\% (Eigen), $581.73$\% (TuckerMPI).
 TCL is on par with TLIB for the CESM-ATM data set.
 TuckerMPI is for the CESM-ATM and Miranda data sets $46.8$\% and $13.7$\% faster than TLIB 
-The TTMs of TuckerMPI and LibTorch compute the tensor product for the fourth mode faster than TLIB, independent of the tensor instance.
+TuckerMPI and LibTorch compute the tensor product faster than TLIB in case of fourth contraction mode, independent of tensor shape.
 
 On the AMD EPYC 9354 CPU, TLIB performs better than most other libraries except for TCL and LibTorch in some instances.
 TLIB reaches a maximum speedup of $33.36$\% (TCL), $117.22$\% (TBLIS), $221.25$\% (LibTorch), $205.80$\% (Eigen).
 TCL outerperforms TLIB by $16.22$\% (NYX) and $71.65$\% (Miranda).
-In this case, TCL computes the tensor product over the fourth mode for almost all tensor instances faster than TLIB.
-In that case of the SCALE-LETKF data set TCL is $3.4$x faster.
+In this case, TCL computes the tensor product over the fourth mode faster than TLIB for almost all tensors.
+%In that case of the SCALE-LETKF data set TCL is $3.4$x faster.
 LibTorch outperforms TLIB for the CESM-ATM data set by $42.02$\%.
 %In that case, LibTorch is outperforming $67$\% when computing the tensor product over mode one.
 
-The runtime tests with tensors from the SDRBench demonstrates that for most tensor instances with real-world tensor shapes, TLIB is able to compute the tensor product faster than other libraries.
+The runtime tests with tensors from the SDRBench demonstrate that TLIB is able to compute the tensor product faster than other libraries for most tensors with real-world tensor shapes.
 
