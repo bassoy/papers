@@ -32,8 +32,7 @@ We measured a peak double-precision floating-point performance of $3.87$ TFLOPS 
 All libraries have been compiled with the GNU compiler v11.2.0 using the highest optimization level \ttt{-O3} together with the \ttt{-fopenmp} and \ttt{-std=c++17} flags. 
 Loops within the eighth case have been parallelized using GCC's OpenMP v4.5 implementation.
 In case of the Intel CPU, the Intel Math Kernel Library 2022 (MKL) and its threading library \ttt{mkl\_intel\_thread}, threading runtime library \ttt{libiomp5} has been used for the three BLAS functions \ttt{gemv}, \ttt{gemm} and \ttt{gemm\_batch}.
-For the AMD CPU, the AMD library AOCL v4.2.0 has been used.
-It has been compiled with the \ttt{zen4} architecture configuration option and OpenMP threading.
+For the AMD CPU, the AMD library AOCL v4.2.0 has been compiled with the \ttt{zen4} flag.
 
 
 \subsection{OpenMP Parallelization}

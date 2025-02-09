@@ -44,7 +44,10 @@ In summary, the main findings of our work are:
 	\item %
 	Our best-performing algorithm is a factor of $2.57$ faster than Intel's batched GEMM implementation for large tensor slices.
 	\item %
-	Our best-performing algorithm has a median performance speedup between $15.38$\% and $257.58$\% compared to other state-of-the art library implementations, including LibTorch and Eigen.
+	%TODO:
+	Our best-performing algorithm has a median speedup between $6.21$\% and $334.31$\% compared to other state-of-the art library implementations, including LibTorch and Eigen when asymmetrically shaped tensors are used.
+	%\item %
+	%It performs better than all other competing implementations for the majority of real world tensors of SDRBench, reaching a maximum speedup of $100.80$\% or more in some tensor instances.
 \end{itemize}
 
 

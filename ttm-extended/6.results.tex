@@ -254,7 +254,7 @@ The \tbf{TuckerMPI} library is a parallel C++ software package for large-scale d
 The local version implements the LoG approach using a BLAS implementation and computes the TTM product similar to our function \ttt{<par-gemm,subtensor>}.
 Note that we were use the current TuckerMPI version with Intel's MKL, which is why TuckerMPI's TTM has only been executed on the Intel CPU.
 \tbf{TLIB} denotes our library and the previously discussed \ttt{<combined>} algorithm.
-If not otherwise stated, all of the following performance and comparisons numbers represent medians across the entire tensor set.
+If not otherwise stated, all of the following performance and comparisons numbers represent medians across a specified tensor set.
 
 %We will use performance or percentage tuples of the form (TCL, TBLIS, LibTorch, Eigen) where each tuple element denotes the performance or runtime percentage of a particular library.
 \subsubsection{Artificial Tensor Shapes}
