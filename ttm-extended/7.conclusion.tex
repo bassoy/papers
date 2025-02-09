@@ -1,7 +1,7 @@
 \section{Summary}
 \label{sec:summary}
 We have presented efficient layout-oblivious algorithms for the compute-bound tensor-matrix multiplication that is essential for many tensor methods.
-Our approach is based on the LOG-method and computes the tensor-matrix product in-place without transposing tensors.
+Our approach is based on the LOG method and computes the tensor-matrix product in-place without transposing tensors.
 It applies the flexible approach described in \cite{bassoy:2019:ttv} and generalizes the findings on tensor slicing in \cite{li:2015:input} for linear tensor layouts.
 The resulting algorithms are able to process dense tensors with arbitrary tensor order, dimensions and with any linear tensor layout all of which can be runtime variable.
 
@@ -39,7 +39,7 @@ Moreover, the presented performance results show that TLIB computes the tensor-m
 % Icelake (symm): Except for TBLIS, TLIB is faster for at least 57\% and up to 99.07\% test cases and has a median speedup of at least 3.05\% and up to 262.28\%.
 % Genoa (nonsymm): TLIB is faster for 74.54\% and 94.75\% the test cases and has a median speedup of at 29.69\% and 117.50\% for LibTorch and Eigen. %TLIB is on average as fast as TBLIS and TCL.
 % Genoa (symm): Except for TBLIS, TLIB is faster for at least 57\% and up to 99.07\% test cases and has a median speedup of at least 3.05\% and up to 262.28\%.
-Our findings leads us to the conclusion that the LoG-based approach is a viable solution for the general tensor-matrix multiplication, capable of matching efficient GETT-based and TGGT-based implementations.
+Our findings leads us to the conclusion that the LOG-based approach is a viable solution for the general tensor-matrix multiplication, capable of matching efficient GETT-based and TGGT-based implementations.
 Hence, other actively developed libraries such as LibTorch and Eigen might benefit from our algorithm design.
 Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 

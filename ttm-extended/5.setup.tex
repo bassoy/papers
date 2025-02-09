@@ -61,7 +61,7 @@ We have evaluated the performance of our algorithms with asymmetrically and symm
 Their corresponding tensor shapes are divided into $12$ sets $N_1$, $N_2$, \dots, $N_{10}$, $M$ and $Q$.
 Table \ref{tab:dataset} contains example dimension tuples for the input tensor and matrix.
 The shape of the latter is $(n_2,n_q)$ if $q=1$ and $(n_1,n_q)$ otherwise where $q$ is the contraction mode with $1 \leq q \leq p$.
-The computation of the output tensor dimensions is described in Section \ref{subsec:ttm}.
+The computation of the output tensor dimensions is described in Section~\ref{subsec:ttm}.
 
 The first shape $10$ sets $N_1$ to $N_{10}$ contain $9 \times 8$ tensor shapes all of which generate asymmetrically shaped tensors.
 Within one set $N_k$, dimension tuples are arranged within $10$ two-dimensional shape arrays $\mbN_k$ of size $9 \times 8$ with $1 \leq k \leq 10$.
@@ -102,5 +102,5 @@ Hence, our profiler generates $10$ runtime arrays of shape $9\times 8$ with asym
 Generating symmetrically shaped tensors with the shape set $M$, the profiler returns $7$ runtime arrays of shape $6 \times 8$ for $7$ contraction modes.
 Using the shape set $Q$, $4$ one-dimensional runtime arrays for $4$ contraction modes are computed.
 
-The three-dimensional runtime data generated with the data sets $N$ and $M$ can be used to create two dimensional performance maps, as it is done in the following section \ref{sec:results}.
+The three-dimensional runtime data generated with the data sets $N$ and $M$ can be used to create two dimensional performance maps, as it is done in the following Section~\ref{sec:results}.
 Each value in a performance map corresponds to a mean or median value over tensor sizes (i.e. dimension tuples with the same length), over tensor orders or contraction modes.

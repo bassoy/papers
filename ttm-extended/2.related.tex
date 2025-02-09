@@ -13,14 +13,14 @@ Runtime measurements cover class 3 tensor contractions.
 \end{comment}
 
 Springer et al. \cite{springer:2018:design} present a tensor-contraction generator TCCG and the GETT approach for dense tensor contractions that is inspired from the design of a high-performance GEMM.
-Their unified code generator selects implementations from generated GETT, LoG and TTGT candidates.
-Their findings show that among $48$ different contractions $15$\% of LoG-based implementations are the fastest.
+Their unified code generator selects implementations from generated GETT, LOG and TTGT candidates.
+Their findings show that among $48$ different contractions $15$\% of LOG-based implementations are the fastest.
 
 Matthews \cite{matthews:2018:high} presents a runtime flexible tensor contraction library that uses GETT approach as well.
 He describes block-scatter-matrix algorithm which uses a special layout for the tensor contraction.
 The proposed algorithm yields results that feature a similar runtime behavior to those presented in \cite{springer:2018:design}.
 
-Li et al. \cite{li:2015:input} introduce InTensLi, a framework that generates in-place tensor-matrix multiplication according to the LoG approach. 
+Li et al. \cite{li:2015:input} introduce InTensLi, a framework that generates in-place tensor-matrix multiplication according to the LOG approach. 
 The authors discusses optimization and tuning techniques for slicing and parallelizing the operation.
 With optimized tuning parameters, they report a speedup of up to $4$x over the TTGT-based MATLAB tensor toolbox library discussed in \cite{bader:2006:algorithm862}.
 
