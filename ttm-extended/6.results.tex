@@ -126,7 +126,7 @@ TTM case $8$ with multiple \ttt{gemm} calls is represented by the triangular reg
 
 % With <par-loop,seq-gemm>
 % Asymmetrically Shaped Tensors
-Function \ttt{<par-loop,slice>} runs on average with $34.96$ GFLOPS/core ($1.67$ TFLOPS) with asymmetrically shaped tensors.
+With asymmetrically shaped tensors, \ttt{<par-loop,slice>} runs on average with $34.96$ GFLOPS/core ($1.67$ TFLOPS).
 With a maximum performance of $57.805$ GFLOPS/core ($2.77$ TFLOPS), it performs on average $89.64$\% faster than \ttt{<par-loop,subtensor>}.
 The slowdown with subtensors at $q=p-1$ or $q=p-2$ can be explained by the small loop count of the function that are $2$ and $4$, respectively.
 While function \ttt{<par-loop,slice>} is affected by the tensor shapes for dimensions $p=3$ and $p=4$ as well, its performance improves with increasing order due to the increasing loop count.
@@ -247,7 +247,6 @@ This subsection compares our best performing algorithm with libraries that do no
 TCL has been used with the same BLAS libraries as TLIB to ensure a fair comparison.
 \tbf{TBLIS} (v1.2.0) implements the GETT approach that is akin to BLIS' algorithm design for the matrix multiplication \cite{matthews:2018:high}.
 The library has been compiled with the \ttt{zen4} and \ttt{skx-2} to enable architecture specific optimization.
-%TODO: add footnote that is required to enable support for zen4 and skx-2 
 The tensor extension of \tbf{Eigen} (v3.4.90) is used by the Tensorflow framework.
 Library \tbf{LibTorch} (v2.5.0) is the C++ distribution of PyTorch \cite{paszke:2019:pytorch}.
 The \tbf{TuckerMPI} library is a parallel C++ software package for large-scale data compression which provides a local and distributed TTM function \cite{ballard:2020:tuckermpi}.
