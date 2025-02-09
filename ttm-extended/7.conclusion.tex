@@ -35,8 +35,8 @@ Our performance tests show that our algorithms are layout-oblivious and do not n
 Despite the flexible design, our best-performing algorithm is able to outperform Intel's BLAS-like extension function \ttt{cblas\_gemm\_batch} by a factor of $2.57$ in case of asymmetrically shaped tensors.
 Moreover, the presented performance results show that TLIB is able to compute the tensor-matrix product faster than most state-of-the-art implementations for many tensor instances.
 
-Our findings lets us conclude that the LoG-based approach is a viable solution for the general tensor-matrix multiplication which can be as fast as or even outperform efficient GETT-based and TGGT-based implementations.
-Hence, other actively developed libraries such as LibTorch, TuckerMPI and Eigen might benefit from our algorithm design.
+Our findings leads us to the conclusion that the LoG-based approach is a viable solution for the general tensor-matrix multiplication, capable matching or even outperforming efficient GETT-based and TGGT-based implementations.
+Hence, other actively developed libraries such as LibTorch and Eigen might benefit from our algorithm design.
 Our header-only library provides C++ interfaces and a python module which allows frameworks to easily integrate our library.
 
 In the near future, we intend to incorporate our implementations in TensorLy, a widely-used framework for tensor computations \cite{cohen:2022:tensor.computations, kossaifi:2019:tensorly}.
