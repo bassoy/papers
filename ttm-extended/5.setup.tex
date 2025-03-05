@@ -56,8 +56,8 @@ The \ttt{proc\_bind(spread)} clause additionally binds each OpenMP thread to one
 Moreover, with the \ttt{spread} thread affinity policy, consecutive OpenMP threads are spread across OpenMP places which can be beneficial if the user decides to set \ttt{ncores} smaller than the number of processor cores.
 
  
-\subsection{Data sets} 
-The runtime performance of our algorithms have been executed with asymmetrically and symmetrically shaped tensors to account for a wide range of use cases.
+\subsection{Data Sets} 
+The runtime performance of our algorithms have been executed with asymmetrically and symmetrically shaped tensors with double-precision floating point numbers to account for a wide range of use cases.
 The corresponding tensor shapes are divided into $12$ sets $N_1$, $N_2$, \dots, $N_{10}$, $M$ and $Q$.
 Table \ref{tab:dataset} contains example dimension tuples for the input tensor and matrix.
 The shape of the latter is $(n_2,n_q)$ if $q=1$ and $(n_1,n_q)$ otherwise where $q$ is the contraction mode with $1 \leq q \leq p$.
@@ -80,7 +80,7 @@ With eight shapes and the step size of each row $s_r = (m_{r,8}-m_{r,1})/8$, the
 Symmetrically and asymmetrically shaped tensors have also been used in \cite{bassoy:2019:ttv, bassoy:2018:fast}.
 
 %artifical tensors 
-We have also benchmarked our algorithm using eight tensors from the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
+We have also benchmarked our algorithm using eight tensors with single-precision floating-point numbers from the scientific data reduction benchmark (SDRBench) \cite{zhao:2020:sdrbench}.
 The scientific datasets in SDRBench mainly consist of order-$3$ tensors with different tensor shapes and number of data fields, originating from various real-world simulations.
 Tensors from the SP dataset for instance has been used for benchmarking the truncated Tucker decomposition in \cite{ballard:2020:tuckermpi}
 We perform runtime tests with order-$4$ tensors that are generated with dimension tuples of the tensor shape set $Q$.
@@ -88,18 +88,16 @@ Their first three dimensions correspond to the respective ones mentioned in the 
 All tensor shapes are provided in Table \ref{tab:dataset}.
 
 
-\subsection{Profiling setup} 
-Our benchmark suite iterates through dimension tuples from one of tensor shape sets for one contraction mode $q$ with $1 \leq q \leq \max_p$ where $\max_p$ is the maximum tensor order within the shape set.
-Tensor and matrix elements are randomly generated single-precision floating-point numbers in case of the data set $Q$.
-In all other test cases double-precision is used.
-The profiler first sweeps through tensor shapes belonging to one tensor order and then iteratively selects one larger tensor order for the next sweep.
-Given a dimension tuple, the profiler generates two tensors and a matrix, executes a mode-$q$ TTM implementation $20$ times and finally computes the median runtime of the benchmarked TTM implementation.
+\subsection{Benchmark Configuration} 
+Our runtime profiler iterates through dimension tuples from one of tensor shape sets for one contraction mode $q$ with $1 \leq q \leq \max_p$ where $\max_p$ is the maximum tensor order within the shape set.
+It sweeps through tensor shapes belonging to one tensor order and then iteratively selects one larger tensor order for the next sweep.
+Given a dimension tuple, the runtime profiler generates two tensors and a matrix, executes a mode-$q$ TTM implementation $20$ times and finally computes the median runtime of the tested TTM implementation.
 To prevent caching of the output tensor, we invalidate caches which is excluded from the timing.
  
 The runtime results for one contraction mode and one TTM implementation are stored in a two-dimensional array with shape $\max_p \times k$ where $k$ is either $8$ in case of asymmetrically and symmetrically shaped tensors or $1$ in case of the set $Q$.
 It should be noted that if $q>p$, the contraction mode $q$ is set to $p$.
 Hence, our profiler generates $10$ runtime arrays of shape $9\times 8$ with asymmetrically shaped tensors for $10$ contraction modes using the shape sets $N_1$, $N_2$, \dots, $N_{10}$.
-Generating symmetrically shaped tensors with the shape set $M$, the profiler returns $7$ runtime arrays of shape $6 \times 8$ for $7$ contraction modes.
+Generating symmetrically shaped tensors with the shape set $M$, it returns $7$ runtime arrays of shape $6 \times 8$ for $7$ contraction modes.
 Using the shape set $Q$, $4$ one-dimensional runtime arrays for $4$ contraction modes are computed.
 
 The three-dimensional runtime data generated with the data sets $N$ and $M$ can be used to create two dimensional performance maps, as it is done in the following Section~\ref{sec:results}.

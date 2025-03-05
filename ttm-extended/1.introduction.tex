@@ -5,7 +5,7 @@ These computations use basic tensor operations as building blocks for decomposin
 Tensor contractions are an important subset of basic operations that need to be fast for efficiently solving tensor methods.
 
 There are three main approaches for implementing tensor contractions.
-The Transpose Transpose GEMM Transpose (TGGT) approach reorganizes tensors in order to perform a tensor contraction using optimized implementations of the general matrix multiplication (GEMM) \citep{bader:2006:algorithm862,solomonik:2013:cyclops}.
+The Transpose Transpose GEMM Transpose (TTGT) approach reorganizes tensors in order to perform a tensor contraction using optimized implementations of the general matrix multiplication (GEMM) \citep{bader:2006:algorithm862,solomonik:2013:cyclops}.
 GEMM-like Tensor-Tensor multiplication (GETT) method implement macro-kernels that are similar to the ones used in fast GEMM implementations \citep{springer:2018:design, matthews:2018:high}.
 The third method is the Loops-over-GEMM (LOG) or the BLAS-based approach in which Basic Linear Algebra Subprograms (BLAS) are utilized with multiple tensor slices or subtensors if possible \citep{dinapoli:2014:towards.efficient.use, li:2015:input, shi:2016:tensor.contraction, bassoy:2019:ttv}.
 The BLAS are considered the de facto standard for writing efficient and portable linear algebra software, which is why nearly all processor vendors provide highly optimized BLAS implementations.

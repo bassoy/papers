@@ -247,13 +247,13 @@ The tensor extension of \tbf{Eigen} (v3.4.90) is used by the Tensorflow framewor
 Library \tbf{LibTorch} (v2.5.0) is the C++ distribution of PyTorch \cite{paszke:2019:pytorch}.
 The \tbf{TuckerMPI} library is a parallel C++ software package for large-scale data compression which provides a local and distributed TTM function \cite{ballard:2020:tuckermpi}.
 The local version implements the LOG approach using a BLAS implementation and computes the TTM product similar to our function \ttt{<par-gemm,subtensor>}.
-Note that we were use the current TuckerMPI version with Intel's MKL, which is why TuckerMPI's TTM has only been executed on the Intel CPU.
+Please note that the current version of TuckerMPI does not support AMD's AOCL which is why runtime tests with TuckerMPI were only performed on the Intel CPU.
 \tbf{TLIB} denotes our library and the previously discussed \ttt{<combined>} algorithm.
 If not otherwise stated, all of the following performance and comparisons numbers represent medians across a specified tensor set.
 
 %We will use performance or percentage tuples of the form (TCL, TBLIS, LibTorch, Eigen) where each tuple element denotes the performance or runtime percentage of a particular library.
 \subsubsection{Artificial Tensor Shapes}
-Fig.~\ref{fig:performance.tlib.case8} compares the performance distribution of our implementation with the previously mentioned libraries.
+Fig.~\ref{fig:performance.comparison} compares the performance distribution of our implementation with the previously mentioned libraries.
 The benchmark is executed with asymmetrically and symmetrically shaped tensors.
 The corresponding tensor shapes and their shape sets have been described in Section~\ref{sec:experimental.setup}.
 
